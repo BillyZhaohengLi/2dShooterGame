@@ -1,21 +1,28 @@
 #pragma once
 #include <vector>
+#include "ofMain.h"
 #include "const.h"
+#include "player.h"
+#include "shot.h"
+#include "helperfunctions.h"
 using namespace std;
 class Wall {
 private:
 	struct WallSegment {
 		int x_left_;
-		int x_right_;
+		int x_span_;
 		int y_up_;
-		int y_down_;
-		WallSegment(int x_left, int x_right, int y_up, int y_down);
+		int y_span_;
+		WallSegment(int x_left, int y_up, int x_span, int y_span);
+		pair<int, int> collision_handler(int x_loc, int y_loc);
+		void bounce_shot(ShotInLevel::Shot shot_to_bounce);
 	};
 	vector<WallSegment> walls;
 public:
-	Wall();
+	Wall() { vector<WallSegment> walls(); };
+	void add_boundary();
 	void draw_all_walls();
-	void add_wall(int x_left, int x_right, int y_up, int y_down);
-	bool in_wall(int x_coord, int y_coord);
-	pair<int, int> laser_bounce(int velocity, int angle);
+	void add_wall(int x_left, int y_up, int x_span, int y_span);
+	pair<int, int> collision_resolver(int x_loc, int y_loc);
+	void bounce_shots(ShotInLevel shots_in_level);
 };

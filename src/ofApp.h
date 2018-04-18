@@ -1,7 +1,10 @@
 #pragma once
 
 #include "ofMain.h"
-
+#include "wall.h"
+#include "player.h"
+#include "const.h"
+#include "shot.h"
 class ofApp : public ofBaseApp{
 
 	public:
