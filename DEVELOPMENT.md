@@ -11,6 +11,7 @@
  * Player class added; contains locations of a player, the cooldown of firing shots and whether the player is alive.
  * Shot class added; contains all shots fired in a level and has an internal struct which contains the parameters of individual shots in the level.
  * Able to detect collision between shots and walls; working on bouncing shots off walls if a collision occurs.
+ * _TODO on April 19_: fix collision between shots and walls and add collision between player and walls/ shots and players(easy). Hopefully add game interface (start, settings, etc.).
 ### April 19:
  * finished implementing shot bouncing and deleting shots after a set number of bounces.
  * implemented shot-player collision; when the player gets hit by a shot they die and become unable to move.
