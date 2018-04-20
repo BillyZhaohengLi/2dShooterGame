@@ -15,7 +15,7 @@ private:
 		int y_span_;
 		WallSegment(int x_left, int y_up, int x_span, int y_span);
 		pair<int, int> collision_handler(int x_loc, int y_loc);
-		void bounce_shot(ShotInLevel::Shot shot_to_bounce);
+		void bounce_shot(ShotInLevel::Shot &to_bounce);
 	};
 	vector<WallSegment> walls;
 public:
@@ -24,5 +24,5 @@ public:
 	void draw_all_walls();
 	void add_wall(int x_left, int y_up, int x_span, int y_span);
 	pair<int, int> collision_resolver(int x_loc, int y_loc);
-	void bounce_shots(ShotInLevel shots_in_level);
+	void bounce_shots(ShotInLevel &shots_in_level);
 };

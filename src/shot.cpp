@@ -20,9 +20,8 @@ void ShotInLevel::add_shot(double x, double y, double initial_angle) {
 }
 
 void ShotInLevel::Shot::draw_shot() {
-	ofSetLineWidth(4);
 	ofSetColor(255, 0, 0);
-	ofDrawLine(posx, posy, posx - shot_length * cos(angle), posy - shot_length * sin(angle));
+	ofDrawCircle(posx, posy, 3);
 }
 
 void ShotInLevel::draw_shot() {
