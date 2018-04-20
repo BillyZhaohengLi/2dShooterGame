@@ -11,12 +11,13 @@
  * Player class added; contains locations of a player, the cooldown of firing shots and whether the player is alive.
  * Shot class added; contains all shots fired in a level and has an internal struct which contains the parameters of individual shots in the level.
  * Able to detect collision between shots and walls; working on bouncing shots off walls if a collision occurs.
- * _TODO on April 19_: fix collision between shots and walls and add collision between player and walls/ shots and players(easy). Hopefully add game interface (start, settings, etc.).
 ### April 19:
  * finished implementing shot bouncing and deleting shots after a set number of bounces.
-
-## Days left to work on project: 6.5 days
-* April 19 (half day)
+ * implemented shot-player collision; when the player gets hit by a shot they die and become unable to move.
+ * implemented player-wall collision; handled border cases such as collision between the player and the corner of a wall.
+ * added annotations to existing code
+ * _TODO on April 21_: interface for the game; improve robustness of collision algorithms (I can think of a few potential problems but sadly there's an exam on friday); random wall generation (this turns out to be easier than I thought). Hopefully I'll be able to start experimenting with LAN networking on April 22.
+## Days left to work on project: 6 days
 * April 21 (full day)
 * April 22 (full day)
 * April 24 (half day)
