@@ -21,6 +21,8 @@
 ### April 21:
  * improved robustness of collision algorithms; fixed cases where resolving a collision between a player/shot and a wall segment will create a new unresolved collision between them and a wall segment previously checked to be fine.
  * added some horrible artwork and sound effects
+ * changed display to borderless window due to some weird pixel scaling issues with the title bar
+ * added random wall generation.
 ## Days left to work on project: 6 days
 * April 21 (full day)
 * April 22 (full day)
