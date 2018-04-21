@@ -87,6 +87,9 @@ void Player::move() {
 kills the player (sets alive to false). Called when the player gets hit by a shot.
 */
 void Player::kill_player() {
+	if (alive) {
+		PlaySound(TEXT("sounds\\die.wav"), NULL, SND_FILENAME | SND_ASYNC);
+	}
 	alive = false;
 }
 
@@ -96,13 +99,48 @@ draws the player using ofDrawCircle.
 void Player::draw_player() {
 	if (alive) {
 		ofSetColor(red, green, blue);
+
+		//draw the player circle corresponding with the hitbox
+		ofDrawCircle(xpos, ypos, player_radius);
+		ofSetColor(0, 0, 0);
+		ofSetLineWidth(4);
+
+		//draw a smiley face on the player
+		ofDrawCircle(xpos - cos(pi / 4) * player_radius * 0.5, ypos - cos(pi / 4) * player_radius * 0.5, player_radius * 0.2);
+		ofDrawCircle(xpos + cos(pi / 4) * player_radius * 0.5, ypos - cos(pi / 4) * player_radius * 0.5, player_radius * 0.2);
+		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.75, ypos + cos(pi / 4) * player_radius * 0.5, xpos - cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75);
+		ofDrawLine(xpos + cos(pi / 4) * player_radius * 0.75, ypos + cos(pi / 4) * player_radius * 0.5, xpos + cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75);
+		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75, xpos + cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75);
+		
+		double gun_angle = atan2(ofGetMouseY() - ypos, ofGetMouseX() - xpos);
+		//draw the gun; if the player is firing add a firing effect.
+		if (shot_cooldown >= player_shot_cooldown * 0.9) {
+			ofDrawLine(xpos + cos(gun_angle) * player_radius, ypos + sin(gun_angle) * player_radius, xpos + cos(gun_angle) * player_radius * 1.25, ypos + sin(gun_angle) * player_radius * 1.25);
+			ofSetColor(255, 255, 0, 128);
+			ofDrawCircle(xpos + cos(gun_angle) * player_radius * 1.25, ypos + sin(gun_angle) * player_radius * 1.25, 6);
+		}
+		else {
+			ofDrawLine(xpos + cos(gun_angle) * player_radius, ypos + sin(gun_angle) * player_radius, xpos + cos(gun_angle) * player_radius * 1.5, ypos + sin(gun_angle) * player_radius * 1.5);
+		}
 	}
 	//if the player is dead draw them in black.
 	else {
+		ofSetColor(red, green, blue);
+
+		//draw the player circle
+		ofDrawCircle(xpos, ypos, player_radius);
 		ofSetColor(0, 0, 0);
+		ofSetLineWidth(3);
+
+		//draw a sad face on the player
+		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.15, ypos - cos(pi / 4) * player_radius * 0.15, xpos - cos(pi / 4) * player_radius * 0.85, ypos - cos(pi / 4) * player_radius * 0.85);
+		ofDrawLine(xpos + cos(pi / 4) * player_radius * 0.15, ypos - cos(pi / 4) * player_radius * 0.15, xpos + cos(pi / 4) * player_radius * 0.85, ypos - cos(pi / 4) * player_radius * 0.85);
+		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.15, ypos - cos(pi / 4) * player_radius * 0.85, xpos - cos(pi / 4) * player_radius * 0.85, ypos - cos(pi / 4) * player_radius * 0.15);
+		ofDrawLine(xpos + cos(pi / 4) * player_radius * 0.15, ypos - cos(pi / 4) * player_radius * 0.85, xpos + cos(pi / 4) * player_radius * 0.85, ypos - cos(pi / 4) * player_radius * 0.15);
+		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.75, ypos + cos(pi / 4) * player_radius * 0.75, xpos - cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.5);
+		ofDrawLine(xpos + cos(pi / 4) * player_radius * 0.75, ypos + cos(pi / 4) * player_radius * 0.75, xpos + cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.5);
+		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.5, xpos + cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.5);
 	}
-	
-	ofDrawCircle(xpos, ypos, player_radius);
 }
 
 /*

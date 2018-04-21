@@ -12,11 +12,12 @@ Wall::WallSegment::WallSegment(int x_left, int y_up, int x_span, int y_span) {
 /*
 handles collision between a wall segment and the player; if the player is in contact with the wall push them out.
 */
-void Wall::WallSegment::collision_handler(Player& player_moving) {
+bool Wall::WallSegment::collision_handler(Player& player_moving) {
 	//get the player's coordinates
 	pair<double, double> temp = player_moving.get_location();
 	double p_x = temp.first;
 	double p_y = temp.second;
+	bool collided = false;
 
 	//convert the player coordinates and the four corners of the wall segment into points; check for collision
 	//between the player and the four sides defined by the four points of the wall segment.
@@ -27,9 +28,9 @@ void Wall::WallSegment::collision_handler(Player& player_moving) {
 	Point wall_SE = Point(x_left_ + x_span_, y_up_ + y_span_);
 	//the player collides with the north wall
 	if (line_segment_circle(wall_NW, wall_NE, player_location, player_radius)) {
-		cout << "touch wall" << "\n";
 		//if circle is above wall
 		if (p_y < y_up_) {
+			collided = true;
 			//touching wall at corner; trig knowledge alert
 			//resolves the collision by pushing the player in the direction that requires the least distance moved to resolve the collision.
 			if (p_x < x_left_) {
@@ -56,9 +57,9 @@ void Wall::WallSegment::collision_handler(Player& player_moving) {
 	}
 	//the player collides with the south wall
 	if (line_segment_circle(wall_SW, wall_SE, player_location, player_radius)) {
-		cout << "touch wall" << "\n";
 		//if circle is below wall
 		if (p_y > y_up_ + y_span_) {
+			collided = true;
 			//touching wall at corner; trig knowledge alert
 			if (p_x < x_left_) {
 				double x_dif = x_left_ - p_x;
@@ -83,9 +84,9 @@ void Wall::WallSegment::collision_handler(Player& player_moving) {
 	}
 	//the player collides with the west wall
 	if (line_segment_circle(wall_NW, wall_SW, player_location, player_radius)) {
-		cout << "touch wall" << "\n";
 		//if circle is left of wall
 		if (p_x < x_left_) {
+			collided = true;
 			if (p_y < y_up_) {
 				double x_dif = x_left_ - p_x;
 				double y_dif = y_up_ - p_y;
@@ -108,9 +109,9 @@ void Wall::WallSegment::collision_handler(Player& player_moving) {
 	}
 	//the player collides with the east wall
 	if (line_segment_circle(wall_NE, wall_SE, player_location, player_radius)) {
-		cout << "touch wall" << "\n";
 		//if circle is right of wall
 		if (p_x > x_left_ + x_span_) {
+			collided = true;
 			if (p_y < y_up_) {
 				double x_dif = p_x - x_left_ - x_span_;
 				double y_dif = y_up_ - p_y;
@@ -132,12 +133,17 @@ void Wall::WallSegment::collision_handler(Player& player_moving) {
 			}
 		}
 	}
+	return collided;
 }
 
 /*
 handles collision between a wall segment and an individual shot. If the shot hits the wall "bounces" the shot in an appropriate direction.
 */
-void Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
+bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
+	if (to_bounce.bounces_remaining == 0) {
+		return false;
+	}
+	bool bounced = false;
 	//generate 6 points; two based on the shot's current and previous locations, four based on the four corners of the wall.
 	//check for collision between the shot and the four sides defined by the four points of the wall segment.
 	//if a bounce occurs, the remaining bounces for the shot is decreased by one.
@@ -152,6 +158,7 @@ void Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	if (doIntersect(shot_before, shot_now, wall_NW, wall_SW)) {
 		//if the shot is coming from the left
 		if (to_bounce.angle >= -pi / 2 && to_bounce.angle <= pi / 2) {
+			bounced = true;
 			to_bounce.bounces_remaining--;
 			to_bounce.posx = x_left_ * 2 - to_bounce.posx;
 			if (to_bounce.angle <= 0) {
@@ -167,6 +174,7 @@ void Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	if (doIntersect(shot_before, shot_now, wall_NE, wall_SE)) {
 		//if the shot is coming from the right
 		if (to_bounce.angle <= -pi / 2 || to_bounce.angle >= pi / 2) {
+			bounced = true;
 			to_bounce.bounces_remaining--;
 			to_bounce.posx = (x_left_ + x_span_) * 2 - to_bounce.posx;
 			if (to_bounce.angle <= -pi / 2) {
@@ -182,6 +190,7 @@ void Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 		to_bounce.bounces_remaining--;
 		//if the shot is coming from the top
 		if (to_bounce.angle >= 0) {
+			bounced = true;
 			to_bounce.posy = y_up_ * 2 - to_bounce.posy;
 			to_bounce.angle = -to_bounce.angle;
 		}
@@ -191,10 +200,12 @@ void Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 		to_bounce.bounces_remaining--;
 		//if the shot is coming from the bottom
 		if (to_bounce.angle <= 0) {
+			bounced = true;
 			to_bounce.posy = (y_up_ + y_span_) * 2 - to_bounce.posy;
 			to_bounce.angle = -to_bounce.angle;
 		}
 	}
+	return bounced;
 }
 
 /*
@@ -235,15 +246,21 @@ bounces shots off walls in a level. Calls bounce_shots of each wall segment for 
 void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 	//vector containing indices of the shots which have no bounces remaining; they will be deleted after the bouncing is finished.
 	vector<int> to_remove;
-	for (int i = 0; i < shots_in_level.shots_in_level.size(); i++) {
-		for (int j = 0; j < walls.size(); j++) {
-			walls[j].bounce_shot(shots_in_level.shots_in_level[i]);
-			//if the shot has no bounces left and its index is not already in the to_remove array add its index.
-			if (shots_in_level.shots_in_level[i].bounces_remaining <= 0 && std::find(to_remove.begin(), to_remove.end(), i) == to_remove.end()) {
-				to_remove.push_back(i);
+	bool bounced;
+	do {
+		bounced = false;
+		for (int i = 0; i < shots_in_level.shots_in_level.size(); i++) {
+			for (int j = 0; j < walls.size(); j++) {
+				if (walls[j].bounce_shot(shots_in_level.shots_in_level[i])) {
+					bounced = true;
+				}
+				//if the shot has no bounces left and its index is not already in the to_remove array add its index.
+				if (shots_in_level.shots_in_level[i].bounces_remaining <= 0 && std::find(to_remove.begin(), to_remove.end(), i) == to_remove.end()) {
+					to_remove.push_back(i);
+				}
 			}
 		}
-	}
+	} while (bounced);
 	//remove all shots with the indices in the to_remove array; notice the backward iteration since deleting an elements shifts the indices of all those behind it.
 	for (int i = to_remove.size() - 1; i > -1; i--) {
 		shots_in_level.shots_in_level.erase(shots_in_level.shots_in_level.begin() + to_remove[i]);
@@ -254,7 +271,13 @@ void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 resolves collision between the player and the walls in the level; calls collision_handler function of individual wall segments.
 */
 void Wall::collision_resolver(Player &player_moving) {
-	for (int i = 0; i < walls.size(); i++) {
-		walls[i].collision_handler(player_moving);
-	}
+	bool collided;
+	do {
+		collided = false;
+		for (int i = 0; i < walls.size(); i++) {
+			if (walls[i].collision_handler(player_moving)) {
+				collided = true;
+			}
+		}
+	} while (collided);
 }

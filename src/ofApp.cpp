@@ -90,7 +90,8 @@ void ofApp::update(){
 	p1.move();
 
 	//if the mouse button is held down and the player can shoot, fire a shot (and put the player into cooldown).
-	if (mouse_down && p1.can_shoot()) {
+	if (mouse_down && p1.can_shoot() && p1.isalive()) {
+		PlaySound(TEXT("sounds\\fire_shot.wav"), NULL, SND_FILENAME | SND_ASYNC);
 		double shot_angle = p1.fire_shot();
 		pair<double, double> player_location = p1.get_location();
 		shots_on_screen.add_shot(player_location.first += (player_radius * 1.01) * cos(shot_angle), player_location.second += (player_radius * 1.01) * sin(shot_angle), shot_angle);

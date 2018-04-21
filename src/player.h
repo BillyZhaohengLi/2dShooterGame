@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include <vector>
 #include <math.h>
+#include <mmsystem.h>
 /*
 player class; one player per object; stores parameters related to players in level.
 */

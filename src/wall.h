@@ -44,12 +44,12 @@ private:
 		/*
 		handles collision between a wall segment and the player; if the player is in contact with the wall push them out.
 		*/
-		void collision_handler(Player& player_moving);
+		bool collision_handler(Player& player_moving);
 
 		/*
 		handles collision between a wall segment and an individual shot. If the shot hits the wall "bounces" the shot in an appropriate direction.
 		*/
-		void bounce_shot(ShotInLevel::Shot &to_bounce);
+		bool bounce_shot(ShotInLevel::Shot &to_bounce);
 	};
 
 	/*

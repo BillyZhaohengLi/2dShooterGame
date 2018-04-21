@@ -5,6 +5,8 @@
 #include "player.h"
 #include "const.h"
 #include "shot.h"
+#include <mmsystem.h>
+
 class ofApp : public ofBaseApp{
 
 	public:
