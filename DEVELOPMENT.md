@@ -18,6 +18,9 @@
  * implemented player-wall collision; handled border cases such as collision between the player and the corner of a wall.
  * added annotations to existing code
  * _TODO on April 21_: interface for the game; improve robustness of collision algorithms; random wall generation (this turns out to be easier than I thought), in-game units to actual displayed pixels scaling. Hopefully I'll be able to start experimenting with LAN networking on April 22.
+### April 21:
+ * improved robustness of collision algorithms; fixed cases where resolving a collision between a player/shot and a wall segment will create a new unresolved collision between them and a wall segment previously checked to be fine.
+ * added some horrible artwork and sound effects
 ## Days left to work on project: 6 days
 * April 21 (full day)
 * April 22 (full day)
