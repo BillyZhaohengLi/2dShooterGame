@@ -23,8 +23,9 @@
  * added some horrible artwork and sound effects
  * changed display to borderless window due to some weird pixel scaling issues with the title bar
  * added random wall generation and algorithm to prevent overlapping walls (which can cause bugs), walls spawning near the player spawnpoints and walls splitting the level into two with one player on each side.
+ * added button class; contains internal struct which contains the parameters of individual buttons.
+ * _TODO on April 22_: falling behind in progress due to more time spent on random wall generation than expected; create interface (start, player name, player color, wall density) and add bots to test multiplayer. Start LAN networking part (or at least finish the lobby interface).
 ## Days left to work on project: 6 days
-* April 21 (full day)
 * April 22 (full day)
 * April 24 (half day)
 * April 25 (half day)
@@ -32,3 +33,5 @@
 * April 27 (half day)
 * April 28 (full day)
 * April 29 (full day)
+* April 30 (half day)
+* April 31 (half day)
