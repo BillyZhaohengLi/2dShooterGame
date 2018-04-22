@@ -4,13 +4,6 @@ Point::Point(double xval, double yval) {
 	y = yval;
 }
 
-rect::rect(int newx, int newy, int newwidth, int newheight) {
-	x = newx;
-	y = newy;
-	width = newwidth;
-	height = newheight;
-}
-
 bool onSegment(Point p, Point q, Point r)
 {
 	if (q.x <= std::max(p.x, r.x) && q.x >=  std::min(p.x, r.x) &&
@@ -104,6 +97,10 @@ double FindDistanceToSegment(double x1, double y1, double x2, double y2, double 
 }
 
 //from https://stackoverflow.com/questions/306316/determine-if-two-rectangles-overlap-each-other.
+/*
+find whether two rectangles with corner points (l1, r1) and (l2, r2) intersect.
+by convention "l" is the upper lefthand corner, r is the lower righthand corner.
+*/
 bool rectOverlap(Point l1, Point r1, Point l2, Point r2)
 {
 	// If one rectangle is on left side of other

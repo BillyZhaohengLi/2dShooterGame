@@ -282,44 +282,48 @@ void Wall::collision_resolver(Player &player_moving) {
 	} while (collided);
 }
 
+/*
+randomly generates walls in the level. Generates the specified amount of wall segments while ensuring that none of the walls overlap with each other,
+spawn near the player spawns or block off the players by splitting the map into two.
+*/
 void Wall::random_level_generator(int wall_count) {
+	//count how many walls have been generated so far.
 	int generated_count = 0;
 	while (generated_count < wall_count) {
+		//roll to determine whether a horizontal or vertical wall is generated.
 		int hor_vert = rand() % 100;
+		int newx = (rand() % (level_width_multiplier - 2) + 1) * wall_width;
+		int newy = (rand() % (level_height_multiplier - 2) + 1) * wall_width;
+		int newwidth;
+		int newheight;
 		//horizontal wall
 		if (hor_vert < 50) {
-			int newx = (rand() % (level_width_multiplier - 2) + 1) * wall_width;
-			int newy = (rand() % (level_height_multiplier - 2) + 1) * wall_width;
-			int newwidth = wall_width;
-			int newheight = (rand() % 6 + 2) * wall_width;
-			if (!intersect_with_spawn(newx, newy, newwidth, newheight)) {
-				add_wall(newx, newy, newwidth, newheight);
-				if (closed_path_checker()) {
-					walls.pop_back();
-				}
-				else {
-					generated_count++;
-				}
-			}
+			newwidth = wall_width;
+			newheight = (rand() % (level_width_multiplier / 3) + 2) * wall_width;
 		}
+		//vertical wall
 		else {
-			int newx = (rand() % (level_width_multiplier - 2) + 1) * wall_width;
-			int newy = (rand() % (level_height_multiplier - 2) + 1) * wall_width;
-			int newwidth = (rand() % 6 + 2) * wall_width;
-			int newheight = wall_width;
-			if (!intersect_with_spawn(newx, newy, newwidth, newheight)) {
-				add_wall(newx, newy, newwidth, newheight);
-				if (closed_path_checker()) {
-					walls.pop_back();
-				}
-				else {
-					generated_count++;
-				}
+			newwidth = (rand() % (level_height_multiplier / 3) + 2) * wall_width;
+			newheight = wall_width;
+		}
+		//only add the wall if it does not intersect with any existing walls; otherwise reroll the wall parameters.
+		if (!intersect_with_spawn(newx, newy, newwidth, newheight)) {
+			add_wall(newx, newy, newwidth, newheight);
+			//if the addition of the current wall splits the map, remove it and reroll the wall parameters.
+			if (closed_path_checker()) {
+				walls.pop_back();
+			}
+			//increment the counter; a new wall has been successfully generated
+			else {
+				generated_count++;
 			}
 		}
 	}
 }
 
+/*
+checks whether there is a valid path between the two players. Uses a maze traversal algorithm.
+*/
 bool Wall::closed_path_checker() {
 	//start from bottom left hand corner, hug the right wall
 	int current_x = 1;
@@ -327,6 +331,10 @@ bool Wall::closed_path_checker() {
 	direction facing = EAST;
 	while (true) {
 		switch (facing) {
+		//checks valid directions one by one; there is no convienient "can go forward" check as in CS125 labs so these disgusting nested if statements
+		//are necessary.
+		//e.g. facing east, first check south (right), then check east (front), then check north (left), then turn back if its a dead end
+		//same for the other 3 cases.
 		case EAST: 
 			if (intersect(wall_width * current_x, wall_width * (current_y + 1), wall_width, wall_width)) {
 				if (intersect(wall_width * (current_x + 1), wall_width * current_y, wall_width, wall_width)) {
@@ -424,10 +432,15 @@ bool Wall::closed_path_checker() {
 	}
 }
 
+/*
+check whether the given wall segment intersects with any existing wall segments.
+*/
 bool Wall::intersect(int newx, int newy, int newwidth, int newheight) {
+	//create points defining the new wall segment
 	Point new_wall_1 = Point(newx, newy);
 	Point new_wall_2 = Point(newx + newwidth, newy + newheight);
 	for (int i = 0; i < walls.size(); i++) {
+		//create points defining existing wall segments
 		Point current_wall_1 = Point(walls[i].x_left_, walls[i].y_up_);
 		Point current_wall_2 = Point(walls[i].x_left_ + walls[i].x_span_, walls[i].y_up_ + walls[i].y_span_);
 		if (rectOverlap(new_wall_1, new_wall_2, current_wall_1, current_wall_2)) {
@@ -437,16 +450,22 @@ bool Wall::intersect(int newx, int newy, int newwidth, int newheight) {
 	return false;
 }
 
+/*
+check whether the given wall segment intersects with any existing wall segments and the player spawn boxes.
+*/
 bool Wall::intersect_with_spawn(int newx, int newy, int newwidth, int newheight) {
+	//create points defining the new wall segment
 	Point new_wall_1 = Point(newx, newy);
 	Point new_wall_2 = Point(newx + newwidth, newy + newheight);
 	for (int i = 0; i < walls.size(); i++) {
+		//create points defining existing wall segments
 		Point current_wall_1 = Point(walls[i].x_left_, walls[i].y_up_);
 		Point current_wall_2 = Point(walls[i].x_left_ + walls[i].x_span_, walls[i].y_up_ + walls[i].y_span_);
 		if (rectOverlap(new_wall_1, new_wall_2, current_wall_1, current_wall_2)) {
 			return true;
 		}
 	}
+	//create points defining player spawn boxes
 	Point p1_spawn_1 = Point(wall_width, (level_height_multiplier - 4) * wall_width);
 	Point p1_spawn_2 = Point(wall_width * 4, (level_height_multiplier - 1) * wall_width);
 	Point p2_spawn_1 = Point((level_width_multiplier - 4) * wall_width, wall_width);

@@ -88,13 +88,23 @@ public:
 	void collision_resolver(Player &player_moving);
 
 	/*
-	randomly generates walls in the level. Takes in two players to check that none of the walls are generated too close / on top of either player.
+	randomly generates walls in the level. Generates the specified amount of wall segments while ensuring that none of the walls overlap with each other,
+	spawn near the player spawns or block off the players by splitting the map into two.
 	*/
 	void random_level_generator(int wall_count);
 
+	/*
+	checks whether there is a valid path between the two players.
+	*/
 	bool closed_path_checker();
 
+	/*
+	check whether the given wall segment intersects with any existing wall segments.
+	*/
 	bool intersect(int newx, int newy, int newwidth, int newheight);
 
-	bool Wall::intersect_with_spawn(int newx, int newy, int newwidth, int newheight);
+	/*
+	check whether the given wall segment intersects with any existing wall segments and the player spawn boxes.
+	*/
+	bool intersect_with_spawn(int newx, int newy, int newwidth, int newheight);
 };
