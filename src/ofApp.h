@@ -5,6 +5,8 @@
 #include "player.h"
 #include "const.h"
 #include "shot.h"
+#include "button.h"
+#include "ofxCenteredTrueTypeFont.h"
 #include <mmsystem.h>
 
 class ofApp : public ofBaseApp{
@@ -26,4 +28,13 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+		void update_menu();
+		void update_singleplayer_game();
+
+		void draw_menu();
+		void draw_singleplayer_game();
+
+		ofxCenteredTrueTypeFont game_title_text;
+		ofxCenteredTrueTypeFont button_text;
+		ofxCenteredTrueTypeFont character_label;
 };

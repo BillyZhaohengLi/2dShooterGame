@@ -52,9 +52,18 @@ const double epsilon = 0.00005;
 /*
 amount of times a shot can bounce.
 */
-const int shot_bounces = 10;
+const int shot_bounces = 6;
 
 /*
 direction enum; used to determine the player's orientation.
 */
 enum direction { STOP = 0, NORTH = 1, SOUTH = 2, EAST = 3, WEST = 4, NORTHEAST = 5, NORTHWEST = 6, SOUTHEAST = 7, SOUTHWEST = 8 };
+
+/*
+game state enum; 
+*/
+enum game_state { MAIN_MENU = 0, SINGLE_PARAMS = 1, IN_GAME_SINGLE = 2, PAUSE = 3, ROUND_OVER = 4, HELP = 5 };
+
+const int start_singleplayer_button = 0;
+const int start_multiplayer_button = 1;
+const int exit_button = 2;

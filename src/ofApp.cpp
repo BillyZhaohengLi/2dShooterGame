@@ -23,15 +23,153 @@ ShotInLevel shots_on_screen;
 instantiate a player at the specified location.
 */
 Player p1 = Player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width, 0, 0, 255);
+
+/*
+instantiate buttons in game
+*/
+AllButtons buttons_in_level;
+
+/*
+instantiate game to start at main menu
+*/
+game_state game_current;
+
+/*
+store player name.
+*/
+string player_name;
+
 //--------------------------------------------------------------
 void ofApp::setup(){
+	//load text for buttons
+	button_text.loadFont("verdana.ttf", wall_width);
+	button_text.setLineHeight(18.0f);
+	button_text.setLetterSpacing(1.037);
+
+	game_title_text.loadFont("verdana.ttf", wall_width * 2);
+	game_title_text.setLineHeight(18.0f);
+	game_title_text.setLetterSpacing(1.037);
+
 	ofSetWindowTitle("2D shooter game");
+	game_current = MAIN_MENU;
+
+	//start game button
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.35,
+		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.15, "Start game", MAIN_MENU);
+
+	//multiplayer button (doesn't do anything yet)
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.55,
+		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.15, "Multiplayer", MAIN_MENU);
+
+	//exit button; exits the game
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.75,
+		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.15, "Exit", MAIN_MENU);
+
 	levelbounds.add_boundary();
 	levelbounds.random_level_generator(24);
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	switch (game_current) {
+	case MAIN_MENU:
+		update_menu();
+		break;
+	case IN_GAME_SINGLE:
+		update_singleplayer_game();
+		break;
+	}
+}
+
+//--------------------------------------------------------------
+void ofApp::draw(){
+	switch (game_current) {
+	case MAIN_MENU:
+		draw_menu();
+		break;
+	case IN_GAME_SINGLE:
+		draw_singleplayer_game();
+		break;
+	}
+}
+
+//--------------------------------------------------------------
+void ofApp::keyPressed(int key){
+	//sets the relevant cell in the keydown array to true
+	int upper_key = toupper(key);
+	keydown[upper_key] = true;
+}
+
+//--------------------------------------------------------------
+void ofApp::keyReleased(int key){
+	//sets the relevant cell in the keydown array to false
+	int upper_key = toupper(key);
+	keydown[upper_key] = false;
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseMoved(int x, int y ){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseDragged(int x, int y, int button){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mousePressed(int x, int y, int button){
+	mouse_down = true;
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseReleased(int x, int y, int button){
+	mouse_down = false;
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseEntered(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::mouseExited(int x, int y){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::windowResized(int w, int h){
+
+}
+
+//--------------------------------------------------------------
+void ofApp::gotMessage(ofMessage msg){
+
+}
+
+
+
+//--------------------------------------------------------------
+void ofApp::dragEvent(ofDragInfo dragInfo){ 
+
+}
+
+void ofApp::update_menu() {
+	if (mouse_down) {
+		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), MAIN_MENU);
+		if (pressed == start_singleplayer_button) {
+			game_current = IN_GAME_SINGLE;
+		}
+		else if (pressed == start_multiplayer_button) {
+
+		}
+		else if (pressed == exit_button) {
+			std::exit(0);
+		}
+	}
+}
+
+void ofApp::update_singleplayer_game() {
 	//reduces the firing cooldown of the player.
 	p1.cooldown_reduce();
 
@@ -110,8 +248,13 @@ void ofApp::update(){
 	shots_on_screen.hit_player(p1);
 }
 
-//--------------------------------------------------------------
-void ofApp::draw(){
+void ofApp::draw_menu() {
+	//draw the title
+	game_title_text.drawStringCentered("2D Shooter Game", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15);
+	buttons_in_level.draw_button(game_current, button_text);
+}
+
+void ofApp::draw_singleplayer_game() {
 	//draw all wall segments
 	levelbounds.draw_all_walls();
 
@@ -122,61 +265,3 @@ void ofApp::draw(){
 	shots_on_screen.draw_shot();
 }
 
-//--------------------------------------------------------------
-void ofApp::keyPressed(int key){
-	//sets the relevant cell in the keydown array to true
-	int upper_key = toupper(key);
-	keydown[upper_key] = true;
-}
-
-//--------------------------------------------------------------
-void ofApp::keyReleased(int key){
-	//sets the relevant cell in the keydown array to false
-	int upper_key = toupper(key);
-	keydown[upper_key] = false;
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mousePressed(int x, int y, int button){
-	mouse_down = true;
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseReleased(int x, int y, int button){
-	mouse_down = false;
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
-}

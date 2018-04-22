@@ -10,7 +10,7 @@ Player::Player(double x, double y, int r, int g, int b) {
 	blue = b;
 	alive = true;
 	facing = STOP;
-	shot_cooldown = 0;
+	shot_cooldown = 10;
 }
 
 /*
