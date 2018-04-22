@@ -25,6 +25,15 @@ struct Point
 	Point(double xval, double yval);
 };
 
+struct rect
+{
+	int x;
+	int y;
+	int width;
+	int height;
+	rect(int newx, int newy, int newwidth, int newheight);
+};
+
 /*
 check whether point r is on line segment pq.
 */
@@ -49,3 +58,5 @@ bool line_segment_circle(Point p1, Point p2, Point circ, double radius);
 find distance of (pointX, pointY) to line segment((x1, y1), (x2, y2)).
 */
 double FindDistanceToSegment(double x1, double y1, double x2, double y2, double pointX, double pointY);
+
+bool rectOverlap(Point l1, Point r1, Point l2, Point r2);

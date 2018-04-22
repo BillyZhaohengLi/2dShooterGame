@@ -86,4 +86,15 @@ public:
 	resolves collision between the player and the walls in the level; calls collision_handler function of individual wall segments.
 	*/
 	void collision_resolver(Player &player_moving);
+
+	/*
+	randomly generates walls in the level. Takes in two players to check that none of the walls are generated too close / on top of either player.
+	*/
+	void random_level_generator(int wall_count);
+
+	bool closed_path_checker();
+
+	bool intersect(int newx, int newy, int newwidth, int newheight);
+
+	bool Wall::intersect_with_spawn(int newx, int newy, int newwidth, int newheight);
 };

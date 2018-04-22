@@ -7,12 +7,12 @@ const double pi = 3.14159265359;
 /*
 width of the level; not necessarily the window width.
 */
-const int level_width = 1024;
+const int level_width_multiplier = 32;
 
 /*
 height of the level; not necessarily the window height.
 */
-const int level_height = 768;
+const int level_height_multiplier = 24;
 
 /*
 guideline width for creating wall segments.
@@ -22,7 +22,7 @@ const int wall_width = 32;
 /*
 radius of the player (who is a circle).
 */
-const int player_radius = 16;
+const int player_radius = 15;
 
 /*
 radius of shots.
@@ -52,7 +52,7 @@ const double epsilon = 0.00005;
 /*
 amount of times a shot can bounce.
 */
-const int shot_bounces = 5;
+const int shot_bounces = 10;
 
 /*
 direction enum; used to determine the player's orientation.

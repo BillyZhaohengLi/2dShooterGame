@@ -22,12 +22,12 @@ ShotInLevel shots_on_screen;
 /*
 instantiate a player at the specified location.
 */
-Player p1 = Player(100, 100, 0, 0, 255);
+Player p1 = Player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width, 0, 0, 255);
 //--------------------------------------------------------------
 void ofApp::setup(){
 	ofSetWindowTitle("2D shooter game");
 	levelbounds.add_boundary();
-	levelbounds.add_wall(400, 400, 200, 200);
+	levelbounds.random_level_generator(24);
 }
 
 //--------------------------------------------------------------

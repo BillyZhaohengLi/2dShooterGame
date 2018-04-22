@@ -187,9 +187,9 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	}
 	//the shot trajectory intersects the north wall
 	if (doIntersect(shot_before, shot_now, wall_NW, wall_NE)) {
-		to_bounce.bounces_remaining--;
 		//if the shot is coming from the top
 		if (to_bounce.angle >= 0) {
+			to_bounce.bounces_remaining--;
 			bounced = true;
 			to_bounce.posy = y_up_ * 2 - to_bounce.posy;
 			to_bounce.angle = -to_bounce.angle;
@@ -197,9 +197,9 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	}
 	//the shot trajectory intersects the south wall
 	if (doIntersect(shot_before, shot_now, wall_SW, wall_SE)) {
-		to_bounce.bounces_remaining--;
 		//if the shot is coming from the bottom
 		if (to_bounce.angle <= 0) {
+			to_bounce.bounces_remaining--;
 			bounced = true;
 			to_bounce.posy = (y_up_ + y_span_) * 2 - to_bounce.posy;
 			to_bounce.angle = -to_bounce.angle;
@@ -213,13 +213,13 @@ add 4 wall segments into the level representing the four sides of the level, "bo
 */
 void Wall::add_boundary() {
 	//top wall
-	walls.push_back(WallSegment(0, 0, level_width, wall_width));
+	walls.push_back(WallSegment(0, 0, level_width_multiplier * wall_width, wall_width));
 	//bottom wall
-	walls.push_back(WallSegment(0, level_height - wall_width, level_width, wall_width));
+	walls.push_back(WallSegment(0, (level_height_multiplier - 1) * wall_width, level_width_multiplier * wall_width, wall_width));
 	//left wall
-	walls.push_back(WallSegment(0, wall_width, wall_width, level_height - wall_width * 2));
+	walls.push_back(WallSegment(0, wall_width, wall_width, (level_height_multiplier - 2) * wall_width));
 	//right wall
-	walls.push_back(WallSegment(level_width - wall_width, wall_width, wall_width, level_height - wall_width * 2));
+	walls.push_back(WallSegment((level_width_multiplier - 1) * wall_width, wall_width, wall_width, (level_height_multiplier - 2) * wall_width));
 	
 }
 
@@ -280,4 +280,179 @@ void Wall::collision_resolver(Player &player_moving) {
 			}
 		}
 	} while (collided);
+}
+
+void Wall::random_level_generator(int wall_count) {
+	int generated_count = 0;
+	while (generated_count < wall_count) {
+		int hor_vert = rand() % 100;
+		//horizontal wall
+		if (hor_vert < 50) {
+			int newx = (rand() % (level_width_multiplier - 2) + 1) * wall_width;
+			int newy = (rand() % (level_height_multiplier - 2) + 1) * wall_width;
+			int newwidth = wall_width;
+			int newheight = (rand() % 6 + 2) * wall_width;
+			if (!intersect_with_spawn(newx, newy, newwidth, newheight)) {
+				add_wall(newx, newy, newwidth, newheight);
+				if (closed_path_checker()) {
+					walls.pop_back();
+				}
+				else {
+					generated_count++;
+				}
+			}
+		}
+		else {
+			int newx = (rand() % (level_width_multiplier - 2) + 1) * wall_width;
+			int newy = (rand() % (level_height_multiplier - 2) + 1) * wall_width;
+			int newwidth = (rand() % 6 + 2) * wall_width;
+			int newheight = wall_width;
+			if (!intersect_with_spawn(newx, newy, newwidth, newheight)) {
+				add_wall(newx, newy, newwidth, newheight);
+				if (closed_path_checker()) {
+					walls.pop_back();
+				}
+				else {
+					generated_count++;
+				}
+			}
+		}
+	}
+}
+
+bool Wall::closed_path_checker() {
+	//start from bottom left hand corner, hug the right wall
+	int current_x = 1;
+	int current_y = level_height_multiplier - 2;
+	direction facing = EAST;
+	while (true) {
+		switch (facing) {
+		case EAST: 
+			if (intersect(wall_width * current_x, wall_width * (current_y + 1), wall_width, wall_width)) {
+				if (intersect(wall_width * (current_x + 1), wall_width * current_y, wall_width, wall_width)) {
+					if (intersect(wall_width * current_x, wall_width * (current_y - 1), wall_width, wall_width)) {
+						current_x--;
+						facing = WEST;
+					}
+					else {
+						current_y--;
+						facing = NORTH;
+					}
+				}
+				else {
+					current_x++;
+					facing = EAST;
+				}
+			}
+			else {
+				current_y++;
+				facing = SOUTH;
+			}
+			break;
+		case NORTH:
+			if (intersect(wall_width * (current_x + 1), wall_width * current_y, wall_width, wall_width)) {
+				if (intersect(wall_width * current_x, wall_width * (current_y - 1), wall_width, wall_width)) {
+					if (intersect(wall_width * (current_x - 1), wall_width * current_y, wall_width, wall_width)) {
+						current_y++;
+						facing = SOUTH;
+					}
+					else {
+						current_x--;
+						facing = WEST;
+					}
+				}
+				else {
+					current_y--;
+					facing = NORTH;
+				}
+			}
+			else {
+				current_x++;
+				facing = EAST;
+			}
+			break;
+		case WEST:
+			if (intersect(wall_width * current_x, wall_width * (current_y - 1), wall_width, wall_width)) {
+				if (intersect(wall_width * (current_x - 1), wall_width * current_y, wall_width, wall_width)) {
+					if (intersect(wall_width * current_x, wall_width * (current_y + 1), wall_width, wall_width)) {
+						current_x++;
+						facing = EAST;
+					}
+					else {
+						current_y++;
+						facing = SOUTH;
+					}
+				}
+				else {
+					current_x--;
+					facing = WEST;
+				}
+			}
+			else {
+				current_y--;
+				facing = NORTH;
+			}
+			break;
+		case SOUTH:
+			if (intersect(wall_width * (current_x - 1), wall_width * current_y, wall_width, wall_width)) {
+				if (intersect(wall_width * current_x, wall_width * (current_y + 1), wall_width, wall_width)) {
+					if (intersect(wall_width * (current_x + 1), wall_width * current_y, wall_width, wall_width)) {
+						current_y--;
+						facing = NORTH;
+					}
+					else {
+						current_x++;
+						facing = EAST;
+					}
+				}
+				else {
+					current_y++;
+					facing = SOUTH;
+				}
+			}
+			else {
+				current_x--;
+				facing = WEST;
+			}
+		}
+		if (current_x == 1 && current_y == level_height_multiplier - 2) {
+			return true;
+		}
+		if (current_x == level_width_multiplier - 2 && current_y == 1) {
+			return false;
+		}
+	}
+}
+
+bool Wall::intersect(int newx, int newy, int newwidth, int newheight) {
+	Point new_wall_1 = Point(newx, newy);
+	Point new_wall_2 = Point(newx + newwidth, newy + newheight);
+	for (int i = 0; i < walls.size(); i++) {
+		Point current_wall_1 = Point(walls[i].x_left_, walls[i].y_up_);
+		Point current_wall_2 = Point(walls[i].x_left_ + walls[i].x_span_, walls[i].y_up_ + walls[i].y_span_);
+		if (rectOverlap(new_wall_1, new_wall_2, current_wall_1, current_wall_2)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+bool Wall::intersect_with_spawn(int newx, int newy, int newwidth, int newheight) {
+	Point new_wall_1 = Point(newx, newy);
+	Point new_wall_2 = Point(newx + newwidth, newy + newheight);
+	for (int i = 0; i < walls.size(); i++) {
+		Point current_wall_1 = Point(walls[i].x_left_, walls[i].y_up_);
+		Point current_wall_2 = Point(walls[i].x_left_ + walls[i].x_span_, walls[i].y_up_ + walls[i].y_span_);
+		if (rectOverlap(new_wall_1, new_wall_2, current_wall_1, current_wall_2)) {
+			return true;
+		}
+	}
+	Point p1_spawn_1 = Point(wall_width, (level_height_multiplier - 4) * wall_width);
+	Point p1_spawn_2 = Point(wall_width * 4, (level_height_multiplier - 1) * wall_width);
+	Point p2_spawn_1 = Point((level_width_multiplier - 4) * wall_width, wall_width);
+	Point p2_spawn_2 = Point((level_width_multiplier - 1) * wall_width, wall_width * 4);
+	if (rectOverlap(new_wall_1, new_wall_2, p1_spawn_1, p1_spawn_2) || rectOverlap(new_wall_1, new_wall_2, p2_spawn_1, p2_spawn_2)) {
+		return true;
+	}
+	return false;
 }
