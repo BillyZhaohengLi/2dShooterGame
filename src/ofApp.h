@@ -33,11 +33,15 @@ class ofApp : public ofBaseApp{
 		void update_single_params();
 		void update_singleplayer_game();
 		void update_pause();
+		void update_round_over();
+		void update_help();
 
 		void draw_menu();
 		void draw_single_params();
 		void draw_singleplayer_game();
 		void draw_pause();
+		void draw_round_over();
+		void draw_help();
 
 		void ofApp::enter_name();
 

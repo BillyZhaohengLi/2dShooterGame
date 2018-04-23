@@ -2,7 +2,7 @@
 /*
 constructor; create a player at the specified x and y coordinates with color rgb.
 */
-Player::Player(double x, double y, int r, int g, int b, string text) {
+Player::Player(double x, double y, int r, int g, int b, bool bot, string text) {
 	xpos = x;
 	ypos = y;
 	red = r;
@@ -12,6 +12,10 @@ Player::Player(double x, double y, int r, int g, int b, string text) {
 	facing = STOP;
 	shot_cooldown = 10;
 	name = text;
+	is_bot = bot;
+	facing_x = 0;
+	facing_y = 0;
+	change_direction_cd = 0;
 }
 
 /*
@@ -94,10 +98,28 @@ void Player::kill_player() {
 	alive = false;
 }
 
+/*
+revives the player (sets alive to true). Called at the start of every round.
+*/
 void Player::revive_player() {
 	alive = true;
 }
 
+/*
+updates the direction the player is facing (used to draw the player's gun). Has different outcomes based on whether the player is a bot.
+*/
+void Player::update_player_facing(int mouse_x, int mouse_y, Player opponent) {
+	//if the player isn't a bot then the player faces towards the mouse direction
+	if (!is_bot) {
+		facing_y = mouse_y;
+		facing_x = mouse_x;
+	}
+	//if the player is a bot then the player faces towards their opponent
+	else {
+		facing_y = opponent.ypos;
+		facing_x = opponent.xpos;
+	}
+}
 /*
 draws the player using ofDrawCircle.
 */
@@ -118,8 +140,7 @@ void Player::draw_player() {
 		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.75, ypos + cos(pi / 4) * player_radius * 0.5, xpos - cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75);
 		ofDrawLine(xpos + cos(pi / 4) * player_radius * 0.75, ypos + cos(pi / 4) * player_radius * 0.5, xpos + cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75);
 		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75, xpos + cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75);
-		
-		double gun_angle = atan2(ofGetMouseY() - ypos, ofGetMouseX() - xpos);
+		double gun_angle = atan2(facing_y - ypos, facing_x - xpos);
 		//draw the gun; if the player is firing add a firing effect.
 		if (shot_cooldown >= player_shot_cooldown * 0.9) {
 			ofDrawLine(xpos + cos(gun_angle) * player_radius, ypos + sin(gun_angle) * player_radius, xpos + cos(gun_angle) * player_radius * 1.25, ypos + sin(gun_angle) * player_radius * 1.25);
@@ -155,7 +176,7 @@ fires a shot; returns the angle at which the shot was fired and sets cooldown to
 */
 double Player::fire_shot() {
 	shot_cooldown = player_shot_cooldown;
-	return atan2(ofGetMouseY() - ypos, ofGetMouseX() - xpos);
+	return atan2(facing_y - ypos, facing_x - xpos);
 }
 
 /*
@@ -174,6 +195,9 @@ void Player::cooldown_reduce() {
 	}
 }
 
+/*
+set the player's name. Also alters font size based on the new name's length.
+*/
 void Player::set_name(string new_name) {
 	name = new_name;
 	if (new_name.length() < 8) {
@@ -189,8 +213,253 @@ void Player::set_name(string new_name) {
 	name_font.setLetterSpacing(1.037);
 }
 
+/*
+getter for the player's name.
+*/
+string Player::get_name() {
+	return name;
+}
+
+/*
+sets the player's color.
+*/
 void Player::set_color(int new_red, int new_green, int new_blue) {
 	red = new_red;
 	green = new_green;
 	blue = new_blue;
+}
+
+/*
+changes the player's direction based on what keys are held down. Has different outcomes based on whether the player is a bot.
+*/
+void Player::change_direction(bool keydown[255]) {
+	//if the player is not a bot change direction according to held keys
+	if (!is_bot) {
+		int vert_displacement = 0;
+		int hor_displacement = 0;
+		if (keydown['W']) {
+			vert_displacement--;
+		}
+		if (keydown['S']) {
+			vert_displacement++;
+		}
+		if (keydown['A']) {
+			hor_displacement--;
+		}
+		if (keydown['D']) {
+			hor_displacement++;
+		}
+
+		//sets the player's new direction based on the keys held down.
+		if (vert_displacement == -1) {
+			if (hor_displacement == -1) {
+				change_direction(NORTHWEST);
+			}
+			else if (hor_displacement == 0) {
+				change_direction(NORTH);
+			}
+			else {
+				change_direction(NORTHEAST);
+			}
+		}
+		else if (vert_displacement == 0) {
+			if (hor_displacement == -1) {
+				change_direction(WEST);
+			}
+			else if (hor_displacement == 0) {
+				change_direction(STOP);
+			}
+			else {
+				change_direction(EAST);
+			}
+		}
+		else {
+			if (hor_displacement == -1) {
+				change_direction(SOUTHWEST);
+			}
+			else if (hor_displacement == 0) {
+				change_direction(SOUTH);
+			}
+			else {
+				change_direction(SOUTHEAST);
+			}
+		}
+	}
+	//otherwise change direction randomly (yes better algorithms can be written but this is not the focus of the project - at least for now).
+	else {
+		//if the bot is ready to change directions then roll a new direction to go in.
+		if (change_direction_cd == 0) {
+			int new_direction = rand() % 8 + 1;
+			switch (new_direction) {
+			case (1):
+				facing = NORTH;
+				break;
+			case (2):
+				facing = WEST;
+				break;
+			case (3):
+				facing = SOUTH;
+				break;
+			case (4):
+				facing = EAST;
+				break;
+			case (5):
+				facing = NORTHWEST;
+				break;
+			case (6):
+				facing = NORTHEAST;
+				break;
+			case (7):
+				facing = SOUTHWEST;
+				break;
+			case (8):
+				facing = SOUTHEAST;
+				break;
+			}
+			change_direction_cd = (rand() % 3 + 1) * bot_change_direction_cd;
+		}
+		else {
+			change_direction_cd--;
+		}
+	}
+}
+
+/*
+prompts the player to shoot a bullet. Has different outcomes based on whether the player is a bot.
+the return value is a very ugly data structure consisting of the values in the following order:
+1. whether the player decides to fire a shot (bool); if this is false none of the following return values matter.
+2. the angle of the shot (double)
+3. the starting x position of the shot (double)
+4. the starting 7 position of the shot (double)
+*/
+pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_down, bool clear_shot) {
+	//if the player is not a bot base whether to fire a shot on whether the mouse is held.
+	if (!is_bot) {
+		//if the mouse is held, the shot cooldown is ready and the player is alive then fire a shot.
+		if (mouse_down && shot_cooldown == 0 && alive) {
+			PlaySound(TEXT("sounds\\fire_shot.wav"), NULL, SND_FILENAME | SND_ASYNC);
+			double shot_angle = fire_shot();
+
+			//return the values as specified above.
+			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(true, shot_angle), pair<double, double>(
+				xpos + (player_radius * 0.9) * cos(shot_angle), ypos + (player_radius * 0.9) * sin(shot_angle)));
+		}
+		else {
+			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), pair<double, double>(0, 0));
+		}
+	}
+	else {
+		//if there is a clear path between the bot and the opponent, the shot cooldown is ready and the bot is alive then fire a shot.
+		if (shot_cooldown == 0 && !clear_shot && alive) {
+			PlaySound(TEXT("sounds\\fire_shot.wav"), NULL, SND_FILENAME | SND_ASYNC);
+			double shot_angle = fire_shot();
+
+			//return the values as specified above.
+			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(true, shot_angle), pair<double, double>(
+				xpos + (player_radius * 0.9) * cos(shot_angle), ypos + (player_radius * 0.9) * sin(shot_angle)));
+		}
+		return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), pair<double, double>(0, 0));
+	}
+}
+
+/*
+sets randomized names for bots. Hmm, I wonder what these names are?
+*/
+void Player::randomize_name() {
+	int roll_dice = rand() % 5;
+	string new_name;
+	switch (roll_dice) {
+	case(0):
+		new_name.push_back(char(69));
+		new_name.push_back(char(118));
+		new_name.push_back(char(97));
+		new_name.push_back(char(110));
+		new_name.push_back(char(115));
+		set_name(new_name);
+		break;
+	case(1):
+		new_name.push_back(char(77));
+		new_name.push_back(char(101));
+		new_name.push_back(char(115));
+		new_name.push_back(char(101));
+		new_name.push_back(char(103));
+		new_name.push_back(char(117));
+		new_name.push_back(char(101));
+		new_name.push_back(char(114));
+		set_name(new_name);
+		break;
+	case(2):
+		new_name.push_back(char(70));
+		new_name.push_back(char(108));
+		new_name.push_back(char(101));
+		new_name.push_back(char(99));
+		new_name.push_back(char(107));
+		set_name(new_name);
+		break;
+	case(3):
+		new_name.push_back(char(67));
+		new_name.push_back(char(104));
+		new_name.push_back(char(97));
+		new_name.push_back(char(108));
+		new_name.push_back(char(108));
+		new_name.push_back(char(101));
+		new_name.push_back(char(110));
+		set_name(new_name);
+		break;
+	case(4):
+		new_name.push_back(char(65));
+		new_name.push_back(char(110));
+		new_name.push_back(char(103));
+		new_name.push_back(char(114));
+		new_name.push_back(char(97));
+		new_name.push_back(char(118));
+		new_name.push_back(char(101));
+		set_name(new_name);
+		break;
+	}
+}
+
+/*
+sets randomized colors for bots.
+*/
+void Player::randomize_color() {
+	int roll_dice = rand() % 6;
+	switch (roll_dice) {
+	//red
+	case(0):
+		red = 255;
+		blue = 0;
+		green = 0;
+		break;
+	//blue
+	case(1):
+		red = 0;
+		blue = 255;
+		green = 0;
+		break;
+	//green
+	case(2):
+		red = 0;
+		blue = 0;
+		green = 255;
+		break;
+	//yellow
+	case(3):
+		red = 255;
+		blue = 255;
+		green = 0;
+		break;
+	//magenta
+	case(4):
+		red = 255;
+		blue = 0;
+		green = 255;
+		break;
+	//cyan
+	case(5):
+		red = 0;
+		blue = 255;
+		green = 255;
+		break;
+	}
 }

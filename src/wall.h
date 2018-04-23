@@ -88,6 +88,11 @@ public:
 	void collision_resolver(Player &player_moving);
 
 	/*
+	predict shots for bots; takes in positions of two players and returns whether the line segment between the players is obstructed by walls.
+	*/
+	bool bot_shot_predictor(Player p1, Player p2);
+
+	/*
 	randomly generates walls in the level. Generates the specified amount of wall segments while ensuring that none of the walls overlap with each other,
 	spawn near the player spawns or block off the players by splitting the map into two.
 	*/
@@ -108,5 +113,8 @@ public:
 	*/
 	bool intersect_with_spawn(int newx, int newy, int newwidth, int newheight);
 
+	/*
+	clears the level; removes all non-boundary walls
+	*/
 	void clear_level();
 };

@@ -209,6 +209,28 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 }
 
 /*
+predict shots for bots; takes in positions of two players and returns whether the line segment between the players is obstructed by walls.
+*/
+bool Wall::bot_shot_predictor(Player p1, Player p2) {
+	//create points based on player locations
+	Point point_1 = Point(p1.get_location().first, p1.get_location().second);
+	Point point_2 = Point(p2.get_location().first, p2.get_location().second);
+
+	//if the line segment intersect one of the borders of any wall then the shot is obstructed
+	for (int i = 0; i < walls.size(); i++) {
+		Point wall_NW = Point(walls[i].x_left_, walls[i].y_up_);
+		Point wall_NE = Point(walls[i].x_left_ + walls[i].x_span_, walls[i].y_up_);
+		Point wall_SW = Point(walls[i].x_left_, walls[i].y_up_ + walls[i].y_span_);
+		Point wall_SE = Point(walls[i].x_left_ + walls[i].x_span_, walls[i].y_up_ + walls[i].y_span_);
+		if (doIntersect(point_1, point_2, wall_NW, wall_NE) || doIntersect(point_1, point_2, wall_NW, wall_SW)
+			|| doIntersect(point_1, point_2, wall_SW, wall_SE) || doIntersect(point_1, point_2, wall_NE, wall_SE)) {
+			return true;
+		}
+	}
+	return false;
+}
+
+/*
 add 4 wall segments into the level representing the four sides of the level, "boxing" the player in.
 */
 void Wall::add_boundary() {
@@ -476,6 +498,9 @@ bool Wall::intersect_with_spawn(int newx, int newy, int newwidth, int newheight)
 	return false;
 }
 
+/*
+clears the level; removes all non-boundary walls
+*/
 void Wall::clear_level() {
 	while (walls.size() > 4) {
 		walls.pop_back();

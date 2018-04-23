@@ -54,6 +54,10 @@ amount of times a shot can bounce.
 */
 const int shot_bounces = 6;
 
+const int bot_change_direction_cd = 30;
+
+const int max_name_length = 16;
+
 /*
 direction enum; used to determine the player's orientation.
 */
@@ -64,20 +68,29 @@ game state enum;
 */
 enum game_state { MAIN_MENU = 0, SINGLE_PARAMS = 1, IN_GAME_SINGLE = 2, PAUSE = 3, ROUND_OVER = 4, HELP = 5 };
 
+/*
+enum to determine game winner;
+*/
+enum winner { TIE = 0, P1_WIN = 1, P2_WIN = 2 };
+
 const int start_singleplayer_button = 0;
 const int start_multiplayer_button = 1;
-const int exit_button = 2;
-const int red_button = 3;
-const int green_button = 4;
-const int blue_button = 5;
-const int yellow_button = 6;
-const int magenta_button = 7;
-const int cyan_button = 8;
-const int few_walls = 9;
-const int medium_walls = 10;
-const int a_lot_walls = 11;
-const int params_back_to_menu = 12;
-const int paused_back_to_menu = 13;
+const int help_button = 2;
+const int exit_button = 3;
+const int red_button = 4;
+const int green_button = 5;
+const int blue_button = 6;
+const int yellow_button = 7;
+const int magenta_button = 8;
+const int cyan_button = 9;
+const int few_walls = 10;
+const int medium_walls = 11;
+const int a_lot_walls = 12;
+const int params_back_to_menu = 13;
+const int paused_back_to_menu = 14;
+const int help_back_to_menu = 15;
+const int rematch_button = 16;
+const int round_over_back_to_menu = 17;
 
 const int character_start = 32;
 const int character_end = 126;

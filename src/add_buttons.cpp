@@ -3,15 +3,19 @@
 void add_buttons(AllButtons& buttons_in_level) {
 	//MAIN MENU BUTTONS
 	//start game button
-	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.55,
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.5,
 		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Start game", MAIN_MENU);
 
 	//multiplayer button (doesn't do anything yet)
-	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.7,
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.63,
 		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Multiplayer", MAIN_MENU);
 
+	//help button; takes the player to the help interface
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.76,
+		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Help", MAIN_MENU);
+
 	//exit button; exits the game
-	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.85,
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.89,
 		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Exit", MAIN_MENU);
 
 	//red color palette
@@ -56,6 +60,20 @@ void add_buttons(AllButtons& buttons_in_level) {
 		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Back", SINGLE_PARAMS);
 
 	//PAUSED BUTTONS
+	//back to main menu
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.55,
 		level_width_multiplier * wall_width * 0.4, level_height_multiplier * wall_width * 0.08, 0, 255, 0, "Return to menu", PAUSE);
+
+	//HELP BUTTONS
+	//back to main menu
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.8,
+		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Back", HELP);
+
+	//ROUND OVER BUTTONS
+	//rematch
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.92,
+		level_width_multiplier * wall_width * 0.22, level_height_multiplier * wall_width * 0.04, 0, 255, 0, "Rematch", ROUND_OVER);
+	//back to main menu
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.6, level_height_multiplier * wall_width * 0.92,
+		level_width_multiplier * wall_width * 0.22, level_height_multiplier * wall_width * 0.04, 0, 255, 0, "Return to menu", ROUND_OVER);
 }

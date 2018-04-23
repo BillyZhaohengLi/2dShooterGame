@@ -80,5 +80,8 @@ public:
 	*/
 	void hit_player(Player &player_to_check);
 
+	/*
+	removes all current shots in the level.
+	*/
 	void clear_shots();
 };
