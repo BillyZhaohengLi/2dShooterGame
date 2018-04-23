@@ -25,6 +25,10 @@
  * added random wall generation and algorithm to prevent overlapping walls (which can cause bugs), walls spawning near the player spawnpoints and walls splitting the level into two with one player on each side.
  * added button class; contains internal struct which contains the parameters of individual buttons.
  * _TODO on April 22_: falling behind in progress due to more time spent on random wall generation than expected; create interface (start, player name, player color, wall density) and add bots to test multiplayer. Start LAN networking part (or at least finish the lobby interface).
+### April 22:
+ * added interface; the user can now name and choose player color in the main menu. The main menu also contains entrances to single player, multiplayer (not yet implemented), options and exit.
+ * added options for the amount of walls to spawn in a level.
+ * added pause.
 ## Days left to work on project: 6 days
 * April 22 (full day)
 * April 24 (half day)
