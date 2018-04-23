@@ -67,3 +67,17 @@ enum game_state { MAIN_MENU = 0, SINGLE_PARAMS = 1, IN_GAME_SINGLE = 2, PAUSE = 
 const int start_singleplayer_button = 0;
 const int start_multiplayer_button = 1;
 const int exit_button = 2;
+const int red_button = 3;
+const int green_button = 4;
+const int blue_button = 5;
+const int yellow_button = 6;
+const int magenta_button = 7;
+const int cyan_button = 8;
+const int few_walls = 9;
+const int medium_walls = 10;
+const int a_lot_walls = 11;
+const int params_back_to_menu = 12;
+const int paused_back_to_menu = 13;
+
+const int character_start = 32;
+const int character_end = 126;

@@ -1,6 +1,7 @@
 #pragma once
 #include "const.h"
 #include "ofMain.h"
+#include "ofxCenteredTrueTypeFont.h"
 #include <vector>
 #include <math.h>
 #include <mmsystem.h>
@@ -40,11 +41,15 @@ private:
 	whether the player is alive.
 	*/
 	bool alive;
+
+	string name;
+
+	ofxCenteredTrueTypeFont name_font;
 public:
 	/*
 	constructor; create a player at the specified x and y coordinates with color rgb.
 	*/
-	Player(double x, double y, int r, int g, int b);
+	Player(double x, double y, int r, int g, int b, string text);
 
 	/*
 	returns the player's location as a pair of doubles.
@@ -76,6 +81,8 @@ public:
 	*/
 	void kill_player();
 
+	void revive_player();
+
 	/*
 	draws the player using ofDrawCircle.
 	*/
@@ -95,4 +102,7 @@ public:
 	reduces the player's cooldown by 1 if its not 0. Called every update.
 	*/
 	void cooldown_reduce();
+
+	void set_name(string new_name);
+	void set_color(int new_red, int new_green, int new_blue);
 };

@@ -10,6 +10,11 @@ boolean on whether the left mouse button is held down.
 bool mouse_down;
 
 /*
+boolean on whether the mouse is held; used to prevent crashing interfaces
+*/
+bool mouse_held;
+
+/*
 wall object containing the walls in the level.
 */
 Wall levelbounds;
@@ -22,7 +27,7 @@ ShotInLevel shots_on_screen;
 /*
 instantiate a player at the specified location.
 */
-Player p1 = Player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width, 0, 0, 255);
+Player p1 = Player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width, 0, 0, 255, "default");
 
 /*
 instantiate buttons in game
@@ -39,6 +44,11 @@ store player name.
 */
 string player_name;
 
+/*
+boolean for handling player input for player name in main menu.
+*/
+bool entered = false;
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	//load text for buttons
@@ -50,23 +60,17 @@ void ofApp::setup(){
 	game_title_text.setLineHeight(18.0f);
 	game_title_text.setLetterSpacing(1.037);
 
+	character_name.loadFont("verdana.ttf", wall_width * 0.6);
+	character_name.setLineHeight(18.0f);
+	character_name.setLetterSpacing(1.037);
+
 	ofSetWindowTitle("2D shooter game");
+	p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
 	game_current = MAIN_MENU;
 
-	//start game button
-	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.35,
-		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.15, "Start game", MAIN_MENU);
-
-	//multiplayer button (doesn't do anything yet)
-	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.55,
-		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.15, "Multiplayer", MAIN_MENU);
-
-	//exit button; exits the game
-	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.75,
-		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.15, "Exit", MAIN_MENU);
+	add_buttons(buttons_in_level);
 
 	levelbounds.add_boundary();
-	levelbounds.random_level_generator(24);
 }
 
 //--------------------------------------------------------------
@@ -75,8 +79,14 @@ void ofApp::update(){
 	case MAIN_MENU:
 		update_menu();
 		break;
+	case SINGLE_PARAMS:
+		update_single_params();
+		break;
 	case IN_GAME_SINGLE:
 		update_singleplayer_game();
+		break;
+	case PAUSE:
+		update_pause();
 		break;
 	}
 }
@@ -87,24 +97,51 @@ void ofApp::draw(){
 	case MAIN_MENU:
 		draw_menu();
 		break;
+	case SINGLE_PARAMS:
+		draw_single_params();
+		break;
 	case IN_GAME_SINGLE:
 		draw_singleplayer_game();
+		break;
+	case PAUSE:
+		draw_pause();
 		break;
 	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyPressed(int key){
-	//sets the relevant cell in the keydown array to true
-	int upper_key = toupper(key);
-	keydown[upper_key] = true;
+	if (key >= 0 && key <= 255) {
+		//sets the relevant cell in the keydown array to true
+		if (game_current == IN_GAME_SINGLE) {
+			keydown[toupper(key)] = true;
+			if (toupper(key) == 'P') {
+				game_current = PAUSE;
+			}
+		}
+		else if (game_current == PAUSE) {
+			keydown[toupper(key)] = true;
+			if (toupper(key) == 'P') {
+				game_current = IN_GAME_SINGLE;
+			}
+		}
+		else {
+			keydown[key] = true;
+		}
+	}
 }
 
 //--------------------------------------------------------------
 void ofApp::keyReleased(int key){
-	//sets the relevant cell in the keydown array to false
-	int upper_key = toupper(key);
-	keydown[upper_key] = false;
+	if (key >= 0 && key <= 255) {
+		//sets the relevant cell in the keydown array to true
+		if (game_current == IN_GAME_SINGLE || game_current == PAUSE) {
+			keydown[toupper(key)] = false;
+		}
+		else {
+			keydown[key] = false;
+		}
+	}
 }
 
 //--------------------------------------------------------------
@@ -125,6 +162,7 @@ void ofApp::mousePressed(int x, int y, int button){
 //--------------------------------------------------------------
 void ofApp::mouseReleased(int x, int y, int button){
 	mouse_down = false;
+	mouse_held = false;
 }
 
 //--------------------------------------------------------------
@@ -155,17 +193,114 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 }
 
 void ofApp::update_menu() {
+	enter_name();
+
+	//check if any button is pressed
 	if (mouse_down) {
 		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), MAIN_MENU);
-		if (pressed == start_singleplayer_button) {
-			game_current = IN_GAME_SINGLE;
+		if (!mouse_held) {
+			switch (pressed) {
+			case (start_singleplayer_button):
+				p1.set_name(player_name);
+				entered = false;
+				game_current = SINGLE_PARAMS;
+				mouse_held = true;
+				break;
+			case (start_multiplayer_button):
+				mouse_held = true;
+				break;
+			case (exit_button):
+				std::exit(0);
+				break;
+			case (red_button):
+				buttons_in_level.tick_button(red_button);
+				p1.set_color(255, 0, 0);
+				mouse_held = true;
+				break;
+			case (green_button):
+				buttons_in_level.tick_button(green_button);
+				p1.set_color(0, 255, 0);
+				mouse_held = true;
+				break;
+			case (blue_button):
+				buttons_in_level.tick_button(blue_button);
+				p1.set_color(0, 0, 255);
+				mouse_held = true;
+				break;
+			case (yellow_button):
+				buttons_in_level.tick_button(yellow_button);
+				p1.set_color(255, 255, 0);
+				mouse_held = true;
+				break;
+			case (magenta_button):
+				buttons_in_level.tick_button(magenta_button);
+				p1.set_color(255, 0, 255);
+				mouse_held = true;
+				break;
+			case (cyan_button):
+				buttons_in_level.tick_button(cyan_button);
+				p1.set_color(0, 255, 255);
+				mouse_held = true;
+				break;
+			}
 		}
-		else if (pressed == start_multiplayer_button) {
+	}
+}
 
+void ofApp::update_single_params() {
+	if (mouse_down) {
+		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), SINGLE_PARAMS);
+		if (!mouse_held) {
+			switch (pressed) {
+			case (few_walls):
+				p1.set_location(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+				levelbounds.random_level_generator(8);
+				mouse_held = true;
+				game_current = IN_GAME_SINGLE;
+				break;
+			case (medium_walls):
+				p1.set_location(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+				levelbounds.random_level_generator(16);
+				mouse_held = true;
+				game_current = IN_GAME_SINGLE;
+				break;
+			case (a_lot_walls):
+				p1.set_location(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+				levelbounds.random_level_generator(24);
+				mouse_held = true;
+				game_current = IN_GAME_SINGLE;
+				break;
+			case (params_back_to_menu):
+				game_current = MAIN_MENU;
+				mouse_held = true;
+				break;
+			}
 		}
-		else if (pressed == exit_button) {
-			std::exit(0);
+	}
+}
+
+void ofApp::enter_name() {
+	//enter name
+	bool something_pressed = false;
+	for (int i = character_start; i < character_end; i++) {
+		if (keydown[i]) {
+			something_pressed = true;
+			if (player_name.length() <= 15 && !entered) {
+				player_name += i;
+			}
 		}
+	}
+	if (keydown[8]) {
+		something_pressed = true;
+		if (player_name.length() > 0 && !entered) {
+			player_name.pop_back();
+		}
+	}
+	if (something_pressed) {
+		entered = true;
+	}
+	else {
+		entered = false;
 	}
 }
 
@@ -248,9 +383,44 @@ void ofApp::update_singleplayer_game() {
 	shots_on_screen.hit_player(p1);
 }
 
+void ofApp::update_pause() {
+	if (mouse_down) {
+		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), PAUSE);
+		if (!mouse_held) {
+			cout << pressed;
+			switch (pressed) {
+			case (paused_back_to_menu):
+				mouse_held = true;
+				levelbounds.clear_level();
+				shots_on_screen.clear_shots();
+				p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
+				p1.revive_player();
+				game_current = MAIN_MENU;
+				break;
+			}
+		}
+	}
+}
+
 void ofApp::draw_menu() {
+	//draw the demo player
+	p1.draw_player();
+	p1.set_name(player_name);
+
+	//draw the player name
+	character_name.drawString("Player name:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.35);
+	character_name.drawString(player_name, level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.4);
+
+	//draw player color
+	character_name.drawString("Player color:", level_width_multiplier * wall_width * 0.75, level_height_multiplier * wall_width * 0.35);
+
 	//draw the title
 	game_title_text.drawStringCentered("2D Shooter Game", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15);
+	buttons_in_level.draw_button(game_current, button_text);
+}
+
+void ofApp::draw_single_params() {
+	button_text.drawStringCentered("Please select the amount of walls:", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15);
 	buttons_in_level.draw_button(game_current, button_text);
 }
 
@@ -265,3 +435,21 @@ void ofApp::draw_singleplayer_game() {
 	shots_on_screen.draw_shot();
 }
 
+void ofApp::draw_pause() {
+	//draw all wall segments
+	levelbounds.draw_all_walls();
+
+	//draw the player
+	p1.draw_player();
+
+	//draw the shots
+	shots_on_screen.draw_shot();
+
+	//draw paused interface
+	ofSetColor(255, 255, 255, 128);
+	ofDrawRectangle(level_width_multiplier * wall_width * 0.25, level_height_multiplier * wall_width * 0.25, level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.5);
+	ofSetColor(0, 0, 0);
+	character_name.drawStringCentered("Game paused", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.3);
+	character_name.drawStringCentered("Press P to unpause", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.35);
+	buttons_in_level.draw_button(game_current, button_text);
+}

@@ -79,4 +79,6 @@ public:
 	checks whether a player is hit by any given shot within the level. If the player gets hit call the kill_player function of the player.
 	*/
 	void hit_player(Player &player_to_check);
+
+	void clear_shots();
 };

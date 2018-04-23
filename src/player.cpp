@@ -2,7 +2,7 @@
 /*
 constructor; create a player at the specified x and y coordinates with color rgb.
 */
-Player::Player(double x, double y, int r, int g, int b) {
+Player::Player(double x, double y, int r, int g, int b, string text) {
 	xpos = x;
 	ypos = y;
 	red = r;
@@ -11,6 +11,7 @@ Player::Player(double x, double y, int r, int g, int b) {
 	alive = true;
 	facing = STOP;
 	shot_cooldown = 10;
+	name = text;
 }
 
 /*
@@ -93,10 +94,16 @@ void Player::kill_player() {
 	alive = false;
 }
 
+void Player::revive_player() {
+	alive = true;
+}
+
 /*
 draws the player using ofDrawCircle.
 */
 void Player::draw_player() {
+	ofSetColor(red, green, blue);
+	name_font.drawStringCentered(name, xpos, ypos - player_radius * 1.8);
 	if (alive) {
 		ofSetColor(red, green, blue);
 
@@ -165,4 +172,25 @@ void Player::cooldown_reduce() {
 	if (shot_cooldown != 0) {
 		shot_cooldown--;
 	}
+}
+
+void Player::set_name(string new_name) {
+	name = new_name;
+	if (new_name.length() < 8) {
+		name_font.loadFont("verdana.ttf", player_radius * 0.8);
+	}
+	else if (new_name.length() < 12) {
+		name_font.loadFont("verdana.ttf", player_radius * 0.7);
+	}
+	else {
+		name_font.loadFont("verdana.ttf", player_radius * 0.6);
+	}
+	name_font.setLineHeight(18.0f);
+	name_font.setLetterSpacing(1.037);
+}
+
+void Player::set_color(int new_red, int new_green, int new_blue) {
+	red = new_red;
+	green = new_green;
+	blue = new_blue;
 }

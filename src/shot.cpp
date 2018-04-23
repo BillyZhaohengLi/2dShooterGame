@@ -64,3 +64,7 @@ void ShotInLevel::hit_player(Player &player_to_check) {
 		}
 	}
 }
+
+void ShotInLevel::clear_shots() {
+	shots_in_level.clear();
+}

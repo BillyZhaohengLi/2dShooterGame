@@ -475,3 +475,9 @@ bool Wall::intersect_with_spawn(int newx, int newy, int newwidth, int newheight)
 	}
 	return false;
 }
+
+void Wall::clear_level() {
+	while (walls.size() > 4) {
+		walls.pop_back();
+	}
+}

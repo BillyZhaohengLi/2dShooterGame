@@ -107,4 +107,6 @@ public:
 	check whether the given wall segment intersects with any existing wall segments and the player spawn boxes.
 	*/
 	bool intersect_with_spawn(int newx, int newy, int newwidth, int newheight);
+
+	void clear_level();
 };
