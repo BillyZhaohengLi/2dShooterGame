@@ -29,8 +29,11 @@
  * added interface; the user can now name and choose player color in the main menu. The main menu also contains entrances to single player, multiplayer (not yet implemented), options and exit.
  * added options for the amount of walls to spawn in a level.
  * added pause.
-## Days left to work on project: 6 days
-* April 22 (full day)
+ * added bots; sadly the bot algorithm is not very good and the bot's performance is actual games is suboptimal.
+ * added victory condition; the game now properly terminates when only one player is left alive.
+ * large modifications to player class and game update cycle; the player class now contains additional variables and some methods in player and in the game update cycle have been modified to account for the existence of bot players.
+ * _TODO on April 24_: interface done! Main game is nearly complete at this point and the LAN networking part can be started. Not too much can be said about it since it's hard to say how difficult it would be.
+## Days left to work on project: 5 days
 * April 24 (half day)
 * April 25 (half day)
 * April 26 (half day)
