@@ -1,5 +1,9 @@
 #include "button.h"
-AllButtons::Button::Button(int x, int y, int width, int height, int red, int green, int blue, string label, game_state to_show) {
+/*
+button constructor.
+*/
+AllButtons::Button::Button(int x, int y, int width, int height, 
+	int red, int green, int blue, string label, game_state to_show) {
 	posx_ = x;
 	posy_ = y;
 	xspan_ = width;
@@ -12,13 +16,22 @@ AllButtons::Button::Button(int x, int y, int width, int height, int red, int gre
 	ticked_ = false;
 }
 
+/*
+check whether the point (x,y) is on a button. Also checks whether the interface the button is in matches the one the player is currently in.
+*/
 bool AllButtons::Button::on_button(int x_coord, int y_coord, game_state current) {
-	return (x_coord >= posx_ && x_coord <= posx_ + xspan_ && y_coord >= posy_ && y_coord <= posy_ + yspan_ && current == to_show_);
+	return (x_coord >= posx_ && x_coord <= posx_ + xspan_ && 
+		y_coord >= posy_ && y_coord <= posy_ + yspan_ && 
+		current == to_show_);
 }
 
+/*
+draw the button with the specified font style.
+*/
 void AllButtons::Button::draw_button(ofxCenteredTrueTypeFont text) {
 	//roll over
-	if (ofGetMouseX() >= posx_ && ofGetMouseX() <= posx_ + xspan_ && ofGetMouseY() >= posy_ && ofGetMouseY() <= posy_ + yspan_) {
+	if (ofGetMouseX() >= posx_ && ofGetMouseX() <= posx_ + xspan_ 
+		&& ofGetMouseY() >= posy_ && ofGetMouseY() <= posy_ + yspan_) {
 		ofSetColor(127 + red_ / 2, 127 + green_ / 2, 127 + blue_ / 2);
 	}
 	else {
@@ -38,11 +51,17 @@ void AllButtons::Button::draw_button(ofxCenteredTrueTypeFont text) {
 	text.drawStringCentered(text_, posx_ + xspan_ / 2, posy_ + yspan_ / 2);
 }
 
+/*
+add a button. Calls the button constructor.
+*/
 void AllButtons::add_button(int x, int y, int width, int height, int red, int green, int blue, string label, game_state to_show) {
 	Button temp = Button(x, y, width, height, red, green, blue, label, to_show);
 	buttons_in_game.push_back(temp);
 }
 
+/*
+detects whether the user's cursor is over a button. Returns the cell number of the button if it is, returns -1 otherwise.
+*/
 int AllButtons::on_button(int x_coord, int y_coord, game_state current) {
 	for (int i = 0; i < buttons_in_game.size(); i++) {
 		if (buttons_in_game[i].on_button(x_coord, y_coord, current)) {
@@ -52,6 +71,9 @@ int AllButtons::on_button(int x_coord, int y_coord, game_state current) {
 	return -1;
 }
 
+/*
+draw all the buttons in the current screen.
+*/
 void AllButtons::draw_button(game_state current, ofxCenteredTrueTypeFont text) {
 	for (int i = 0; i < buttons_in_game.size(); i++) {
 		if (buttons_in_game[i].to_show_ == current) {
@@ -60,6 +82,9 @@ void AllButtons::draw_button(game_state current, ofxCenteredTrueTypeFont text) {
 	}
 }
 
+/*
+tick a button; sets the button's ticked parameter to true and every other button in the screen's ticked to false.
+*/
 void AllButtons::tick_button(int button) {
 	for (int i = 0; i < buttons_in_game.size(); i++) {
 		buttons_in_game[i].ticked_ = false;

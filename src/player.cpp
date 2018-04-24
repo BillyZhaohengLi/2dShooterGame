@@ -342,7 +342,8 @@ pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_d
 
 			//return the values as specified above.
 			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(true, shot_angle), pair<double, double>(
-				xpos + (player_radius * 0.9) * cos(shot_angle), ypos + (player_radius * 0.9) * sin(shot_angle)));
+				xpos + (player_radius - shot_length + shot_radius + epsilon) * cos(shot_angle), 
+				ypos + (player_radius - shot_length + shot_radius + epsilon) * sin(shot_angle)));
 		}
 		else {
 			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), pair<double, double>(0, 0));

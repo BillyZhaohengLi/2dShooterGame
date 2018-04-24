@@ -29,21 +29,28 @@ class ofApp : public ofBaseApp{
 		void dragEvent(ofDragInfo dragInfo);
 		void gotMessage(ofMessage msg);
 		
+		//update helper functions
 		void update_menu();
 		void update_single_params();
 		void update_singleplayer_game();
 		void update_pause();
 		void update_round_over();
 		void update_help();
+		void update_multi_connect();
 
+		//draw helper functions
 		void draw_menu();
 		void draw_single_params();
 		void draw_singleplayer_game();
 		void draw_pause();
 		void draw_round_over();
 		void draw_help();
+		void draw_multi_connect();
 
-		void ofApp::enter_name();
+		//helper function for taking player name
+		void enter_name();
+		void enter_ip();
+
 
 		ofxCenteredTrueTypeFont game_title_text;
 		ofxCenteredTrueTypeFont button_text;

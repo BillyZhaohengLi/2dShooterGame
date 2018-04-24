@@ -50,6 +50,11 @@ store player name.
 string player_name;
 
 /*
+store ip address.
+*/
+string ip_address;
+
+/*
 enum for game outcome.
 */
 winner game_result;
@@ -111,6 +116,9 @@ void ofApp::update(){
 	case HELP:
 		update_help();
 		break;
+	case MULTI_CONNECT:
+		update_multi_connect();
+		break;
 	}
 }
 
@@ -135,6 +143,9 @@ void ofApp::draw(){
 		break;
 	case HELP:
 		draw_help();
+		break;
+	case MULTI_CONNECT:
+		draw_multi_connect();
 		break;
 	}
 }
@@ -249,6 +260,7 @@ void ofApp::update_menu() {
 			//multiplayer button; to be implemented
 			case (start_multiplayer_button):
 				mouse_held = true;
+				game_current = MULTI_CONNECT;
 				break;
 			//help button; sends the player to the help interface
 			case (help_button):
@@ -383,7 +395,7 @@ void ofApp::enter_name() {
 		}
 	}
 	//8 is the backspace button; if it is pressed pop the last letter the player entered.
-	if (keydown[8]) {
+	if (keydown[backspace_ascii]) {
 		something_pressed = true;
 		if (player_name.length() > 0 && !entered) {
 			player_name.pop_back();
@@ -552,6 +564,61 @@ void ofApp::update_help() {
 	}
 }
 
+void ofApp::update_multi_connect() {
+	enter_ip();
+
+	if (mouse_down) {
+		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), MULTI_CONNECT);
+		if (!mouse_held) {
+			switch (pressed) {
+				//go back to main menu
+			case (multi_connect_button):
+				mouse_held = true;
+				break;
+			case (multi_connect_back_to_menu):
+				mouse_held = true;
+				game_current = MAIN_MENU;
+				break;
+			}
+		}
+	}
+}
+
+void ofApp::enter_ip() {
+	//enter name
+	bool something_pressed = false;
+	if (keydown[period_ascii]) {
+		something_pressed = true;
+		//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
+		if (ip_address.length() < max_ip_length && !entered) {
+			ip_address += '.';
+		}
+	}
+	for (int i = integer_start; i <= integer_end; i++) {
+		if (keydown[i]) {
+			something_pressed = true;
+			//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
+			if (ip_address.length() < max_ip_length && !entered) {
+				ip_address += i;
+			}
+		}
+	}
+	//8 is the backspace button; if it is pressed pop the last letter the player entered.
+	if (keydown[backspace_ascii]) {
+		something_pressed = true;
+		if (ip_address.length() > 0 && !entered) {
+			ip_address.pop_back();
+		}
+	}
+	//boolean variable to prevent multiple letters entered with one key press due to how fast update is called
+	if (something_pressed) {
+		entered = true;
+	}
+	else {
+		entered = false;
+	}
+}
+
 void ofApp::draw_menu() {
 	//draw the demo player
 	p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
@@ -657,5 +724,13 @@ void ofApp::draw_help() {
 	character_name.drawString("Pause: P (single player only)", level_width_multiplier * wall_width * 0.2, level_height_multiplier * wall_width * 0.55);
 
 	//draw buttons in level
+	buttons_in_level.draw_button(game_current, button_text);
+}
+
+void ofApp::draw_multi_connect() {
+	ofSetColor(0, 0, 0);
+	game_title_text.drawStringCentered("Multiplayer connect", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15);
+	character_name.drawString("Enter an IP address to LAN connect to or wait for a connection:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.35);
+	character_name.drawString("IP address: " + ip_address, level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.45);
 	buttons_in_level.draw_button(game_current, button_text);
 }
