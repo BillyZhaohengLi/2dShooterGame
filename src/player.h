@@ -68,6 +68,7 @@ private:
 	the font to display the player's name in. Scales with the player's name length.
 	*/
 	ofxCenteredTrueTypeFont name_font;
+
 public:
 	/*
 	constructor; create a player at the specified x and y coordinates with color rgb.

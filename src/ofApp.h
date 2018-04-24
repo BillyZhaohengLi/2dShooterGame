@@ -8,6 +8,7 @@
 #include "button.h"
 #include "add_buttons.h"
 #include "ofxCenteredTrueTypeFont.h"
+#include "ofxNetwork.h"
 #include <mmsystem.h>
 
 class ofApp : public ofBaseApp{
@@ -51,8 +52,15 @@ class ofApp : public ofBaseApp{
 		void enter_name();
 		void enter_ip();
 
+		ofSoundPlayer shotSound;
+		ofSoundPlayer dieSound;
 
 		ofxCenteredTrueTypeFont game_title_text;
 		ofxCenteredTrueTypeFont button_text;
 		ofxCenteredTrueTypeFont character_name;
+
+		ofxTCPServer multiplayer_server;
+		ofxTCPClient multiplayer_client;
+
+		bool connected_to_host;
 };

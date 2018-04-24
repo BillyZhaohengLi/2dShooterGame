@@ -92,9 +92,6 @@ void Player::move() {
 kills the player (sets alive to false). Called when the player gets hit by a shot.
 */
 void Player::kill_player() {
-	if (alive) {
-		PlaySound(TEXT("sounds\\die.wav"), NULL, SND_FILENAME | SND_ASYNC);
-	}
 	alive = false;
 }
 
@@ -337,7 +334,6 @@ pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_d
 	if (!is_bot) {
 		//if the mouse is held, the shot cooldown is ready and the player is alive then fire a shot.
 		if (mouse_down && shot_cooldown == 0 && alive) {
-			PlaySound(TEXT("sounds\\fire_shot.wav"), NULL, SND_FILENAME | SND_ASYNC);
 			double shot_angle = fire_shot();
 
 			//return the values as specified above.
@@ -352,7 +348,6 @@ pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_d
 	else {
 		//if there is a clear path between the bot and the opponent, the shot cooldown is ready and the bot is alive then fire a shot.
 		if (shot_cooldown == 0 && !clear_shot && alive) {
-			PlaySound(TEXT("sounds\\fire_shot.wav"), NULL, SND_FILENAME | SND_ASYNC);
 			double shot_angle = fire_shot();
 
 			//return the values as specified above.

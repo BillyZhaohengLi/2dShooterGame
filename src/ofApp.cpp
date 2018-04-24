@@ -66,6 +66,8 @@ bool entered = false;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	connected_to_host = false;
+
 	//load text for buttons
 	button_text.loadFont("verdana.ttf", wall_width);
 	button_text.setLineHeight(18.0f);
@@ -80,6 +82,9 @@ void ofApp::setup(){
 	character_name.loadFont("verdana.ttf", wall_width * 0.6);
 	character_name.setLineHeight(18.0f);
 	character_name.setLetterSpacing(1.037);
+
+	shotSound.load("fire_shot.wav");
+	dieSound.load("die.wav");
 
 	ofSetWindowTitle("2D shooter game");
 	
@@ -260,6 +265,7 @@ void ofApp::update_menu() {
 			//multiplayer button; to be implemented
 			case (start_multiplayer_button):
 				mouse_held = true;
+				multiplayer_server.setup(multiplayer_port);
 				game_current = MULTI_CONNECT;
 				break;
 			//help button; sends the player to the help interface
@@ -429,9 +435,11 @@ void ofApp::update_singleplayer_game() {
 	pair<pair<bool, double>, pair<double, double>> p1_shot_params = p1.shoot_prompt(mouse_down, clear_shot);
 	pair<pair<bool, double>, pair<double, double>> p2_shot_params = p2.shoot_prompt(mouse_down, clear_shot);
 	if (p1_shot_params.first.first) {
+		shotSound.play();
 		shots_on_screen.add_shot(p1_shot_params.second.first, p1_shot_params.second.second, p1_shot_params.first.second);
 	}
 	if (p2_shot_params.first.first) {
+		shotSound.play();
 		shots_on_screen.add_shot(p2_shot_params.second.first, p2_shot_params.second.second, p2_shot_params.first.second);
 	}
 
@@ -451,14 +459,17 @@ void ofApp::update_singleplayer_game() {
 
 	//determine if either player is dead.
 	if (!p1.isalive() && !p2.isalive()) {
+		dieSound.play();
 		game_result = TIE;
 		game_current = ROUND_OVER;
 	}
 	else if (!p1.isalive()) {
+		dieSound.play();
 		game_result = P2_WIN;
 		game_current = ROUND_OVER;
 	}
 	else if (!p2.isalive()) {
+		dieSound.play();
 		game_result = P1_WIN;
 		game_current = ROUND_OVER;
 	}
@@ -574,9 +585,12 @@ void ofApp::update_multi_connect() {
 				//go back to main menu
 			case (multi_connect_button):
 				mouse_held = true;
+				multiplayer_server.close();
+				connected_to_host = multiplayer_client.setup(ip_address, 11999);
 				break;
 			case (multi_connect_back_to_menu):
 				mouse_held = true;
+				multiplayer_server.close();
 				game_current = MAIN_MENU;
 				break;
 			}
@@ -732,5 +746,11 @@ void ofApp::draw_multi_connect() {
 	game_title_text.drawStringCentered("Multiplayer connect", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15);
 	character_name.drawString("Enter an IP address to LAN connect to or wait for a connection:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.35);
 	character_name.drawString("IP address: " + ip_address, level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.45);
+	if (multiplayer_server.getNumClients() > 0) {
+		character_name.drawString("Someone is connected!", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.55);
+	}
+	else if (connected_to_host) {
+		character_name.drawString("You are connected!", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.55);
+	}
 	buttons_in_level.draw_button(game_current, button_text);
 }

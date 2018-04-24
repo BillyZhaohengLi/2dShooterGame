@@ -115,3 +115,5 @@ const int integer_end = 57;
 
 const int backspace_ascii = 8;
 const int period_ascii = 46;
+
+const int multiplayer_port = 11999;
