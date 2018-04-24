@@ -33,6 +33,9 @@
  * added victory condition; the game now properly terminates when only one player is left alive.
  * large modifications to player class and game update cycle; the player class now contains additional variables and some methods in player and in the game update cycle have been modified to account for the existence of bot players.
  * _TODO on April 24_: interface done! Main game is nearly complete at this point and the LAN networking part can be started. Not too much can be said about it since it's hard to say how difficult it would be.
+### April 23 (homework was done early so why not):
+ * added multiplayer interface; supports entering ip addresses. The planned functionality would be that players on the multiplayer connect page can LAN connect to each other through entering the other's ip address.
+ * added Raknet library to project.
 ## Days left to work on project: 5 days
 * April 24 (half day)
 * April 25 (half day)
