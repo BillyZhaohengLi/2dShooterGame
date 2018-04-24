@@ -32,7 +32,6 @@ class ofApp : public ofBaseApp{
 		
 		//update helper functions
 		void update_menu();
-		void update_single_params();
 		void update_singleplayer_game();
 		void update_pause();
 		void update_round_over();
@@ -41,7 +40,6 @@ class ofApp : public ofBaseApp{
 
 		//draw helper functions
 		void draw_menu();
-		void draw_single_params();
 		void draw_singleplayer_game();
 		void draw_pause();
 		void draw_round_over();

@@ -73,7 +73,8 @@ enum direction { STOP = 0, NORTH = 1, SOUTH = 2, EAST = 3, WEST = 4, NORTHEAST =
 /*
 game state enum; 
 */
-enum game_state { MAIN_MENU = 0, SINGLE_PARAMS = 1, IN_GAME_SINGLE = 2, PAUSE = 3, ROUND_OVER = 4, HELP = 5, MULTI_CONNECT = 6 };
+enum game_state { MAIN_MENU = 0, IN_GAME_SINGLE = 2, PAUSE = 3, ROUND_OVER = 4, HELP = 5,
+	MULTI_CONNECT = 6 , MULTI_MENU = 7, IN_GAME_MULTI = 8, MULTI_ROUND_OVER = 9};
 
 /*
 enum to determine game winner;
@@ -96,13 +97,12 @@ const int cyan_button = 9;
 const int few_walls = 10;
 const int medium_walls = 11;
 const int a_lot_walls = 12;
-const int params_back_to_menu = 13;
-const int paused_back_to_menu = 14;
-const int help_back_to_menu = 15;
-const int rematch_button = 16;
-const int round_over_back_to_menu = 17;
-const int multi_connect_button = 18;
-const int multi_connect_back_to_menu = 19;
+const int paused_back_to_menu = 13;
+const int help_back_to_menu = 14;
+const int rematch_button = 15;
+const int round_over_back_to_menu = 16;
+const int multi_connect_button = 17;
+const int multi_connect_back_to_menu = 18;
 
 /*
 start and end of printable ascii character range.

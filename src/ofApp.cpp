@@ -64,6 +64,13 @@ boolean for handling player input for player name in main menu.
 */
 bool entered = false;
 
+/*
+boolean for handling whether the player is in multiplayer mode.
+*/
+bool in_multi = false;
+
+int walls_amount = 8;
+
 //--------------------------------------------------------------
 void ofApp::setup(){
 	connected_to_host = false;
@@ -106,8 +113,8 @@ void ofApp::update(){
 	case MAIN_MENU:
 		update_menu();
 		break;
-	case SINGLE_PARAMS:
-		update_single_params();
+	case MULTI_MENU:
+		update_menu();
 		break;
 	case IN_GAME_SINGLE:
 		update_singleplayer_game();
@@ -134,8 +141,8 @@ void ofApp::draw(){
 	case MAIN_MENU:
 		draw_menu();
 		break;
-	case SINGLE_PARAMS:
-		draw_single_params();
+	case MULTI_MENU:
+		draw_menu();
 		break;
 	case IN_GAME_SINGLE:
 		draw_singleplayer_game();
@@ -259,7 +266,21 @@ void ofApp::update_menu() {
 					p1.set_name(player_name);
 				}
 				entered = false;
-				game_current = SINGLE_PARAMS;
+				game_current = IN_GAME_SINGLE;
+
+				p1.set_location(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+
+				//generate walls
+				levelbounds.random_level_generator(walls_amount);
+
+				//sets player weapons to cooldown (to prevent accidental firings immediately after game begins)
+				p1.fire_shot();
+				p2.fire_shot();
+
+				//sets a random name and color for the bot
+				p2.randomize_name();
+				p2.randomize_color();
+
 				mouse_held = true;
 				break;
 			//multiplayer button; to be implemented
@@ -279,108 +300,80 @@ void ofApp::update_menu() {
 				break;
 			//red palette button; modifies the player color
 			case (red_button):
+				for (int i = red_button; i <= cyan_button; i++) {
+					buttons_in_level.untick_button(i);
+				}
 				buttons_in_level.tick_button(red_button);
 				p1.set_color(255, 0, 0);
 				mouse_held = true;
 				break;
 			//green palette button; modifies the player color
 			case (green_button):
+				for (int i = red_button; i <= cyan_button; i++) {
+					buttons_in_level.untick_button(i);
+				}
 				buttons_in_level.tick_button(green_button);
 				p1.set_color(0, 255, 0);
 				mouse_held = true;
 				break;
 			//blue palette button; modifies the player color
 			case (blue_button):
+				for (int i = red_button; i <= cyan_button; i++) {
+					buttons_in_level.untick_button(i);
+				}
 				buttons_in_level.tick_button(blue_button);
 				p1.set_color(0, 0, 255);
 				mouse_held = true;
 				break;
 			//yellow palette button; modifies the player color
 			case (yellow_button):
+				for (int i = red_button; i <= cyan_button; i++) {
+					buttons_in_level.untick_button(i);
+				}
 				buttons_in_level.tick_button(yellow_button);
 				p1.set_color(255, 255, 0);
 				mouse_held = true;
 				break;
 			//magenta palette button; modifies the player color
 			case (magenta_button):
+				for (int i = red_button; i <= cyan_button; i++) {
+					buttons_in_level.untick_button(i);
+				}
 				buttons_in_level.tick_button(magenta_button);
 				p1.set_color(255, 0, 255);
 				mouse_held = true;
 				break;
 			//cyan palette button; modifies the player color
 			case (cyan_button):
+				for (int i = red_button; i <= cyan_button; i++) {
+					buttons_in_level.untick_button(i);
+				}
 				buttons_in_level.tick_button(cyan_button);
 				p1.set_color(0, 255, 255);
 				mouse_held = true;
 				break;
-			}
-		}
-	}
-}
-
-void ofApp::update_single_params() {
-	if (mouse_down) {
-		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), SINGLE_PARAMS);
-		if (!mouse_held) {
-			switch (pressed) {
-			//button to instantiate level with few walls
 			case (few_walls):
-				//set player locations to default
-				p1.set_location(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-
-				//generate walls
-				levelbounds.random_level_generator(8);
-
-				//sets player weapons to cooldown (to prevent accidental firings immediately after game begins)
-				p1.fire_shot();
-				p2.fire_shot();
-
-				//sets a random name and color for the bot
-				p2.randomize_name();
-				p2.randomize_color();
-
+				for (int i = few_walls; i <= a_lot_walls; i++) {
+					buttons_in_level.untick_button(i);
+				}
+				buttons_in_level.tick_button(few_walls);
+				walls_amount = 8;
 				mouse_held = true;
-				game_current = IN_GAME_SINGLE;
 				break;
-			//button to instantiate level with some walls
 			case (medium_walls):
-				//set player locations to default
-				p1.set_location(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-
-				//generate walls
-				levelbounds.random_level_generator(16);
-
-				//sets player weapons to cooldown (to prevent accidental firings immediately after game begins)
-				p1.fire_shot();
-				p2.fire_shot();
-
-				//sets a random name and color for the bot
-				p2.randomize_name();
-				p2.randomize_color();
+				for (int i = few_walls; i <= a_lot_walls; i++) {
+					buttons_in_level.untick_button(i);
+				}
+				buttons_in_level.tick_button(medium_walls);
+				walls_amount = 16;
 				mouse_held = true;
-				game_current = IN_GAME_SINGLE;
 				break;
-			//button to instantiate level with a lot of walls
 			case (a_lot_walls):
-				//set player locations to default
-				p1.set_location(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-
-				//generate walls
-				levelbounds.random_level_generator(24);
-
-				//sets player weapons to cooldown (to prevent accidental firings immediately after game begins)
-				p1.fire_shot();
-				p2.fire_shot();
-
-				//sets a random name and color for the bot
-				p2.randomize_name();
-				p2.randomize_color();
-				mouse_held = true;
-				game_current = IN_GAME_SINGLE;
-				break;
-			//button to go back to main menu
-			case (params_back_to_menu):
-				game_current = MAIN_MENU;
+				for (int i = few_walls; i <= a_lot_walls; i++) {
+					buttons_in_level.untick_button(i);
+				}
+				buttons_in_level.tick_button(a_lot_walls);
+				walls_amount = 24;
 				mouse_held = true;
 				break;
 			}
@@ -577,6 +570,9 @@ void ofApp::update_help() {
 
 void ofApp::update_multi_connect() {
 	enter_ip();
+	if (multiplayer_server.getNumClients() > 0 || connected_to_host) {
+		game_current = MULTI_MENU;
+	}
 
 	if (mouse_down) {
 		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), MULTI_CONNECT);
@@ -634,10 +630,7 @@ void ofApp::enter_ip() {
 }
 
 void ofApp::draw_menu() {
-	//draw the demo player
-	p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
-	p1.draw_player();
-	p1.set_name(player_name);
+	ofSetColor(0, 0, 0);
 
 	//draw the player name
 	character_name.drawString("Player name:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.35);
@@ -646,18 +639,21 @@ void ofApp::draw_menu() {
 	//draw player color
 	character_name.drawString("Player color:", level_width_multiplier * wall_width * 0.75, level_height_multiplier * wall_width * 0.35);
 
+	character_name.drawString("Wall settings:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.5);
+	character_name.drawString("Few", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.55);
+	character_name.drawString("Some", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.60);
+	character_name.drawString("A lot", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.65);
+
 	//draw the title
 	game_title_text.drawStringCentered("2D Shooter Game", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15);
 
 	//draw buttons in level
 	buttons_in_level.draw_button(game_current, button_text);
-}
 
-void ofApp::draw_single_params() {
-	button_text.drawStringCentered("Please select the amount of walls:", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15);
-
-	//draw buttons in level
-	buttons_in_level.draw_button(game_current, button_text);
+	//draw the demo player
+	p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
+	p1.draw_player();
+	p1.set_name(player_name);
 }
 
 void ofApp::draw_singleplayer_game() {
@@ -675,6 +671,7 @@ void ofApp::draw_singleplayer_game() {
 }
 
 void ofApp::draw_pause() {
+	ofSetColor(0, 0, 0);
 	//draw all wall segments
 	levelbounds.draw_all_walls();
 
@@ -697,6 +694,7 @@ void ofApp::draw_pause() {
 }
 
 void ofApp::draw_round_over() {
+	ofSetColor(0, 0, 0);
 	//draw all wall segments
 	levelbounds.draw_all_walls();
 
@@ -745,12 +743,6 @@ void ofApp::draw_multi_connect() {
 	ofSetColor(0, 0, 0);
 	game_title_text.drawStringCentered("Multiplayer connect", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15);
 	character_name.drawString("Enter an IP address to LAN connect to or wait for a connection:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.35);
-	character_name.drawString("IP address: " + ip_address, level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.45);
-	if (multiplayer_server.getNumClients() > 0) {
-		character_name.drawString("Someone is connected!", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.55);
-	}
-	else if (connected_to_host) {
-		character_name.drawString("You are connected!", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.55);
-	}
+	character_name.drawString("IP address:" + ip_address, level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.55);
 	buttons_in_level.draw_button(game_current, button_text);
 }

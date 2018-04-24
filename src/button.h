@@ -78,4 +78,5 @@ public:
 	tick a button; sets the button's ticked parameter to true and every other button in the screen's ticked to false.
 	*/
 	void tick_button(int button);
+	void untick_button(int button);
 };

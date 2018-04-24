@@ -87,11 +87,16 @@ tick a button; sets the button's ticked parameter to true and every other button
 */
 void AllButtons::tick_button(int button) {
 	for (int i = 0; i < buttons_in_game.size(); i++) {
-		buttons_in_game[i].ticked_ = false;
-	}
-	for (int i = 0; i < buttons_in_game.size(); i++) {
 		if (i == button) {
 			buttons_in_game[i].ticked_ = true;
+		}
+	}
+}
+
+void AllButtons::untick_button(int button) {
+	for (int i = 0; i < buttons_in_game.size(); i++) {
+		if (i == button) {
+			buttons_in_game[i].ticked_ = false;
 		}
 	}
 }
