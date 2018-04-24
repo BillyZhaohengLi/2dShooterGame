@@ -35,7 +35,8 @@
  * _TODO on April 24_: interface done! Main game is nearly complete at this point and the LAN networking part can be started. Not too much can be said about it since it's hard to say how difficult it would be.
 ### April 23 (homework was done early so why not):
  * added multiplayer interface; supports entering ip addresses. The planned functionality would be that players on the multiplayer connect page can LAN connect to each other through entering the other's ip address.
- * added Raknet library to project.
+ * no longer using Raknet library; for small-scale games like this one involving only 2 players the openFrameworks built-in TCP networking library, ofxNetwork, is more than enough.
+ * LAN neworking successfully started; two instances of the game can now connect to each other with one as the host and the other as the client.
 ## Days left to work on project: 5 days
 * April 24 (half day)
 * April 25 (half day)
