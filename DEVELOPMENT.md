@@ -38,6 +38,8 @@
  * no longer using Raknet library; for small-scale games like this one involving only 2 players the openFrameworks built-in TCP networking library, ofxNetwork, is more than enough.
  * LAN neworking successfully started; two instances of the game can now connect to each other with one as the host and the other as the client.
  * _TODO on April 24_: set up the main menu for multiplayer to showcase both player models. Figure out how to transmit player data over the connection.
+### April 25:
+ * added disconnect functionality; either the host or client disconnecting from a multiplayer game will appropriately disconnect the other user.
 ## Days left to work on project: 5 days
 * April 24 (half day)
 * April 25 (half day)
