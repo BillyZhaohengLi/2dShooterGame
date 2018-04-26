@@ -43,9 +43,7 @@
  * player preview functionality finished! Users can now see a real-time model of their opponents's character in the multiplayer main menu.
  * refactored a lot of code did a project clean-up; moved serialization and de-serialization methods into their respective classes and helper functions in the main program into the helperfunctions class. 
  * _TODO on April 26_: implement (or at least try) the actual multiplayer game and find efficient ways of communication to minimize lag. Move text into a separate "text" class since the current main program looks rather messy with all the "draw text" lying around everywhere.
-## Days left to work on project: 5 days
-* April 24 (half day)
-* April 25 (half day)
+## Days left to work on project: 4 days
 * April 26 (half day)
 * April 27 (half day)
 * April 28 (full day)
