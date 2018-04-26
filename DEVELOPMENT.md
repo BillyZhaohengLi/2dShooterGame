@@ -1,7 +1,7 @@
 # Project Proposal : Simple multiplayer 2d shooter game
 ## Libraries: 
-  ~~* Raknet (networking engine for games)~~
-  ~~* Oxygine (2D C++ game engine)~~
+  * ~~Raknet (networking engine for games)~~
+  * ~~Oxygine (2D C++ game engine)~~
   * ofxCenteredTrueTypeFont (external library for convieniently modifiying font parameters and drawing fonts)
   * ofxNetwork (networking engine)
 ## Progress:
