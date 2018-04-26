@@ -1,28 +1,11 @@
 #include "ofApp.h"
-/*
-instantiate a player at the specified location.
-*/
-Player p1 = Player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width, 0, 0, 255, false, "default");
-
-/*
-bot player.
-*/
-Player p2 = Player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5, 0, 0, 255, true, "default");
-
-/*
-boolean for handling player input for player name in main menu.
-*/
-bool entered = false;
-
-/*
-boolean for handling whether the player is in multiplayer mode.
-*/
-bool in_multi = false;
-
-int walls_amount = 8;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
+	//instantiate some class variables
+	entered = false;
+	in_multi = false;
+	walls_amount = few_walls_amount;
 	connected_to_host = false;
 	client_server = NONE;
 
@@ -200,21 +183,19 @@ void ofApp::dragEvent(ofDragInfo dragInfo){
 
 void ofApp::update_menu() {
 	//helper function to enter name
-	enter_name();
+	pair<bool, string> temp = enter_name(entered, player_name, keydown);
+	entered = temp.first;
+	player_name = temp.second;
 
 	//check if any button is pressed
 	if (mouse_down) {
 		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), MAIN_MENU);
 		if (!mouse_held) {
 			switch (pressed) {
+
 			//single player button; sets the player name to whatever the user entered.
 			case (start_singleplayer_button):
-				if (player_name == "") {
-					p1.set_name("*blank*");
-				}
-				else {
-					p1.set_name(player_name);
-				}
+				p1.set_name(player_name);
 				entered = false;
 				game_current = IN_GAME_SINGLE;
 
@@ -233,22 +214,26 @@ void ofApp::update_menu() {
 
 				mouse_held = true;
 				break;
-			//multiplayer button; to be implemented
+
+			//multiplayer button; takes the player to the multiplayer interface and starts the TCP server
 			case (start_multiplayer_button):
 				mouse_held = true;
 				multiplayer_server.setup(multiplayer_port);
 				game_current = MULTI_CONNECT;
 				break;
+
 			//help button; sends the player to the help interface
 			case (help_button):
 				mouse_held = true;
 				game_current = HELP;
 				break;
+
 			//exit button; exits the program.
 			case (exit_button):
 				std::exit(0);
 				break;
-			//red palette button; modifies the player color
+
+			//red palette button; modifies the player color (also unticks all other color palettes)
 			case (red_button):
 				for (int i = red_button; i <= cyan_button; i++) {
 					buttons_in_level.untick_button(i);
@@ -257,7 +242,8 @@ void ofApp::update_menu() {
 				p1.set_color(255, 0, 0);
 				mouse_held = true;
 				break;
-			//green palette button; modifies the player color
+
+			//green palette button; modifies the player color (also unticks all other color palettes)
 			case (green_button):
 				for (int i = red_button; i <= cyan_button; i++) {
 					buttons_in_level.untick_button(i);
@@ -266,7 +252,8 @@ void ofApp::update_menu() {
 				p1.set_color(0, 255, 0);
 				mouse_held = true;
 				break;
-			//blue palette button; modifies the player color
+
+			//blue palette button; modifies the player color (also unticks all other color palettes)
 			case (blue_button):
 				for (int i = red_button; i <= cyan_button; i++) {
 					buttons_in_level.untick_button(i);
@@ -275,7 +262,8 @@ void ofApp::update_menu() {
 				p1.set_color(0, 0, 255);
 				mouse_held = true;
 				break;
-			//yellow palette button; modifies the player color
+
+			//yellow palette button; modifies the player color (also unticks all other color palettes)
 			case (yellow_button):
 				for (int i = red_button; i <= cyan_button; i++) {
 					buttons_in_level.untick_button(i);
@@ -284,7 +272,8 @@ void ofApp::update_menu() {
 				p1.set_color(255, 255, 0);
 				mouse_held = true;
 				break;
-			//magenta palette button; modifies the player color
+
+			//magenta palette button; modifies the player color (also unticks all other color palettes)
 			case (magenta_button):
 				for (int i = red_button; i <= cyan_button; i++) {
 					buttons_in_level.untick_button(i);
@@ -293,7 +282,8 @@ void ofApp::update_menu() {
 				p1.set_color(255, 0, 255);
 				mouse_held = true;
 				break;
-			//cyan palette button; modifies the player color
+
+			//cyan palette button; modifies the player color (also unticks all other color palettes)
 			case (cyan_button):
 				for (int i = red_button; i <= cyan_button; i++) {
 					buttons_in_level.untick_button(i);
@@ -302,7 +292,8 @@ void ofApp::update_menu() {
 				p1.set_color(0, 255, 255);
 				mouse_held = true;
 				break;
-			//button for generating few walls in the level.
+
+			//button for generating few walls in the level. (also unticks all other wall choices)
 			case (few_walls):
 				for (int i = few_walls; i <= a_lot_walls; i++) {
 					buttons_in_level.untick_button(i);
@@ -311,7 +302,8 @@ void ofApp::update_menu() {
 				walls_amount = few_walls_amount;
 				mouse_held = true;
 				break;
-			//button for generating some walls in the level.
+
+			//button for generating some walls in the level. (also unticks all other wall choices)
 			case (medium_walls):
 				for (int i = few_walls; i <= a_lot_walls; i++) {
 					buttons_in_level.untick_button(i);
@@ -320,7 +312,8 @@ void ofApp::update_menu() {
 				walls_amount = medium_walls_amount;
 				mouse_held = true;
 				break;
-			//button for generating a lot of walls in the level.
+
+			//button for generating a lot of walls in the level. (also unticks all other wall choices)
 			case (a_lot_walls):
 				for (int i = few_walls; i <= a_lot_walls; i++) {
 					buttons_in_level.untick_button(i);
@@ -331,34 +324,6 @@ void ofApp::update_menu() {
 				break;
 			}
 		}
-	}
-}
-
-void ofApp::enter_name() {
-	//enter name
-	bool something_pressed = false;
-	for (int i = character_start; i < character_end; i++) {
-		if (keydown[i]) {
-			something_pressed = true;
-			//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
-			if (player_name.length() < max_name_length && !entered) {
-				player_name += i;
-			}
-		}
-	}
-	//8 is the backspace button; if it is pressed pop the last letter the player entered.
-	if (keydown[backspace_ascii]) {
-		something_pressed = true;
-		if (player_name.length() > 0 && !entered) {
-			player_name.pop_back();
-		}
-	}
-	//boolean variable to prevent multiple letters entered with one key press due to how fast update is called
-	if (something_pressed) {
-		entered = true;
-	}
-	else {
-		entered = false;
 	}
 }
 
@@ -425,6 +390,7 @@ void ofApp::update_pause() {
 		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), PAUSE);
 		if (!mouse_held) {
 			switch (pressed) {
+
 			//go back to main menu
 			case (paused_back_to_menu):
 				mouse_held = true;
@@ -453,6 +419,7 @@ void ofApp::update_round_over() {
 		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), ROUND_OVER);
 		if (!mouse_held) {
 			switch (pressed) {
+
 			//rematch button; does not regenerate walls.
 			case (rematch_button):
 				mouse_held = true;
@@ -479,6 +446,8 @@ void ofApp::update_round_over() {
 
 				game_current = IN_GAME_SINGLE;
 				break;
+
+			//return to main menu
 			case (round_over_back_to_menu):
 				mouse_held = true;
 
@@ -510,6 +479,7 @@ void ofApp::update_help() {
 		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), HELP);
 		if (!mouse_held) {
 			switch (pressed) {
+
 			//go back to main menu
 			case (help_back_to_menu):
 				mouse_held = true;
@@ -521,22 +491,38 @@ void ofApp::update_help() {
 }
 
 void ofApp::update_multi_connect() {
-	enter_ip();
+	//enter ip address
+	pair<bool, string> temp = enter_ip(entered, ip_address, keydown);
+	entered = temp.first;
+	ip_address = temp.second;
+
 	if (multiplayer_server.getNumClients() > 0) {
+		//set players to appropriate locations in the level
 		p1.set_location(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
 		p2.set_location(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
+
+		//set p2 to not be a bot since p2 is now player-controlled
 		p2.set_bot(false);
-		multiplayer_server.send(0, "PLAYER" + to_string(p1.get_color()) + p1.get_name() +
-			"~" + to_string(p1.get_facing().first) + "~" + to_string(p1.get_facing().second));
+
+		//send the details of the player to the other user
+		multiplayer_server.send(0, p1.serialized_string());
+
+		//set enums accordingly
 		client_server = HOST;
 		game_current = MULTI_MENU;
 	}
 	if (connected_to_host) {
+		//set players to appropriate locations in the level
 		p1.set_location(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
 		p2.set_location(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
+
+		//set p2 to not be a bot since p2 is now player-controlled
 		p2.set_bot(false);
-		multiplayer_client.send("PLAYER" + to_string(p1.get_color()) + p1.get_name() +
-			"~" + to_string(p1.get_facing().first) + "~" + to_string(p1.get_facing().second));
+
+		//send the details of the player to the other user
+		multiplayer_client.send(p1.serialized_string());
+
+		//set enums accordingly
 		client_server = CLIENT;
 		game_current = MULTI_MENU;
 	}
@@ -545,12 +531,15 @@ void ofApp::update_multi_connect() {
 		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), MULTI_CONNECT);
 		if (!mouse_held) {
 			switch (pressed) {
-				//go back to main menu
+
+			//connect to a server at the specified ip address.
 			case (multi_connect_button):
 				mouse_held = true;
 				multiplayer_server.close();
 				connected_to_host = multiplayer_client.setup(ip_address, 11999);
 				break;
+
+			//go back to main menu
 			case (multi_connect_back_to_menu):
 				mouse_held = true;
 				multiplayer_server.close();
@@ -561,140 +550,81 @@ void ofApp::update_multi_connect() {
 	}
 }
 
-void ofApp::enter_ip() {
-	//enter name
-	bool something_pressed = false;
-	if (keydown[period_ascii]) {
-		something_pressed = true;
-		//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
-		if (ip_address.length() < max_ip_length && !entered) {
-			ip_address += '.';
-		}
-	}
-	for (int i = integer_start; i <= integer_end; i++) {
-		if (keydown[i]) {
-			something_pressed = true;
-			//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
-			if (ip_address.length() < max_ip_length && !entered) {
-				ip_address += i;
-			}
-		}
-	}
-	//8 is the backspace button; if it is pressed pop the last letter the player entered.
-	if (keydown[backspace_ascii]) {
-		something_pressed = true;
-		if (ip_address.length() > 0 && !entered) {
-			ip_address.pop_back();
-		}
-	}
-	//boolean variable to prevent multiple letters entered with one key press due to how fast update is called
-	if (something_pressed) {
-		entered = true;
-	}
-	else {
-		entered = false;
-	}
-}
-
 void ofApp::update_multi_menu() {
 	string message;
+
+	//receive message; also handle the case if the connection is terminated
 	if (client_server == HOST) {
+		//if the connection is terminated set variables accordingly, close the servere and go back to main menu
 		if (multiplayer_server.getNumClients() == 0) {
 			multiplayer_server.close();
 			p2.set_bot(true);
 			p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
 			connected_to_host = false;
-			client_server == NONE;
+			client_server = NONE;
 			game_current = MAIN_MENU;
 		}
+		//otherwise recieve a message from the client
 		message = multiplayer_server.receive(0);
 	}
 	else if (client_server == CLIENT) {
+		//if the connection is terminated set variables accordingly, close the servere and go back to main menu
 		if (!multiplayer_client.isConnected()) {
 			multiplayer_client.close();
 			p2.set_bot(true);
 			p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
 			connected_to_host = false;
-			client_server == NONE;
+			client_server = NONE;
 			game_current = MAIN_MENU;
 		}
+		//otherwise recieve a message from the host
 		message = multiplayer_client.receive();
 	}
+
+	//handle message from partner
 	if (message.length() > 0) {
-		string header = message.substr(0, 6);
-		if (header == "PLAYER") {
-			//set color
-			int new_color = message.at(6) - '0';
-			cout << new_color << "\n";
-			switch (new_color) {
-			case (red_color):
-				p2.set_color(255, 0, 0);
-				break;
-			case (green_color):
-				p2.set_color(0, 255, 0);
-				break;
-			case (blue_color):
-				p2.set_color(0, 0, 255);
-				break;
-			case (yellow_color):
-				p2.set_color(255, 255, 0);
-				break;
-			case (magenta_color):
-				p2.set_color(255, 0, 255);
-				break;
-			case (cyan_color):
-				p2.set_color(0, 255, 255);
-				break;
-			}
-			//set name
-			vector<string> params;
-			for (int i = 0; i < 3; i++) {
-				params.push_back("");
-			}
-			string received = message.substr(7);
-			int cell_count = 0;
-			for (int i = 0; i < received.length(); i++) {
-				if (received[i] == '~') {
-					cell_count++;
-				}
-				else {
-					params[cell_count] += received[i];
-				}
-			}
-			p2.set_name(params[0]);
-			p2.update_player_facing(stoi(params[1]), stoi(params[2]), p1);
+		//if the message begins with "PLAYER" then it is a message to update the opponent's player model;
+		if (message.substr(0, 6) == "PLAYER") {
+			p2.deserialize_update_message(message);
 		}
 	}
-	//receive message from partner
 
 	//helper function to enter name
-	enter_name();
+	pair<bool, string> temp = enter_name(entered, player_name, keydown);
+	entered = temp.first;
+	player_name = temp.second;
 
 	//check if any button is pressed
 	if (mouse_down) {
 		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), MULTI_MENU);
 		if (!mouse_held) {
 			switch (pressed) {
-				//single player button; sets the player name to whatever the user entered.
+
+			//start the multiplayer game; to be implemented
 			case (multi_start_game_button):
 				mouse_held = true;
 				break;
-				//multiplayer button; to be implemented
+
+			//disconnect from the session.
 			case (multi_disconnect_button):
 				mouse_held = true;
+				//close either the server or the client based on what the program was connected to the session as.
 				if (client_server == HOST) {
 					multiplayer_server.close();
 				}
 				else if (client_server == CLIENT) {
 					multiplayer_client.close();
 				}
+
+				//set variables back to default
 				p2.set_bot(true);
 				p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
 				connected_to_host = false;
-				client_server == NONE;
+				client_server = NONE;
 				game_current = MAIN_MENU;
 				break;
-				//red palette button; modifies the player color
+
+			//red palette button; modifies the player color
 			case (red_button_m):
 				for (int i = red_button_m; i <= cyan_button_m; i++) {
 					buttons_in_level.untick_button(i);
@@ -703,7 +633,8 @@ void ofApp::update_multi_menu() {
 				p1.set_color(255, 0, 0);
 				mouse_held = true;
 				break;
-				//green palette button; modifies the player color
+
+			//green palette button; modifies the player color
 			case (green_button_m):
 				for (int i = red_button_m; i <= cyan_button_m; i++) {
 					buttons_in_level.untick_button(i);
@@ -712,7 +643,8 @@ void ofApp::update_multi_menu() {
 				p1.set_color(0, 255, 0);
 				mouse_held = true;
 				break;
-				//blue palette button; modifies the player color
+
+			//blue palette button; modifies the player color
 			case (blue_button_m):
 				for (int i = red_button_m; i <= cyan_button_m; i++) {
 					buttons_in_level.untick_button(i);
@@ -721,7 +653,8 @@ void ofApp::update_multi_menu() {
 				p1.set_color(0, 0, 255);
 				mouse_held = true;
 				break;
-				//yellow palette button; modifies the player color
+
+			//yellow palette button; modifies the player color
 			case (yellow_button_m):
 				for (int i = red_button_m; i <= cyan_button_m; i++) {
 					buttons_in_level.untick_button(i);
@@ -730,7 +663,8 @@ void ofApp::update_multi_menu() {
 				p1.set_color(255, 255, 0);
 				mouse_held = true;
 				break;
-				//magenta palette button; modifies the player color
+
+			//magenta palette button; modifies the player color
 			case (magenta_button_m):
 				for (int i = red_button_m; i <= cyan_button_m; i++) {
 					buttons_in_level.untick_button(i);
@@ -739,7 +673,8 @@ void ofApp::update_multi_menu() {
 				p1.set_color(255, 0, 255);
 				mouse_held = true;
 				break;
-				//cyan palette button; modifies the player color
+
+			//cyan palette button; modifies the player color
 			case (cyan_button_m):
 				for (int i = red_button_m; i <= cyan_button_m; i++) {
 					buttons_in_level.untick_button(i);
@@ -748,7 +683,8 @@ void ofApp::update_multi_menu() {
 				p1.set_color(0, 255, 255);
 				mouse_held = true;
 				break;
-				//button for generating few walls in the level.
+
+			//button for generating few walls in the level.
 			case (few_walls_m):
 				for (int i = few_walls_m; i <= a_lot_walls_m; i++) {
 					buttons_in_level.untick_button(i);
@@ -757,7 +693,8 @@ void ofApp::update_multi_menu() {
 				walls_amount = few_walls_amount;
 				mouse_held = true;
 				break;
-				//button for generating some walls in the level.
+
+			//button for generating some walls in the level.
 			case (medium_walls_m):
 				for (int i = few_walls_m; i <= a_lot_walls_m; i++) {
 					buttons_in_level.untick_button(i);
@@ -766,7 +703,8 @@ void ofApp::update_multi_menu() {
 				walls_amount = medium_walls_amount;
 				mouse_held = true;
 				break;
-				//button for generating a lot of walls in the level.
+
+			//button for generating a lot of walls in the level.
 			case (a_lot_walls_m):
 				for (int i = few_walls_m; i <= a_lot_walls_m; i++) {
 					buttons_in_level.untick_button(i);
@@ -778,26 +716,25 @@ void ofApp::update_multi_menu() {
 			}
 		}
 	}
+
+	//send the data of the player to the other user.
 	if (client_server == HOST) {
-		multiplayer_server.send(0, "PLAYER" + to_string(p1.get_color()) + p1.get_name() + 
-			"~" + to_string(p1.get_facing().first) + "~" + to_string(p1.get_facing().second));
+		multiplayer_server.send(0, p1.serialized_string());
 	}
 	else if (client_server == CLIENT) {
-		multiplayer_client.send("PLAYER" + to_string(p1.get_color()) + p1.get_name() +
-			"~" + to_string(p1.get_facing().first) + "~" + to_string(p1.get_facing().second));
+		multiplayer_client.send(p1.serialized_string());
 	}
 }
 
 void ofApp::draw_menu() {
 	ofSetColor(0, 0, 0);
 
-	//draw the player name
+	//draw player name
 	character_name.drawString("Player name:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.35);
 	character_name.drawString(player_name, level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.4);
 
-	//draw player color
+	//draw other text
 	character_name.drawString("Player color:", level_width_multiplier * wall_width * 0.75, level_height_multiplier * wall_width * 0.35);
-
 	character_name.drawString("Wall settings:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.5);
 	character_name.drawString("Few", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.55);
 	character_name.drawString("Some", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.60);
@@ -842,6 +779,7 @@ void ofApp::draw_pause() {
 	shots_on_screen.draw_shot();
 
 	//draw paused interface
+	//draw an overlaying rectangle to prevent black text from mixing in with the walls
 	ofSetColor(255, 255, 255, 128);
 	ofDrawRectangle(level_width_multiplier * wall_width * 0.25, level_height_multiplier * wall_width * 0.25, level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.5);
 	ofSetColor(0, 0, 0);
@@ -864,6 +802,7 @@ void ofApp::draw_round_over() {
 	//draw the shots
 	shots_on_screen.draw_shot();
 
+	//draw an overlaying rectangle to prevent black text from mixing in with the walls
 	ofSetColor(255, 255, 255, 128);
 	ofDrawRectangle(level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.9, level_width_multiplier * wall_width * 0.8, level_height_multiplier * wall_width * 0.08);
 	ofSetColor(0, 0, 0);
@@ -888,6 +827,7 @@ void ofApp::draw_round_over() {
 }
 
 void ofApp::draw_help() {
+	//draw help text
 	ofSetColor(0, 0, 0);
 	game_title_text.drawStringCentered("Help", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15);
 	character_name.drawString("Move: WASD keys", level_width_multiplier * wall_width * 0.2, level_height_multiplier * wall_width * 0.35);
@@ -899,10 +839,13 @@ void ofApp::draw_help() {
 }
 
 void ofApp::draw_multi_connect() {
+	//draw multiplayer connect text
 	ofSetColor(0, 0, 0);
 	game_title_text.drawStringCentered("Multiplayer connect", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15);
 	character_name.drawString("Enter an IP address to LAN connect to or wait for a connection:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.35);
 	character_name.drawString("IP address:" + ip_address, level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.55);
+
+	//draw buttons in level
 	buttons_in_level.draw_button(game_current, button_text);
 }
 
@@ -913,9 +856,8 @@ void ofApp::draw_multi_menu() {
 	character_name.drawString("Player name:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.35);
 	character_name.drawString(player_name, level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.4);
 
-	//draw player color
+	//draw other text
 	character_name.drawString("Player color:", level_width_multiplier * wall_width * 0.75, level_height_multiplier * wall_width * 0.35);
-
 	character_name.drawString("Wall settings:", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.5);
 	character_name.drawString("Few", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.55);
 	character_name.drawString("Some", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.60);
@@ -932,5 +874,6 @@ void ofApp::draw_multi_menu() {
 	p1.draw_player();
 	p1.set_name(player_name);
 
+	//draw the opponent's player
 	p2.draw_player();
 }

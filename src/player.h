@@ -149,6 +149,9 @@ public:
 	*/
 	void set_color(int new_red, int new_green, int new_blue);
 
+	/*
+	get the color of the player as an integer; each integer represents a color (since there are only 6 colors anyways)
+	*/
 	int get_color();
 
 	pair<int, int> get_facing();
@@ -178,5 +181,18 @@ public:
 	*/
 	void randomize_color();
 
+	/*
+	set whether the player is a bot.
+	*/
 	void set_bot(bool bot);
+
+	/*
+	deserialize a message sent over a multiplayer connection and update a player accordingly.
+	*/
+	void deserialize_update_message(string message);
+
+	/*
+	send a player over the connection as a serialized string.
+	*/
+	string serialized_string();
 };

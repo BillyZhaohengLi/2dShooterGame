@@ -113,3 +113,76 @@ bool rectOverlap(Point l1, Point r1, Point l2, Point r2)
 
 	return true;
 }
+
+/*
+helper function for entering name called in update. Takes in the keys pressed, whether the name was altered in the previous frame and the player's name
+and returns whether the name was altered and the new name.
+*/
+pair<bool, string> enter_name(bool entered, string player_name, bool keydown[255]) {
+	//enter name
+	bool something_pressed = false;
+	for (int i = character_start; i < character_end; i++) {
+		if (keydown[i]) {
+			something_pressed = true;
+			//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
+			if (player_name.length() < max_name_length && !entered) {
+				player_name += i;
+			}
+		}
+	}
+	//8 is the backspace button; if it is pressed pop the last letter the player entered.
+	if (keydown[backspace_ascii]) {
+		something_pressed = true;
+		if (player_name.length() > 0 && !entered) {
+			player_name.pop_back();
+		}
+	}
+	//boolean variable to prevent multiple letters entered with one key press due to how fast update is called
+	if (something_pressed) {
+		entered = true;
+	}
+	else {
+		entered = false;
+	}
+	return pair<bool, string>(entered, player_name);
+}
+
+/*
+helper function for entering ip address called in update. Takes in the keys pressed, whether the ip address was altered in the previous frame and the player's name
+and returns whether the name was altered and the new ip address.
+*/
+pair<bool, string> enter_ip(bool entered, string ip_address, bool keydown[255]) {
+	//enter name
+	bool something_pressed = false;
+	if (keydown[period_ascii]) {
+		something_pressed = true;
+		//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
+		if (ip_address.length() < max_ip_length && !entered) {
+			ip_address += '.';
+		}
+	}
+	for (int i = integer_start; i <= integer_end; i++) {
+		if (keydown[i]) {
+			something_pressed = true;
+			//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
+			if (ip_address.length() < max_ip_length && !entered) {
+				ip_address += i;
+			}
+		}
+	}
+	//8 is the backspace button; if it is pressed pop the last letter the player entered.
+	if (keydown[backspace_ascii]) {
+		something_pressed = true;
+		if (ip_address.length() > 0 && !entered) {
+			ip_address.pop_back();
+		}
+	}
+	//boolean variable to prevent multiple letters entered with one key press due to how fast update is called
+	if (something_pressed) {
+		entered = true;
+	}
+	else {
+		entered = false;
+	}
+	return pair<bool, string>(entered, ip_address);
+}

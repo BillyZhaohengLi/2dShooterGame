@@ -48,72 +48,66 @@ class ofApp : public ofBaseApp{
 		void draw_help();
 		void draw_multi_connect();
 
-		//helper function for taking player name
-		void enter_name();
-		void enter_ip();
-
+		//sounds to be used in game
 		ofSoundPlayer shotSound;
 		ofSoundPlayer dieSound;
 
+		//fonts to be used in game
 		ofxCenteredTrueTypeFont game_title_text;
 		ofxCenteredTrueTypeFont button_text;
 		ofxCenteredTrueTypeFont character_name;
 
+		//tcp server and client; used for multiplayer
 		ofxTCPServer multiplayer_server;
 		ofxTCPClient multiplayer_client;
 
+		//boolean for whether the user is connected to a host. Only used as a signal to switch to the multiplayer main menu.
 		bool connected_to_host;
 
-		/*
-		array of booleans used to store which keys are held down.
-		*/
+		//array of booleans used to store which keys are held down.
 		bool keydown[255];
 
-		/*
-		boolean on whether the left mouse button is held down.
-		*/
+		//boolean on whether the left mouse button is held down.
 		bool mouse_down;
 
-		/*
-		boolean on whether the mouse is held; used to prevent crashing interfaces
-		*/
+		//boolean on whether the mouse is held; used to prevent crashing interfaces
 		bool mouse_held;
 
-		/*
-		wall object containing the walls in the level.
-		*/
+		//boolean for handling player input for player name in main menu; used to prevent multiple keys being entered with one press
+		//due to how fast update is called.
+		bool entered;
+
+		//boolean for handling whether the player is in multiplayer mode.
+		bool in_multi;
+
+		//the amount of walls to generate in a level when the start button is clicked.
+		int walls_amount;
+
+		//wall object containing the walls in the level.
 		Wall levelbounds;
 
-		/*
-		shotInLevel object containing the shots on screen.
-		*/
+		//shotInLevel object containing the shots on screen.
 		ShotInLevel shots_on_screen;
 
-		/*
-		instantiate buttons in game
-		*/
+		//instantiate buttons in game
 		AllButtons buttons_in_level;
 
-		/*
-		instantiate game to start at main menu
-		*/
+		//instantiate game to start at main menu
 		game_state game_current;
 
-		/*
-		store player name.
-		*/
+		//store player name.
 		string player_name;
 
-		/*
-		store ip address.
-		*/
+		//store ip address.
 		string ip_address;
 
-		/*
-		enum for game outcome.
-		*/
+		//enum for game outcome.
 		winner game_result;
 
+		//enum for the state of the program; used to handle communication based on whether the program is a client or a host.
 		connection client_server;
 
+		//players in the game. By default p1 is the player character and p2 is a bot.
+		Player p1 = Player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width, 0, 0, 255, false, "default");
+		Player p2 = Player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5, 0, 0, 255, true, "default");
 };

@@ -4,6 +4,7 @@ code from https://www.geeksforgeeks.org/check-if-two-given-line-segments-interse
 */
 #include <algorithm>
 #include "ofMain.h"
+#include "const.h"
 /*
 struct used to calculate intersections.
 */
@@ -55,3 +56,15 @@ find whether two rectangles with corner points (l1, r1) and (l2, r2) intersect.
 by convention "l" is the upper lefthand corner, r is the lower righthand corner.
 */
 bool rectOverlap(Point l1, Point r1, Point l2, Point r2);
+
+/*
+helper function for entering name called in update. Takes in the keys pressed, whether the name was altered in the previous frame and the player's name
+and returns whether the name was altered and the new name.
+*/
+pair<bool, string> enter_name(bool entered, string player_name, bool keydown[255]);
+
+/*
+helper function for entering ip address called in update. Takes in the keys pressed, whether the ip address was altered in the previous frame and the player's name
+and returns whether the name was altered and the new ip address.
+*/
+pair<bool, string> enter_ip(bool entered, string ip_address, bool keydown[255]);

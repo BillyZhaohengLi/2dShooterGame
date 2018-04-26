@@ -64,6 +64,9 @@ the maximum name length of the player.
 */
 const int max_name_length = 16;
 
+/*
+the maximum ip address length. (e.g. 255.255.255.255 - exactly 15 characters).
+*/
 const int max_ip_length = 15;
 /*
 direction enum; used to determine the player's orientation.
