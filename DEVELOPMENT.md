@@ -40,6 +40,7 @@
  * _TODO on April 24_: set up the main menu for multiplayer to showcase both player models. Figure out how to transmit player data over the connection.
 ### April 25:
  * added disconnect functionality; either the host or client disconnecting from a multiplayer game will appropriately disconnect the other user.
+ * player preview functionality finished! Users can now see a real-time model of their opponents's character in the multiplayer main menu.
 ## Days left to work on project: 5 days
 * April 24 (half day)
 * April 25 (half day)
