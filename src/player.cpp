@@ -459,3 +459,7 @@ void Player::randomize_color() {
 		break;
 	}
 }
+
+void Player::set_bot(bool bot) {
+	is_bot = bot;
+}

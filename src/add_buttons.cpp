@@ -42,16 +42,15 @@ void add_buttons(AllButtons& buttons_in_level) {
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.85, level_height_multiplier * wall_width * 0.44,
 		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 0, 255, 255, "", MAIN_MENU);
 
-	//SINGLE PLAYER SETTINGS BUTTONS
-	//yellow color palette
+	//few wall settings
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.2, level_height_multiplier * wall_width * 0.52,
 		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 0, 255, 0, "", MAIN_MENU);
 
-	//magenta color palette
+	//medium wall settings
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.2, level_height_multiplier * wall_width * 0.57,
 		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 255, 255, 0, "", MAIN_MENU);
 
-	//cyan color palette
+	//lots of walls settings
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.2, level_height_multiplier * wall_width * 0.62,
 		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 255, 0, 0, "", MAIN_MENU);
 
@@ -86,7 +85,44 @@ void add_buttons(AllButtons& buttons_in_level) {
 	//start game button
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.76,
 		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Start game", MULTI_MENU);
+
 	//exit button; exits the game
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.68, level_height_multiplier * wall_width * 0.89,
 		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Disconnect", MULTI_MENU);
+
+	//red color palette
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.75, level_height_multiplier * wall_width * 0.4,
+		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 255, 0, 0, "", MULTI_MENU);
+
+	//blue color palette
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.8, level_height_multiplier * wall_width * 0.4,
+		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 0, 255, 0, "", MULTI_MENU);
+
+	//green color palette
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.85, level_height_multiplier * wall_width * 0.4,
+		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 0, 0, 255, "", MULTI_MENU);
+
+	//yellow color palette
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.75, level_height_multiplier * wall_width * 0.44,
+		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 255, 255, 0, "", MULTI_MENU);
+
+	//magenta color palette
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.8, level_height_multiplier * wall_width * 0.44,
+		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 255, 0, 255, "", MULTI_MENU);
+
+	//cyan color palette
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.85, level_height_multiplier * wall_width * 0.44,
+		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 0, 255, 255, "", MULTI_MENU);
+
+	//few wall settings
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.2, level_height_multiplier * wall_width * 0.52,
+		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 0, 255, 0, "", MULTI_MENU);
+
+	//medium wall settings
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.2, level_height_multiplier * wall_width * 0.57,
+		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 255, 255, 0, "", MULTI_MENU);
+
+	//lots of walls settings
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.2, level_height_multiplier * wall_width * 0.62,
+		level_width_multiplier * wall_width * 0.03, level_height_multiplier * wall_width * 0.03, 255, 0, 0, "", MULTI_MENU);
 }

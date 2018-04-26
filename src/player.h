@@ -173,4 +173,6 @@ public:
 	sets randomized colors for bots.
 	*/
 	void randomize_color();
+
+	void set_bot(bool bot);
 };

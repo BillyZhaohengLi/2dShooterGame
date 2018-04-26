@@ -32,6 +32,7 @@ class ofApp : public ofBaseApp{
 		
 		//update helper functions
 		void update_menu();
+		void update_multi_menu();
 		void update_singleplayer_game();
 		void update_pause();
 		void update_round_over();
@@ -40,6 +41,7 @@ class ofApp : public ofBaseApp{
 
 		//draw helper functions
 		void draw_menu();
+		void draw_multi_menu();
 		void draw_singleplayer_game();
 		void draw_pause();
 		void draw_round_over();
@@ -61,4 +63,57 @@ class ofApp : public ofBaseApp{
 		ofxTCPClient multiplayer_client;
 
 		bool connected_to_host;
+
+		/*
+		array of booleans used to store which keys are held down.
+		*/
+		bool keydown[255];
+
+		/*
+		boolean on whether the left mouse button is held down.
+		*/
+		bool mouse_down;
+
+		/*
+		boolean on whether the mouse is held; used to prevent crashing interfaces
+		*/
+		bool mouse_held;
+
+		/*
+		wall object containing the walls in the level.
+		*/
+		Wall levelbounds;
+
+		/*
+		shotInLevel object containing the shots on screen.
+		*/
+		ShotInLevel shots_on_screen;
+
+		/*
+		instantiate buttons in game
+		*/
+		AllButtons buttons_in_level;
+
+		/*
+		instantiate game to start at main menu
+		*/
+		game_state game_current;
+
+		/*
+		store player name.
+		*/
+		string player_name;
+
+		/*
+		store ip address.
+		*/
+		string ip_address;
+
+		/*
+		enum for game outcome.
+		*/
+		winner game_result;
+
+		connection client_server;
+
 };

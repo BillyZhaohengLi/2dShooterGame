@@ -16,5 +16,4 @@ int main( ){
 	// pass in width and height too:
 	ofSetFrameRate(40);
 	ofRunApp(new ofApp());
-
 }
