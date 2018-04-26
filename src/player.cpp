@@ -226,6 +226,34 @@ void Player::set_color(int new_red, int new_green, int new_blue) {
 	blue = new_blue;
 }
 
+int Player::get_color() {
+	if (red == 255 && green == 0 && blue == 0) {
+		return red_color;
+	}
+	else if (red == 0 && green == 255 && blue == 0) {
+		return green_color;
+	}
+	else if (red == 0 && green == 0 && blue == 255) {
+		return blue_color;
+	}
+	else if (red == 255 && green == 255 && blue == 0) {
+		return yellow_color;
+	}
+	else if (red == 255 && green == 0 && blue == 255) {
+		return magenta_color;
+	}
+	else if (red == 0 && green == 255 && blue == 255) {
+		return cyan_color;
+	}
+	else {
+		return -1;
+	}
+}
+
+pair<int, int> Player::get_facing() {
+	return pair<int, int>(facing_x, facing_y);
+}
+
 /*
 changes the player's direction based on what keys are held down. Has different outcomes based on whether the player is a bot.
 */

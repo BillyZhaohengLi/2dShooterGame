@@ -523,10 +523,20 @@ void ofApp::update_help() {
 void ofApp::update_multi_connect() {
 	enter_ip();
 	if (multiplayer_server.getNumClients() > 0) {
+		p1.set_location(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
+		p2.set_location(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
+		p2.set_bot(false);
+		multiplayer_server.send(0, "PLAYER" + to_string(p1.get_color()) + p1.get_name() +
+			"~" + to_string(p1.get_facing().first) + "~" + to_string(p1.get_facing().second));
 		client_server = HOST;
 		game_current = MULTI_MENU;
 	}
 	if (connected_to_host) {
+		p1.set_location(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
+		p2.set_location(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
+		p2.set_bot(false);
+		multiplayer_client.send("PLAYER" + to_string(p1.get_color()) + p1.get_name() +
+			"~" + to_string(p1.get_facing().first) + "~" + to_string(p1.get_facing().second));
 		client_server = CLIENT;
 		game_current = MULTI_MENU;
 	}
@@ -587,7 +597,6 @@ void ofApp::enter_ip() {
 }
 
 void ofApp::update_multi_menu() {
-	cout << multiplayer_server.getNumClients() << "\n";
 	string message;
 	if (client_server == HOST) {
 		if (multiplayer_server.getNumClients() == 0) {
@@ -595,6 +604,7 @@ void ofApp::update_multi_menu() {
 			p2.set_bot(true);
 			p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
 			connected_to_host = false;
+			client_server == NONE;
 			game_current = MAIN_MENU;
 		}
 		message = multiplayer_server.receive(0);
@@ -605,13 +615,54 @@ void ofApp::update_multi_menu() {
 			p2.set_bot(true);
 			p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
 			connected_to_host = false;
+			client_server == NONE;
 			game_current = MAIN_MENU;
 		}
 		message = multiplayer_client.receive();
 	}
 	if (message.length() > 0) {
-		string header = message.substr(0, 9);
-		if (header == "DISCONNECT") {
+		string header = message.substr(0, 6);
+		if (header == "PLAYER") {
+			//set color
+			int new_color = message.at(6) - '0';
+			cout << new_color << "\n";
+			switch (new_color) {
+			case (red_color):
+				p2.set_color(255, 0, 0);
+				break;
+			case (green_color):
+				p2.set_color(0, 255, 0);
+				break;
+			case (blue_color):
+				p2.set_color(0, 0, 255);
+				break;
+			case (yellow_color):
+				p2.set_color(255, 255, 0);
+				break;
+			case (magenta_color):
+				p2.set_color(255, 0, 255);
+				break;
+			case (cyan_color):
+				p2.set_color(0, 255, 255);
+				break;
+			}
+			//set name
+			vector<string> params;
+			for (int i = 0; i < 3; i++) {
+				params.push_back("");
+			}
+			string received = message.substr(7);
+			int cell_count = 0;
+			for (int i = 0; i < received.length(); i++) {
+				if (received[i] == '~') {
+					cell_count++;
+				}
+				else {
+					params[cell_count] += received[i];
+				}
+			}
+			p2.set_name(params[0]);
+			p2.update_player_facing(stoi(params[1]), stoi(params[2]), p1);
 		}
 	}
 	//receive message from partner
@@ -640,6 +691,7 @@ void ofApp::update_multi_menu() {
 				p2.set_bot(true);
 				p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
 				connected_to_host = false;
+				client_server == NONE;
 				game_current = MAIN_MENU;
 				break;
 				//red palette button; modifies the player color
@@ -725,6 +777,14 @@ void ofApp::update_multi_menu() {
 				break;
 			}
 		}
+	}
+	if (client_server == HOST) {
+		multiplayer_server.send(0, "PLAYER" + to_string(p1.get_color()) + p1.get_name() + 
+			"~" + to_string(p1.get_facing().first) + "~" + to_string(p1.get_facing().second));
+	}
+	else if (client_server == CLIENT) {
+		multiplayer_client.send("PLAYER" + to_string(p1.get_color()) + p1.get_name() +
+			"~" + to_string(p1.get_facing().first) + "~" + to_string(p1.get_facing().second));
 	}
 }
 
@@ -871,4 +931,6 @@ void ofApp::draw_multi_menu() {
 	p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
 	p1.draw_player();
 	p1.set_name(player_name);
+
+	p2.draw_player();
 }

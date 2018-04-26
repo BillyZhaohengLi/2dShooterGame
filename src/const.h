@@ -81,6 +81,9 @@ enum to determine game winner;
 */
 enum winner { TIE = 0, P1_WIN = 1, P2_WIN = 2 };
 
+/*
+enum for connection status of the program.
+*/
 enum connection { NONE = 0, HOST = 1, CLIENT = 2 };
 
 /*
@@ -127,6 +130,13 @@ const int cyan_button_m = 26;
 const int few_walls_m = 27;
 const int medium_walls_m = 28;
 const int a_lot_walls_m = 29;
+
+const int red_color = 0;
+const int green_color = 1;
+const int blue_color = 2;
+const int yellow_color = 3;
+const int magenta_color = 4;
+const int cyan_color = 5;
 
 /*
 constants for the amount of walls to be generated in a level; corresponds to the wall setting buttons.

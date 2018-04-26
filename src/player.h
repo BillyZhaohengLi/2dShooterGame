@@ -149,6 +149,10 @@ public:
 	*/
 	void set_color(int new_red, int new_green, int new_blue);
 
+	int get_color();
+
+	pair<int, int> get_facing();
+
 	/*
 	changes the player's direction based on what keys are held down. Has different outcomes based on whether the player is a bot.
 	*/
