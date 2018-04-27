@@ -35,12 +35,12 @@ private:
 		/*
 		the screen the button is on (main menu, etc).
 		*/
-		game_state to_show_;
+		vector<game_state> to_show_;
 
 		/*
 		conventional constructor. Ticked defaults to false.
 		*/
-		Button(int x, int y, int width, int height, int red, int green, int blue, string label, game_state to_show);
+		Button(int x, int y, int width, int height, int red, int green, int blue, string label, vector<game_state> to_show);
 
 		/*
 		check whether the point (x,y) is on a button. Also checks whether the interface the button is in matches the one the player is currently in.
@@ -62,7 +62,7 @@ public:
 	/*
 	add a button. Calls the button constructor.
 	*/
-	void add_button(int x, int y, int width, int height, int red, int green, int blue, string label, game_state to_show);
+	void add_button(int x, int y, int width, int height, int red, int green, int blue, string label, vector<game_state> to_show);
 
 	/*
 	detects whether the user's cursor is over a button. Returns the cell number of the button if it is, returns -1 otherwise.

@@ -3,7 +3,7 @@
 button constructor.
 */
 AllButtons::Button::Button(int x, int y, int width, int height, 
-	int red, int green, int blue, string label, game_state to_show) {
+	int red, int green, int blue, string label, vector<game_state> to_show) {
 	posx_ = x;
 	posy_ = y;
 	xspan_ = width;
@@ -20,9 +20,15 @@ AllButtons::Button::Button(int x, int y, int width, int height,
 check whether the point (x,y) is on a button. Also checks whether the interface the button is in matches the one the player is currently in.
 */
 bool AllButtons::Button::on_button(int x_coord, int y_coord, game_state current) {
-	return (x_coord >= posx_ && x_coord <= posx_ + xspan_ && 
-		y_coord >= posy_ && y_coord <= posy_ + yspan_ && 
-		current == to_show_);
+	if (x_coord >= posx_ && x_coord <= posx_ + xspan_ &&
+		y_coord >= posy_ && y_coord <= posy_ + yspan_) {
+		for (int i = 0; i < to_show_.size(); i++) {
+			if (to_show_[i] == current) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 /*
@@ -54,7 +60,7 @@ void AllButtons::Button::draw_button(ofxCenteredTrueTypeFont text) {
 /*
 add a button. Calls the button constructor.
 */
-void AllButtons::add_button(int x, int y, int width, int height, int red, int green, int blue, string label, game_state to_show) {
+void AllButtons::add_button(int x, int y, int width, int height, int red, int green, int blue, string label, vector<game_state> to_show) {
 	Button temp = Button(x, y, width, height, red, green, blue, label, to_show);
 	buttons_in_game.push_back(temp);
 }
@@ -76,8 +82,11 @@ draw all the buttons in the current screen.
 */
 void AllButtons::draw_button(game_state current, ofxCenteredTrueTypeFont text) {
 	for (int i = 0; i < buttons_in_game.size(); i++) {
-		if (buttons_in_game[i].to_show_ == current) {
-			buttons_in_game[i].draw_button(text);
+		for (int j = 0; j < buttons_in_game[i].to_show_.size(); j++) {
+			if (buttons_in_game[i].to_show_[j] == current) {
+				buttons_in_game[i].draw_button(text);
+				break;
+			}
 		}
 	}
 }
