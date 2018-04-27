@@ -48,10 +48,12 @@
 ### April 26:
  * Added text class (called GameText in the program) used to store text to draw in the main program. Makes the main program loop look much cleaner as well as adding future text easier as it is now done separately in the add_button_text class instead of in draw methods in the main program (renamed from add_button).
  * rewrote A LOT of code since before starting the multiplayer game there were many places where the coding style was questionable; modifications include merging some largely similar update/draw functions, rearranging some logical statements, merging similar switch cases and improving class variable naming consistency, and moving initializations/declarations of many variables in the main program into appropriate subclasses and header files.
-## Days left to work on project: 4 days
-* April 26 (half day)
-* April 27 (half day)
+ * added serialization and deserialization methods for different classes, made possible with a split by delimiter helper function taken from the previous frequencycount assignment.
+ * _TODO on April 28_ : implement the methods in the main game engine and get multiplayer going! All doubles were truncated to integers to reduce the amount of data transmitted per update call so a smooth gaming experience over LAN should not be out of the question.
+## Days left to work on project: 3 days
 * April 28 (full day)
 * April 29 (full day)
 * April 30 (half day)
-* April 31 (half day)
+* ~~April 31 (half day)~~ proof that studying CS makes you delusional; it actually took me 1 week to notice that this doesn't look right.
+* May 1 (half day)
+* May 2 (half day, but best not to make any major changes on this day; excluded for now)
