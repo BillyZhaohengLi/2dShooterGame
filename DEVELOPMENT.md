@@ -54,6 +54,6 @@
 * April 28 (full day)
 * April 29 (full day)
 * April 30 (half day)
-* ~~April 31 (half day)~~ proof that studying CS makes you delusional; it actually took me 1 week to notice that this doesn't look right.
+* ~~April 31 (half day)~~ proof that studying CS makes you delusional.
 * May 1 (half day)
 * May 2 (half day, but best not to make any major changes on this day; excluded for now)
