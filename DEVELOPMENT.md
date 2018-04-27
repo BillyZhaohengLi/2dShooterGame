@@ -47,7 +47,7 @@
  * _TODO on April 26_: implement (or at least try) the actual multiplayer game and find efficient ways of communication to minimize lag. Move text into a separate "text" class since the current main program looks rather messy with all the "draw text" lying around everywhere.
 ### April 26:
  * Added text class (called GameText in the program) used to store text to draw in the main program. Makes the main program loop look much cleaner as well as adding future text easier as it is now done separately in the add_button_text class instead of in draw methods in the main program (renamed from add_button).
- * rewrote A LOT of code since before starting the multiplayer game there were many places where the coding style was...questionable; modifications include merging some largely similar update/draw functions, rearranging some logical statements, merging similar switch cases and improving class variable naming consistency, and moving initializations/declarations of many variables in the main program into appropriate subclasses and header files.
+ * rewrote A LOT of code since before starting the multiplayer game there were many places where the coding style was questionable; modifications include merging some largely similar update/draw functions, rearranging some logical statements, merging similar switch cases and improving class variable naming consistency, and moving initializations/declarations of many variables in the main program into appropriate subclasses and header files.
 ## Days left to work on project: 4 days
 * April 26 (half day)
 * April 27 (half day)
