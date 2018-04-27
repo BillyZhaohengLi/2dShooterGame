@@ -122,8 +122,7 @@ const int multi_connect_button = 17;
 const int multi_connect_back_to_menu = 18;
 
 //multiplayer menu buttons
-const int multi_start_game_button = 19;
-const int multi_disconnect_button = 20;
+const int multi_disconnect_button = 19;
 
 /*
 constants for color codes of the player

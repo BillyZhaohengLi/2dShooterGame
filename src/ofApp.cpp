@@ -26,6 +26,7 @@ void ofApp::update(){
 		update_menu();
 		break;
 	case IN_GAME_SINGLE:
+	case IN_GAME_MULTI:
 		update_singleplayer_game();
 		break;
 	case PAUSE:
@@ -52,6 +53,7 @@ void ofApp::draw(){
 		draw_menu();
 		break;
 	case IN_GAME_SINGLE:
+	case IN_GAME_MULTI:
 	case PAUSE:
 	case ROUND_OVER:
 		draw_singleplayer_game();
@@ -79,6 +81,9 @@ void ofApp::keyPressed(int key){
 				game_current = PAUSE;
 			}
 		}
+		else if (game_current == IN_GAME_MULTI) {
+			keydown[toupper(key)] = true;
+		}
 		else if (game_current == PAUSE) {
 			//if pause is pressed during pause then resume the game
 			keydown[toupper(key)] = true;
@@ -97,6 +102,9 @@ void ofApp::keyReleased(int key){
 	if (key >= 0 && key <= 255) {
 		//sets the relevant cell in the keydown array to true
 		if (game_current == IN_GAME_SINGLE || game_current == PAUSE) {
+			keydown[toupper(key)] = false;
+		}
+		else if (game_current == IN_GAME_MULTI) {
 			keydown[toupper(key)] = false;
 		}
 		else {
@@ -186,7 +194,13 @@ void ofApp::update_menu() {
 	if (message.length() > 0) {
 		//if the message begins with "PLAYER" then it is a message to update the opponent's player model;
 		if (message.substr(0, 6) == "PLAYER") {
-			p2.deserialize_update_message(message);
+			p2.deserialize_update_model_message(message);
+		}
+		else if (message.substr(0, 6) == "START ") {
+			levelbounds.deserialize_update_message(message.substr(6));
+			p1.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+			p2.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+			game_current = IN_GAME_MULTI;
 		}
 	}
 
@@ -229,6 +243,9 @@ void ofApp::update_menu() {
 				p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
 				p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
 
+				//sends a signal and the level layout to the client.
+				multiplayer_server.send(0, "START " + levelbounds.serialized_string());
+
 				mouse_held = true;
 				entered = false;
 				game_current = IN_GAME_MULTI;
@@ -255,11 +272,6 @@ void ofApp::update_menu() {
 		//exit button; exits the program.
 		case (exit_button):
 			std::exit(0);
-			break;
-
-		//start the multiplayer game; to be implemented
-		case (multi_start_game_button):
-			mouse_held = true;
 			break;
 
 		//disconnect from the session.
@@ -316,73 +328,157 @@ void ofApp::update_menu() {
 
 	//send the data of the player to the other user.
 	if (client_server == HOST) {
-		multiplayer_server.send(0, p1.serialized_string());
+		multiplayer_server.send(0, p1.serialized_model_string());
 	}
 	else if (client_server == CLIENT) {
-		multiplayer_client.send(p1.serialized_string());
+		multiplayer_client.send(p1.serialized_model_string());
 	}
 }
 
 void ofApp::update_singleplayer_game() {
-	//reduces the firing cooldown of the players.
-	p1.cooldown_reduce();
-	p2.cooldown_reduce();
+	if (client_server == NONE) {
+		//reduces the firing cooldown of the players.
+		p1.cooldown_reduce();
+		p2.cooldown_reduce();
 
-	//determines the players' new direction based on the keys held down at this particular time.
-	p1.change_direction(keydown);
-	p2.change_direction(keydown);
+		//determines the players' new direction based on the keys held down at this particular time.
+		p1.change_direction(keydown);
+		p2.change_direction(keydown);
 
-	//after changing directions, move the players.
-	p1.move();
-	p2.move();
+		//update the direction the players' guns point at.
+		p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
+		p2.update_player_facing(ofGetMouseX(), ofGetMouseY(), p1);
 
-	//update the direction the players' guns point at.
-	p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
-	p2.update_player_facing(ofGetMouseX(), ofGetMouseY(), p1);
+		//after changing directions, move the players.
+		p1.move();
+		p2.move();
 
-	//check firing shots for both players
-	bool clear_shot = levelbounds.bot_shot_predictor(p1, p2);
-	pair<pair<bool, double>, pair<double, double>> p1_shot_params = p1.shoot_prompt(mouse_down, clear_shot);
-	pair<pair<bool, double>, pair<double, double>> p2_shot_params = p2.shoot_prompt(mouse_down, clear_shot);
-	if (p1_shot_params.first.first) {
-		shotSound.play();
-		shots_on_screen.add_shot(p1_shot_params.second.first, p1_shot_params.second.second, p1_shot_params.first.second);
+		//check firing shots for both players
+		bool clear_shot = levelbounds.bot_shot_predictor(p1, p2);
+		pair<pair<bool, double>, pair<double, double>> p1_shot_params = p1.shoot_prompt(mouse_down, clear_shot);
+		pair<pair<bool, double>, pair<double, double>> p2_shot_params = p2.shoot_prompt(mouse_down, clear_shot);
+		if (p1_shot_params.first.first) {
+			shotSound.play();
+			shots_on_screen.add_shot(p1_shot_params.second.first, p1_shot_params.second.second, p1_shot_params.first.second);
+		}
+		if (p2_shot_params.first.first) {
+			shotSound.play();
+			shots_on_screen.add_shot(p2_shot_params.second.first, p2_shot_params.second.second, p2_shot_params.first.second);
+		}
+
+		//move all shots on the screen.
+		shots_on_screen.move();
+
+		//after moving the shots, bounce all shots which have hit a wall.
+		levelbounds.bounce_shots(shots_on_screen);
+
+		//if the player collides with wall segment(s), resolve the collision(s).
+		levelbounds.collision_resolver(p1);
+		levelbounds.collision_resolver(p2);
+
+		//determine whether any of the shots hit the player.
+		shots_on_screen.hit_player(p1);
+		shots_on_screen.hit_player(p2);
+
+		//determine if either player is dead.
+		if (!p1.isalive() && !p2.isalive()) {
+			dieSound.play();
+			game_result = TIE;
+			game_current = ROUND_OVER;
+		}
+		else if (!p1.isalive()) {
+			dieSound.play();
+			game_result = P2_WIN;
+			game_current = ROUND_OVER;
+		}
+		else if (!p2.isalive()) {
+			dieSound.play();
+			game_result = P1_WIN;
+			game_current = ROUND_OVER;
+		}
 	}
-	if (p2_shot_params.first.first) {
-		shotSound.play();
-		shots_on_screen.add_shot(p2_shot_params.second.first, p2_shot_params.second.second, p2_shot_params.first.second);
+	else if (client_server == CLIENT) {
+		string message = multiplayer_client.receive();
+		if (message.size() > 0) {
+			vector<string> message_array = split(message, "G");
+			if (message_array[0] == "UPDATE") {
+				shots_on_screen.deserialize_update_message(message_array[1]);
+				p2.deserialize_update_game_message(message_array[2]);
+				p1.deserialize_update_game_message(message_array[3]);
+				if (message_array[4] == "S") {
+					shotSound.play();
+				}
+			}
+		}
+
+		string to_send = serialize_input(keydown, mouse_down, ofGetMouseX(), ofGetMouseY());
+		multiplayer_client.send(to_send);
 	}
+	else if (client_server == HOST) {
+		bool shot_fired = false;
+		//reduces the firing cooldown of the players.
+		p1.cooldown_reduce();
+		p2.cooldown_reduce();
 
-	//move all shots on the screen.
-	shots_on_screen.move();
+		//determines the players' new direction based on the keys held down at this particular time.
+		p1.change_direction(keydown);
 
-	//after moving the shots, bounce all shots which have hit a wall.
-	levelbounds.bounce_shots(shots_on_screen);
+		//update the direction the players' guns point at.
+		p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
 
-	//if the player collides with wall segment(s), resolve the collision(s).
-	levelbounds.collision_resolver(p1);
-	levelbounds.collision_resolver(p2);
+		//after changing directions, move the players.
+		p1.move();
 
-	//determine whether any of the shots hit the player.
-	shots_on_screen.hit_player(p1);
-	shots_on_screen.hit_player(p2);
+		string message = multiplayer_server.receive(0);
+		if (message.size() > 0 && (message[0] == 'T' || message[0] == 'F')) {
+			pair<pair<bool*, bool>, pair<double, double>> message_pairs = deserialize_input(message);
+			p2.change_direction(message_pairs.first.first);
+			delete message_pairs.first.first;
+			p2.update_player_facing(message_pairs.second.first, message_pairs.second.second, p1);
+			p2.move();
+			pair<pair<bool, double>, pair<double, double>> p2_shot_params = p2.shoot_prompt(message_pairs.first.second, false);
+			if (p2_shot_params.first.first) {
+				shot_fired = true;
+				shotSound.play();
+				shots_on_screen.add_shot(p2_shot_params.second.first, p2_shot_params.second.second, p2_shot_params.first.second);
+			}
+		}
+		else {
+			p2.move();
+		}
 
-	//determine if either player is dead.
-	if (!p1.isalive() && !p2.isalive()) {
-		dieSound.play();
-		game_result = TIE;
-		game_current = ROUND_OVER;
+		pair<pair<bool, double>, pair<double, double>> p1_shot_params = p1.shoot_prompt(mouse_down, false);
+		if (p1_shot_params.first.first) {
+			shot_fired = true;
+			shotSound.play();
+			shots_on_screen.add_shot(p1_shot_params.second.first, p1_shot_params.second.second, p1_shot_params.first.second);
+		}
+
+		//move all shots on the screen.
+		shots_on_screen.move();
+
+		//after moving the shots, bounce all shots which have hit a wall.
+		levelbounds.bounce_shots(shots_on_screen);
+
+		//if the player collides with wall segment(s), resolve the collision(s).
+		levelbounds.collision_resolver(p1);
+		levelbounds.collision_resolver(p2);
+
+		//determine whether any of the shots hit the player.
+		shots_on_screen.hit_player(p1);
+		shots_on_screen.hit_player(p2);
+
+		//send updated game to client
+		string to_send = ("UPDATE" + shots_on_screen.serialized_string() + p1.serialized_game_string() + p2.serialized_game_string() + "G");
+		if (shot_fired) {
+			to_send += "S";
+		}
+		else {
+			to_send += "N";
+		}
+		multiplayer_server.send(0, to_send);
 	}
-	else if (!p1.isalive()) {
-		dieSound.play();
-		game_result = P2_WIN;
-		game_current = ROUND_OVER;
-	}
-	else if (!p2.isalive()) {
-		dieSound.play();
-		game_result = P1_WIN;
-		game_current = ROUND_OVER;
-	}
+	
 }
 
 void ofApp::update_pause() {
@@ -482,7 +578,7 @@ void ofApp::update_multi_connect() {
 		p2.set_bot(false);
 
 		//send the details of the player to the other user
-		multiplayer_server.send(0, p1.serialized_string());
+		multiplayer_server.send(0, p1.serialized_model_string());
 
 		//set enums accordingly
 		client_server = HOST;
@@ -497,7 +593,7 @@ void ofApp::update_multi_connect() {
 		p2.set_bot(false);
 
 		//send the details of the player to the other user
-		multiplayer_client.send(p1.serialized_string());
+		multiplayer_client.send(p1.serialized_model_string());
 
 		//set enums accordingly
 		client_server = CLIENT;

@@ -80,3 +80,7 @@ int wall_button_to_wall_amount(int wall_button);
 splits a string into an array by a delimiter. taken from https://stackoverflow.com/questions/9435385/split-a-string-using-c11.
 */
 std::vector<std::string> split(const string& input, const string& regex);
+
+string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, double mouse_y);
+
+pair<pair<bool*, bool>, pair<double, double>> deserialize_input(string message);

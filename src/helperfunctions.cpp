@@ -236,3 +236,50 @@ std::vector<std::string> split(const string& input, const string& regex) {
 		last;
 	return { first, last };
 }
+
+string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, double mouse_y) {
+	string to_send;
+	for (int i = 0; i < 255; i++) {
+		if (keydown[i]) {
+			to_send += "T";
+		}
+		else {
+			to_send += "F";
+		}
+		to_send += "~";
+	}
+	if (mouse_down) {
+		to_send += "T";
+	}
+	else {
+		to_send += "F";
+	}
+	to_send += "~";
+	to_send += to_string(mouse_x);
+	to_send += "~";
+	to_send += to_string(mouse_y);
+	return to_send;
+}
+
+pair<pair<bool*, bool>, pair<double, double>> deserialize_input(string message) {
+	vector<string> message_array = split(message, "~");
+	bool* key_down = new bool[255];
+	for (int i = 0; i < 255; i++) {
+		if (message_array[i] == "T") {
+			key_down[i] = true;
+		}
+		else {
+			key_down[i] = false;
+		}
+	}
+	bool mouse_down;
+	if (message_array[255] == "T") {
+		mouse_down = true;
+	}
+	else {
+		mouse_down = false;
+	}
+	double mouse_x = stod(message_array[256]);
+	double mouse_y = stod(message_array[257]);
+	return pair<pair<bool*, bool>, pair<double, double>>(pair<bool*, bool> (key_down, mouse_down), pair<double, double>(mouse_x, mouse_y));
+}

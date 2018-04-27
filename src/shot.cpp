@@ -82,9 +82,11 @@ string ShotInLevel::serialized_string() {
 
 void ShotInLevel::deserialize_update_message(string message) {
 	shots_in_level.clear();
-	vector<string> message_array = split(message.substr(1, message.size() - 2), "~");
-	for (int i = 0; i < message_array.size(); i += 3) {
-		Shot temp = Shot(stoi(message_array[i]), stoi(message_array[i + 1]), stoi(message_array[i + 2]));
-		shots_in_level.push_back(temp);
+	vector<string> message_array = split(message.substr(0, message.size() - 1), "~");
+	if (message_array.size() % 3 == 0) {
+		for (int i = 0; i < message_array.size(); i += 3) {
+			Shot temp = Shot(stoi(message_array[i]), stoi(message_array[i + 1]), stoi(message_array[i + 2]));
+			shots_in_level.push_back(temp);
+		}
 	}
 }

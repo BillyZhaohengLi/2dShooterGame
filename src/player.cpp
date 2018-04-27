@@ -496,7 +496,7 @@ void Player::set_bot(bool bot) {
 /*
 deserialize a message sent over a multiplayer connection and update a player accordingly.
 */
-void Player::deserialize_update_message(string message) {
+void Player::deserialize_update_model_message(string message) {
 	vector<string> message_array = split(message.substr(6), "~");
 	//set the player's new color based on the color received.
 	switch (stoi(message_array[0])) {
@@ -537,10 +537,33 @@ void Player::deserialize_update_message(string message) {
 	facing_y = stoi(message_array[3]);
 }
 
+void Player::deserialize_update_game_message(string message) {
+	vector<string> message_array = split(message, "~");
+	xpos = stoi(message_array[0]);
+	ypos = stoi(message_array[1]);
+	facing_x = stoi(message_array[2]);
+	facing_y = stoi(message_array[3]);
+	shot_cooldown = stoi(message_array[4]);
+	if (message_array[5] == "F") {
+		alive = false;
+	}
+}
+
 /*
 send a player over the connection as a serialized string.
 */
-string Player::serialized_string() {
+string Player::serialized_model_string() {
 	string to_send = "PLAYER" + to_string(get_color()) + "~" + name + "~" + to_string(facing_x) + "~" + to_string(facing_y);
 	return to_send;
+}
+
+string Player::serialized_game_string() {
+	string to_send = "G" + to_string(round(xpos)) + "~" + to_string(round(ypos)) + "~" + to_string(round(facing_x)) +
+		"~" + to_string(round(facing_y)) + "~" + to_string(shot_cooldown) + "~";
+	if (alive) {
+		return to_send + "T";
+	}
+	else {
+		return to_send + "F";
+	}
 }

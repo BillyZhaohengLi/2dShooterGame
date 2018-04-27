@@ -189,10 +189,17 @@ public:
 	/*
 	deserialize a message sent over a multiplayer connection and update a player accordingly.
 	*/
-	void deserialize_update_message(string message);
+	void deserialize_update_model_message(string message);
 
+	void deserialize_update_game_message(string message);
 	/*
 	send a player over the connection as a serialized string.
 	*/
-	string serialized_string();
+	string serialized_model_string();
+
+	/*
+	send a player's position, direction facing, shot cooldown and whether they're alive over the connection as a serialized string.
+	*/
+	string serialized_game_string();
+
 };

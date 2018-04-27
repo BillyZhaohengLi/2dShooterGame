@@ -26,7 +26,7 @@ void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 	//start game button
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.76,
 		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Start game",
-		vector<game_state> {MAIN_MENU}, button_text);
+		vector<game_state> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//multiplayer button (doesn't do anything yet)
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.68, level_height_multiplier * wall_width * 0.76,
@@ -122,12 +122,7 @@ void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 		vector<game_state> {MULTI_CONNECT}, button_text);
 
 	//MULTIPLAYER MENU BUTTONS
-	//start game button
-	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.76,
-		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Start game", 
-		vector<game_state> {MULTI_MENU}, button_text);
-
-	//exit button; exits the game
+	//disconnect button; disconnects from the multiplayer session.
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.68, level_height_multiplier * wall_width * 0.89,
 		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Disconnect", 
 		vector<game_state> {MULTI_MENU}, button_text);
