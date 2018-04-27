@@ -49,7 +49,8 @@
  * Added text class (called GameText in the program) used to store text to draw in the main program. Makes the main program loop look much cleaner as well as adding future text easier as it is now done separately in the add_button_text class instead of in draw methods in the main program (renamed from add_button).
  * rewrote A LOT of code since before starting the multiplayer game there were many places where the coding style was questionable; modifications include merging some largely similar update/draw functions, rearranging some logical statements, merging similar switch cases and improving class variable naming consistency, and moving initializations/declarations of many variables in the main program into appropriate subclasses and header files.
  * added serialization and deserialization methods for different classes, made possible with a split by delimiter helper function taken from the previous frequencycount assignment.
- * _TODO on April 28_ : implement the methods in the main game engine and get multiplayer going! All doubles were truncated to integers to reduce the amount of data transmitted per update call so a smooth gaming experience over LAN should not be out of the question.
+ * MULTIPLAYER GAME IMPLEMENTED
+ * _TODO on April 28_ : fix the latency issues currently with the multiplayer portion of the game. All doubles were truncated to integers to reduce the amount of data transmitted per update call so a smooth gaming experience over LAN should not be out of the question.
 ## Days left to work on project: 3 days
 * April 28 (full day)
 * April 29 (full day)
