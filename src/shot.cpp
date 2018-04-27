@@ -3,8 +3,8 @@
 constructor; creates a shot at the designated x and y position with a trajectory defined by an initial angle.
 */
 ShotInLevel::Shot::Shot(double x, double y, double initial_angle) {
-	posx = x;
-	posy = y;
+	xpos_ = x;
+	ypos_ = y;
 	angle = initial_angle;
 	bounces_remaining = shot_bounces;
 }
@@ -13,8 +13,8 @@ ShotInLevel::Shot::Shot(double x, double y, double initial_angle) {
 move the shot in the direction defined by its angle; called every update.
 */
 void ShotInLevel::Shot::move() {
-	posx = posx + shot_length * cos(angle);
-	posy = posy + shot_length * sin(angle);
+	xpos_ = xpos_ + shot_length * cos(angle);
+	ypos_ = ypos_ + shot_length * sin(angle);
 }
 
 /*
@@ -22,14 +22,14 @@ draw the shot using ofDrawCircle.
 */
 void ShotInLevel::Shot::draw_shot() {
 	ofSetColor(255, 0, 0);
-	ofDrawCircle(posx, posy, shot_radius);
+	ofDrawCircle(xpos_, ypos_, shot_radius);
 }
 
 /*
 add a shot at the specified location traveling in a specified angle. Calls the Shot constructor.
 */
-void ShotInLevel::add_shot(double x, double y, double initial_angle) {
-	shots_in_level.push_back(Shot(x, y, initial_angle));
+void ShotInLevel::add_shot(double xpos, double ypos, double initial_angle) {
+	shots_in_level.push_back(Shot(xpos, ypos, initial_angle));
 }
 
 /*
@@ -57,8 +57,8 @@ void ShotInLevel::hit_player(Player &player_to_check) {
 	pair<double, double> player_location = player_to_check.get_location();
 	//easy pre-calc content; the player is hit by a shot if the distance between the player and the shot is less than the sum of the two radii.
 	for (int i = 0; i < shots_in_level.size(); i++) {
-		double x_dist = shots_in_level[i].posx - player_location.first;
-		double y_dist = shots_in_level[i].posy - player_location.second;
+		double x_dist = shots_in_level[i].xpos_ - player_location.first;
+		double y_dist = shots_in_level[i].ypos_ - player_location.second;
 		if (sqrt(x_dist * x_dist + y_dist * y_dist) < (player_radius + shot_radius)) {
 			player_to_check.kill_player();
 		}

@@ -73,7 +73,7 @@ public:
 	/*
 	constructor; create a player at the specified x and y coordinates with color rgb.
 	*/
-	Player(double x, double y, int r, int g, int b, bool bot, string text);
+	Player(double x, double y, int palette, bool bot, string text);
 
 	/*
 	returns the player's location as a pair of doubles.
@@ -106,9 +106,9 @@ public:
 	void kill_player();
 
 	/*
-	revives the player (sets alive to true). Called at the start of every round.
+	resets the player (sets alive to true) at a given location and puts their weapon on cooldown (basically prepared for a new game).
 	*/
-	void revive_player();
+	void reset_player(double new_x, double new_y);
 	
 	/*
 	updates the direction the player is facing (used to draw the player's gun). Has different outcomes based on whether the player is a bot.
@@ -145,9 +145,9 @@ public:
 	string get_name();
 
 	/*
-	sets the player's color.
+	sets the player's color via a color palette.
 	*/
-	void set_color(int new_red, int new_green, int new_blue);
+	void set_color(int color_palette);
 
 	/*
 	get the color of the player as an integer; each integer represents a color (since there are only 6 colors anyways)

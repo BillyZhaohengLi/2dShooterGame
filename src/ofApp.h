@@ -6,7 +6,8 @@
 #include "const.h"
 #include "shot.h"
 #include "button.h"
-#include "add_buttons.h"
+#include "gametext.h"
+#include "add_buttons_text.h"
 #include "ofxCenteredTrueTypeFont.h"
 #include "ofxNetwork.h"
 #include <mmsystem.h>
@@ -32,7 +33,6 @@ class ofApp : public ofBaseApp{
 		
 		//update helper functions
 		void update_menu();
-		void update_multi_menu();
 		void update_singleplayer_game();
 		void update_pause();
 		void update_round_over();
@@ -41,28 +41,19 @@ class ofApp : public ofBaseApp{
 
 		//draw helper functions
 		void draw_menu();
-		void draw_multi_menu();
 		void draw_singleplayer_game();
-		void draw_pause();
-		void draw_round_over();
-		void draw_help();
 		void draw_multi_connect();
 
 		//sounds to be used in game
 		ofSoundPlayer shotSound;
 		ofSoundPlayer dieSound;
 
-		//fonts to be used in game
-		ofxCenteredTrueTypeFont game_title_text;
-		ofxCenteredTrueTypeFont button_text;
-		ofxCenteredTrueTypeFont character_name;
-
 		//tcp server and client; used for multiplayer
 		ofxTCPServer multiplayer_server;
 		ofxTCPClient multiplayer_client;
 
-		//boolean for whether the user is connected to a host. Only used as a signal to switch to the multiplayer main menu.
-		bool connected_to_host;
+		//boolean for whether the user is connected to a host. Only used as a signal to switch to the multiplayer main menu. By default not connected.
+		bool connected_to_host = false;
 
 		//array of booleans used to store which keys are held down.
 		bool keydown[255];
@@ -74,14 +65,14 @@ class ofApp : public ofBaseApp{
 		bool mouse_held;
 
 		//boolean for handling player input for player name in main menu; used to prevent multiple keys being entered with one press
-		//due to how fast update is called.
-		bool entered;
+		//due to how fast update is called. By default nothing has been entered yet.
+		bool entered = false;
 
-		//boolean for handling whether the player is in multiplayer mode.
-		bool in_multi;
+		//boolean for handling whether the player is in multiplayer mode. Game defaults to starting in singleplayer.
+		bool in_multi = false;
 
-		//the amount of walls to generate in a level when the start button is clicked.
-		int walls_amount;
+		//the amount of walls to generate in a level when the start button is clicked. Defaults to the minimum option.
+		int walls_amount = few_walls_amount;
 
 		//wall object containing the walls in the level.
 		Wall levelbounds;
@@ -89,11 +80,14 @@ class ofApp : public ofBaseApp{
 		//shotInLevel object containing the shots on screen.
 		ShotInLevel shots_on_screen;
 
-		//instantiate buttons in game
+		//buttons in game
 		AllButtons buttons_in_level;
 
-		//instantiate game to start at main menu
-		game_state game_current;
+		//text in game
+		AllText text_in_level;
+
+		//the current interface the program is in. instantiated to start at main menu
+		game_state game_current = MAIN_MENU;
 
 		//store player name.
 		string player_name;
@@ -104,10 +98,10 @@ class ofApp : public ofBaseApp{
 		//enum for game outcome.
 		winner game_result;
 
-		//enum for the state of the program; used to handle communication based on whether the program is a client or a host.
-		connection client_server;
+		//enum for the state of the program; used to handle communication based on whether the program is a client or a host. By default the program is neither.
+		connection client_server = NONE;
 
 		//players in the game. By default p1 is the player character and p2 is a bot.
-		Player p1 = Player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width, 0, 0, 255, false, "default");
-		Player p2 = Player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5, 0, 0, 255, true, "default");
+		Player p1 = Player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4, blue_button, false, "default");
+		Player p2 = Player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5, blue_button, true, "default");
 };

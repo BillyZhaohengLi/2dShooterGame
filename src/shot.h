@@ -17,12 +17,12 @@ public:
 		/*
 		the shot's x coordinate.
 		*/
-		double posx;
+		double xpos_;
 
 		/*
 		the shot's y coordinate.
 		*/
-		double posy;
+		double ypos_;
 
 		/*
 		the angle of the shot's trajectory.
@@ -56,14 +56,9 @@ public:
 	vector<Shot> shots_in_level;
 
 	/*
-	empty constructor.
-	*/
-	ShotInLevel() { vector<Shot> shots_in_level; };
-
-	/*
 	add a shot at the specified location traveling in a specified angle. Calls the Shot constructor.
 	*/
-	void add_shot(double posx, double posy, double angle);
+	void add_shot(double xpos, double ypos, double angle);
 
 	/*
 	moves all shots in the level; calls the move function for each individual shot.

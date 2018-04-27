@@ -124,16 +124,10 @@ const int multi_connect_back_to_menu = 18;
 //multiplayer menu buttons
 const int multi_start_game_button = 19;
 const int multi_disconnect_button = 20;
-const int red_button_m = 21;
-const int green_button_m = 22;
-const int blue_button_m = 23;
-const int yellow_button_m = 24;
-const int magenta_button_m = 25;
-const int cyan_button_m = 26;
-const int few_walls_m = 27;
-const int medium_walls_m = 28;
-const int a_lot_walls_m = 29;
 
+/*
+constants for color codes of the player
+*/
 const int red_color = 0;
 const int green_color = 1;
 const int blue_color = 2;

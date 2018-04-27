@@ -2,16 +2,14 @@
 /*
 constructor; create a player at the specified x and y coordinates with color rgb.
 */
-Player::Player(double x, double y, int r, int g, int b, bool bot, string text) {
+Player::Player(double x, double y, int palette, bool bot, string text) {
 	xpos = x;
 	ypos = y;
-	red = r;
-	green = g;
-	blue = b;
+	set_color(palette);
 	alive = true;
 	facing = STOP;
 	shot_cooldown = 10;
-	name = text;
+	set_name(text);
 	is_bot = bot;
 	facing_x = 0;
 	facing_y = 0;
@@ -96,10 +94,13 @@ void Player::kill_player() {
 }
 
 /*
-revives the player (sets alive to true). Called at the start of every round.
+revives the player (sets alive to true) at a given location and puts their weapon on cooldown (basically prepared for a new game).
 */
-void Player::revive_player() {
+void Player::reset_player(double new_x, double new_y) {
 	alive = true;
+	shot_cooldown = player_shot_cooldown / 2;
+	xpos = new_x;
+	ypos = new_y;
 }
 
 /*
@@ -218,12 +219,47 @@ string Player::get_name() {
 }
 
 /*
-sets the player's color.
+sets the player's color via a color palette.
 */
-void Player::set_color(int new_red, int new_green, int new_blue) {
-	red = new_red;
-	green = new_green;
-	blue = new_blue;
+void Player::set_color(int color_palette) {
+	switch (color_palette) {
+		//red
+	case (red_button):
+		red = 255;
+		blue = 0;
+		green = 0;
+		break;
+		//blue
+	case (blue_button):
+		red = 0;
+		blue = 255;
+		green = 0;
+		break;
+		//green
+	case (green_button):
+		red = 0;
+		blue = 0;
+		green = 255;
+		break;
+		//yellow
+	case (yellow_button):
+		red = 255;
+		blue = 255;
+		green = 0;
+		break;
+		//magenta
+	case (magenta_button):
+		red = 255;
+		blue = 0;
+		green = 255;
+		break;
+		//cyan
+	case (cyan_button):
+		red = 0;
+		blue = 255;
+		green = 255;
+		break;
+	}
 }
 
 int Player::get_color() {
@@ -447,45 +483,7 @@ void Player::randomize_name() {
 sets randomized colors for bots.
 */
 void Player::randomize_color() {
-	int roll_dice = rand() % 6;
-	switch (roll_dice) {
-	//red
-	case(0):
-		red = 255;
-		blue = 0;
-		green = 0;
-		break;
-	//blue
-	case(1):
-		red = 0;
-		blue = 255;
-		green = 0;
-		break;
-	//green
-	case(2):
-		red = 0;
-		blue = 0;
-		green = 255;
-		break;
-	//yellow
-	case(3):
-		red = 255;
-		blue = 255;
-		green = 0;
-		break;
-	//magenta
-	case(4):
-		red = 255;
-		blue = 0;
-		green = 255;
-		break;
-	//cyan
-	case(5):
-		red = 0;
-		blue = 255;
-		green = 255;
-		break;
-	}
+	set_color(rand() % 6 + red_button);
 }
 
 /*

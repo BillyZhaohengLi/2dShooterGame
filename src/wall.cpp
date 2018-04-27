@@ -2,11 +2,11 @@
 /*
 constructor; create a wall segment at the specified location with specified width and height.
 */
-Wall::WallSegment::WallSegment(int x_left, int y_up, int x_span, int y_span) {
-	x_left_ = x_left;
-	x_span_ = x_span;
-	y_up_ = y_up;
-	y_span_ = y_span;
+Wall::WallSegment::WallSegment(int xpos, int ypos, int xspan, int yspan) {
+	xpos_ = xpos;
+	xspan_ = xspan;
+	ypos_ = ypos;
+	yspan_ = yspan;
 }
 
 /*
@@ -22,114 +22,114 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 	//convert the player coordinates and the four corners of the wall segment into points; check for collision
 	//between the player and the four sides defined by the four points of the wall segment.
 	Point player_location = Point(temp.first, temp.second);
-	Point wall_NW = Point(x_left_, y_up_);
-	Point wall_NE = Point(x_left_ + x_span_, y_up_);
-	Point wall_SW = Point(x_left_, y_up_ + y_span_);
-	Point wall_SE = Point(x_left_ + x_span_, y_up_ + y_span_);
+	Point wall_NW = Point(xpos_, ypos_);
+	Point wall_NE = Point(xpos_ + xspan_, ypos_);
+	Point wall_SW = Point(xpos_, ypos_ + yspan_);
+	Point wall_SE = Point(xpos_ + xspan_, ypos_ + yspan_);
 	//the player collides with the north wall
 	if (line_segment_circle(wall_NW, wall_NE, player_location, player_radius)) {
 		//if circle is above wall
-		if (p_y < y_up_) {
+		if (p_y < ypos_) {
 			collided = true;
 			//touching wall at corner; trig knowledge alert
 			//resolves the collision by pushing the player in the direction that requires the least distance moved to resolve the collision.
-			if (p_x < x_left_) {
-				double x_dif = x_left_ - p_x;
-				double y_dif = y_up_ - p_y;
+			if (p_x < xpos_) {
+				double x_dif = xpos_ - p_x;
+				double y_dif = ypos_ - p_y;
 				double angle = atan(y_dif / x_dif);
-				double new_x = x_left_ - player_radius * cos(angle) - epsilon;
-				double new_y = y_up_ - player_radius * sin(angle) - epsilon;
+				double new_x = xpos_ - player_radius * cos(angle) - epsilon;
+				double new_y = ypos_ - player_radius * sin(angle) - epsilon;
 				player_moving.set_location(new_x, new_y);
 			}
-			else if (p_x > x_left_ + x_span_) {
-				double x_dif = p_x - x_left_ - x_span_;
-				double y_dif = y_up_ - p_y;
+			else if (p_x > xpos_ + xspan_) {
+				double x_dif = p_x - xpos_ - xspan_;
+				double y_dif = ypos_ - p_y;
 				double angle = atan(y_dif / x_dif);
-				double new_x = x_left_ + x_span_ + player_radius * cos(angle) + epsilon;
-				double new_y = y_up_ - player_radius * sin(angle) - epsilon;
+				double new_x = xpos_ + xspan_ + player_radius * cos(angle) + epsilon;
+				double new_y = ypos_ - player_radius * sin(angle) - epsilon;
 				player_moving.set_location(new_x, new_y);
 			}
 			//touching wall at side. Pushes the player outwards.
 			else {
-				player_moving.set_location(p_x, y_up_ - player_radius - epsilon);
+				player_moving.set_location(p_x, ypos_ - player_radius - epsilon);
 			}
 		}
 	}
 	//the player collides with the south wall
 	if (line_segment_circle(wall_SW, wall_SE, player_location, player_radius)) {
 		//if circle is below wall
-		if (p_y > y_up_ + y_span_) {
+		if (p_y > ypos_ + yspan_) {
 			collided = true;
 			//touching wall at corner; trig knowledge alert
-			if (p_x < x_left_) {
-				double x_dif = x_left_ - p_x;
-				double y_dif = p_y - y_up_ - y_span_;
+			if (p_x < xpos_) {
+				double x_dif = xpos_ - p_x;
+				double y_dif = p_y - ypos_ - yspan_;
 				double angle = atan(y_dif / x_dif);
-				double new_x = x_left_ - player_radius * cos(angle) - epsilon;
-				double new_y = y_up_ + y_span_ + player_radius * sin(angle) + epsilon;
+				double new_x = xpos_ - player_radius * cos(angle) - epsilon;
+				double new_y = ypos_ + yspan_ + player_radius * sin(angle) + epsilon;
 				player_moving.set_location(new_x, new_y);
 			}
-			else if (p_x > x_left_ + x_span_) {
-				double x_dif = p_x - x_left_ - x_span_;
-				double y_dif = p_y - y_up_ - y_span_;
+			else if (p_x > xpos_ + xspan_) {
+				double x_dif = p_x - xpos_ - xspan_;
+				double y_dif = p_y - ypos_ - yspan_;
 				double angle = atan(y_dif / x_dif);
-				double new_x = x_left_ + x_span_ + player_radius * cos(angle) + epsilon;
-				double new_y = y_up_ + y_span_ + player_radius * sin(angle) + epsilon;
+				double new_x = xpos_ + xspan_ + player_radius * cos(angle) + epsilon;
+				double new_y = ypos_ + yspan_ + player_radius * sin(angle) + epsilon;
 				player_moving.set_location(new_x, new_y);
 			}
 			else {
-				player_moving.set_location(p_x, y_up_ + y_span_ + player_radius + epsilon);
+				player_moving.set_location(p_x, ypos_ + yspan_ + player_radius + epsilon);
 			}
 		}
 	}
 	//the player collides with the west wall
 	if (line_segment_circle(wall_NW, wall_SW, player_location, player_radius)) {
 		//if circle is left of wall
-		if (p_x < x_left_) {
+		if (p_x < xpos_) {
 			collided = true;
-			if (p_y < y_up_) {
-				double x_dif = x_left_ - p_x;
-				double y_dif = y_up_ - p_y;
+			if (p_y < ypos_) {
+				double x_dif = xpos_ - p_x;
+				double y_dif = ypos_ - p_y;
 				double angle = atan(y_dif / x_dif);
-				double new_x = x_left_ - player_radius * cos(angle) - epsilon;
-				double new_y = y_up_ - player_radius * sin(angle) - epsilon;
+				double new_x = xpos_ - player_radius * cos(angle) - epsilon;
+				double new_y = ypos_ - player_radius * sin(angle) - epsilon;
 				player_moving.set_location(new_x, new_y);
-			} else if (p_y > y_up_ + y_span_) {
-				double x_dif = x_left_ - p_x;
-				double y_dif = p_y - y_up_ - y_span_;
+			} else if (p_y > ypos_ + yspan_) {
+				double x_dif = xpos_ - p_x;
+				double y_dif = p_y - ypos_ - yspan_;
 				double angle = atan(y_dif / x_dif);
-				double new_x = x_left_ - player_radius * cos(angle) - epsilon;
-				double new_y = y_up_ + y_span_ + player_radius * sin(angle) + epsilon;
+				double new_x = xpos_ - player_radius * cos(angle) - epsilon;
+				double new_y = ypos_ + yspan_ + player_radius * sin(angle) + epsilon;
 				player_moving.set_location(new_x, new_y);
 			}
 			else {
-				player_moving.set_location(x_left_ - player_radius - epsilon, p_y);
+				player_moving.set_location(xpos_ - player_radius - epsilon, p_y);
 			}
 		}
 	}
 	//the player collides with the east wall
 	if (line_segment_circle(wall_NE, wall_SE, player_location, player_radius)) {
 		//if circle is right of wall
-		if (p_x > x_left_ + x_span_) {
+		if (p_x > xpos_ + xspan_) {
 			collided = true;
-			if (p_y < y_up_) {
-				double x_dif = p_x - x_left_ - x_span_;
-				double y_dif = y_up_ - p_y;
+			if (p_y < ypos_) {
+				double x_dif = p_x - xpos_ - xspan_;
+				double y_dif = ypos_ - p_y;
 				double angle = atan(y_dif / x_dif);
-				double new_x = x_left_ + x_span_ + player_radius * cos(angle) + epsilon;
-				double new_y = y_up_ - player_radius * sin(angle) - epsilon;
+				double new_x = xpos_ + xspan_ + player_radius * cos(angle) + epsilon;
+				double new_y = ypos_ - player_radius * sin(angle) - epsilon;
 				player_moving.set_location(new_x, new_y);
 			}
-			else if (p_y > y_up_ + y_span_) {
-				double x_dif = p_x - x_left_ - x_span_;
-				double y_dif = p_y - y_up_ - y_span_;
+			else if (p_y > ypos_ + yspan_) {
+				double x_dif = p_x - xpos_ - xspan_;
+				double y_dif = p_y - ypos_ - yspan_;
 				double angle = atan(y_dif / x_dif);
-				double new_x = x_left_ + x_span_ + player_radius * cos(angle) + epsilon;
-				double new_y = y_up_ + y_span_ + player_radius * sin(angle) + epsilon;
+				double new_x = xpos_ + xspan_ + player_radius * cos(angle) + epsilon;
+				double new_y = ypos_ + yspan_ + player_radius * sin(angle) + epsilon;
 				player_moving.set_location(new_x, new_y);
 			}
 			else {
-				player_moving.set_location(x_left_ + x_span_ + player_radius + epsilon, p_y);
+				player_moving.set_location(xpos_ + xspan_ + player_radius + epsilon, p_y);
 			}
 		}
 	}
@@ -147,12 +147,12 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	//generate 6 points; two based on the shot's current and previous locations, four based on the four corners of the wall.
 	//check for collision between the shot and the four sides defined by the four points of the wall segment.
 	//if a bounce occurs, the remaining bounces for the shot is decreased by one.
-	Point shot_before = Point(to_bounce.posx - shot_length * cos(to_bounce.angle), to_bounce.posy - shot_length * sin(to_bounce.angle));
-	Point shot_now = Point(to_bounce.posx, to_bounce.posy);
-	Point wall_NW = Point(x_left_, y_up_);
-	Point wall_NE = Point(x_left_ + x_span_, y_up_);
-	Point wall_SW = Point(x_left_, y_up_ + y_span_);
-	Point wall_SE = Point(x_left_ + x_span_, y_up_ + y_span_);
+	Point shot_before = Point(to_bounce.xpos_ - shot_length * cos(to_bounce.angle), to_bounce.ypos_ - shot_length * sin(to_bounce.angle));
+	Point shot_now = Point(to_bounce.xpos_, to_bounce.ypos_);
+	Point wall_NW = Point(xpos_, ypos_);
+	Point wall_NE = Point(xpos_ + xspan_, ypos_);
+	Point wall_SW = Point(xpos_, ypos_ + yspan_);
+	Point wall_SE = Point(xpos_ + xspan_, ypos_ + yspan_);
 
 	//the shot trajectory intersects the west wall
 	if (doIntersect(shot_before, shot_now, wall_NW, wall_SW)) {
@@ -160,7 +160,7 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 		if (to_bounce.angle >= -pi / 2 && to_bounce.angle <= pi / 2) {
 			bounced = true;
 			to_bounce.bounces_remaining--;
-			to_bounce.posx = x_left_ * 2 - to_bounce.posx;
+			to_bounce.xpos_ = xpos_ * 2 - to_bounce.xpos_;
 			if (to_bounce.angle <= 0) {
 				to_bounce.angle = -pi - to_bounce.angle;
 			}
@@ -176,7 +176,7 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 		if (to_bounce.angle <= -pi / 2 || to_bounce.angle >= pi / 2) {
 			bounced = true;
 			to_bounce.bounces_remaining--;
-			to_bounce.posx = (x_left_ + x_span_) * 2 - to_bounce.posx;
+			to_bounce.xpos_ = (xpos_ + xspan_) * 2 - to_bounce.xpos_;
 			if (to_bounce.angle <= -pi / 2) {
 				to_bounce.angle = -pi - to_bounce.angle;
 			}
@@ -191,7 +191,7 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 		if (to_bounce.angle >= 0) {
 			to_bounce.bounces_remaining--;
 			bounced = true;
-			to_bounce.posy = y_up_ * 2 - to_bounce.posy;
+			to_bounce.ypos_ = ypos_ * 2 - to_bounce.ypos_;
 			to_bounce.angle = -to_bounce.angle;
 		}
 	}
@@ -201,7 +201,7 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 		if (to_bounce.angle <= 0) {
 			to_bounce.bounces_remaining--;
 			bounced = true;
-			to_bounce.posy = (y_up_ + y_span_) * 2 - to_bounce.posy;
+			to_bounce.ypos_ = (ypos_ + yspan_) * 2 - to_bounce.ypos_;
 			to_bounce.angle = -to_bounce.angle;
 		}
 	}
@@ -218,10 +218,10 @@ bool Wall::bot_shot_predictor(Player p1, Player p2) {
 
 	//if the line segment intersect one of the borders of any wall then the shot is obstructed
 	for (int i = 0; i < walls.size(); i++) {
-		Point wall_NW = Point(walls[i].x_left_, walls[i].y_up_);
-		Point wall_NE = Point(walls[i].x_left_ + walls[i].x_span_, walls[i].y_up_);
-		Point wall_SW = Point(walls[i].x_left_, walls[i].y_up_ + walls[i].y_span_);
-		Point wall_SE = Point(walls[i].x_left_ + walls[i].x_span_, walls[i].y_up_ + walls[i].y_span_);
+		Point wall_NW = Point(walls[i].xpos_, walls[i].ypos_);
+		Point wall_NE = Point(walls[i].xpos_ + walls[i].xspan_, walls[i].ypos_);
+		Point wall_SW = Point(walls[i].xpos_, walls[i].ypos_ + walls[i].yspan_);
+		Point wall_SE = Point(walls[i].xpos_ + walls[i].xspan_, walls[i].ypos_ + walls[i].yspan_);
 		if (doIntersect(point_1, point_2, wall_NW, wall_NE) || doIntersect(point_1, point_2, wall_NW, wall_SW)
 			|| doIntersect(point_1, point_2, wall_SW, wall_SE) || doIntersect(point_1, point_2, wall_NE, wall_SE)) {
 			return true;
@@ -248,8 +248,8 @@ void Wall::add_boundary() {
 /*
 add a new wall into the level.
 */
-void Wall::add_wall(int x_left, int y_up, int x_right, int y_down) {
-	walls.push_back(WallSegment(x_left, y_up, x_right, y_down));
+void Wall::add_wall(int xpos, int ypos, int xspan, int yspan) {
+	walls.push_back(WallSegment(xpos, ypos, xspan, yspan));
 }
 
 /*
@@ -258,7 +258,7 @@ draw all walls in the level calling ofDrawRectangle for each wall segment.
 void Wall::draw_all_walls() {
 	ofSetColor(0, 0, 0);
 	for (WallSegment i : walls) {
-		ofDrawRectangle(i.x_left_, i.y_up_, i.x_span_, i.y_span_);
+		ofDrawRectangle(i.xpos_, i.ypos_, i.xspan_, i.yspan_);
 	}
 }
 
@@ -463,8 +463,8 @@ bool Wall::intersect(int newx, int newy, int newwidth, int newheight) {
 	Point new_wall_2 = Point(newx + newwidth, newy + newheight);
 	for (int i = 0; i < walls.size(); i++) {
 		//create points defining existing wall segments
-		Point current_wall_1 = Point(walls[i].x_left_, walls[i].y_up_);
-		Point current_wall_2 = Point(walls[i].x_left_ + walls[i].x_span_, walls[i].y_up_ + walls[i].y_span_);
+		Point current_wall_1 = Point(walls[i].xpos_, walls[i].ypos_);
+		Point current_wall_2 = Point(walls[i].xpos_ + walls[i].xspan_, walls[i].ypos_ + walls[i].yspan_);
 		if (rectOverlap(new_wall_1, new_wall_2, current_wall_1, current_wall_2)) {
 			return true;
 		}
@@ -481,8 +481,8 @@ bool Wall::intersect_with_spawn(int newx, int newy, int newwidth, int newheight)
 	Point new_wall_2 = Point(newx + newwidth, newy + newheight);
 	for (int i = 0; i < walls.size(); i++) {
 		//create points defining existing wall segments
-		Point current_wall_1 = Point(walls[i].x_left_, walls[i].y_up_);
-		Point current_wall_2 = Point(walls[i].x_left_ + walls[i].x_span_, walls[i].y_up_ + walls[i].y_span_);
+		Point current_wall_1 = Point(walls[i].xpos_, walls[i].ypos_);
+		Point current_wall_2 = Point(walls[i].xpos_ + walls[i].xspan_, walls[i].ypos_ + walls[i].yspan_);
 		if (rectOverlap(new_wall_1, new_wall_2, current_wall_1, current_wall_2)) {
 			return true;
 		}

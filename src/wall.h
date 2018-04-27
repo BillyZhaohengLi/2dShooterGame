@@ -19,27 +19,27 @@ private:
 		/*
 		the x coordinate of the left side of the wall.
 		*/
-		int x_left_;
+		int xpos_;
 
 		/*
 		the width of the wall.
 		*/
-		int x_span_;
+		int xspan_;
 
 		/*
 		the y coordinate of the top side of the wall.
 		*/
-		int y_up_;
+		int ypos_;
 
 		/*
 		the height of the wall.
 		*/
-		int y_span_;
+		int yspan_;
 
 		/*
 		constructor; create a wall segment at the specified location with specified width and height.
 		*/
-		WallSegment(int x_left, int y_up, int x_span, int y_span);
+		WallSegment(int xpos, int ypos, int xspan, int yspan);
 
 		/*
 		handles collision between a wall segment and the player; if the player is in contact with the wall push them out.
@@ -58,11 +58,6 @@ private:
 	vector<WallSegment> walls;
 public:
 	/*
-	default constructor.
-	*/
-	Wall() { vector<WallSegment> walls(); };
-
-	/*
 	add 4 wall segments into the level representing the four sides of the level, "boxing" the player in.
 	*/
 	void add_boundary();
@@ -70,7 +65,7 @@ public:
 	/*
 	add a new wall into the level.
 	*/
-	void add_wall(int x_left, int y_up, int x_span, int y_span);
+	void add_wall(int xpos, int ypos, int xspan, int yspan);
 
 	/*
 	draw all walls in the level calling ofDrawRectangle for each wall segment.

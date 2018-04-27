@@ -1,9 +1,16 @@
 #include "helperfunctions.h"
+/*
+constructor; construct a new point (x,y).
+*/
 Point::Point(double xval, double yval) {
 	x = xval;
 	y = yval;
 }
 
+/*
+check whether point r is on line segment pq.
+*/
+//code from https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/.
 bool onSegment(Point p, Point q, Point r)
 {
 	if (q.x <= std::max(p.x, r.x) && q.x >=  std::min(p.x, r.x) &&
@@ -13,6 +20,10 @@ bool onSegment(Point p, Point q, Point r)
 	return false;
 }
 
+/*
+returns the orientation of triangle pqr defined as whether tracing the triangle in such a manner is CW or CCW motion.
+*/
+//code from https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/.
 int orientation(Point p, Point q, Point r)
 {
 	// See https://www.geeksforgeeks.org/orientation-3-ordered-points/
@@ -25,6 +36,10 @@ int orientation(Point p, Point q, Point r)
 	return (val > 0) ? 1 : 2; // clock or counterclock wise
 }
 
+/*
+detect whether line segments p1q1 and p2q2 intersect.
+*/
+//code from https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/.
 bool doIntersect(Point p1, Point q1, Point p2, Point q2)
 {
 	// Find the four orientations needed for general and
@@ -54,11 +69,17 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2)
 	return false; // Doesn't fall in any of the above cases
 }
 
+/*
+detect whether the line segment p1p2 and circle centered at point circ with a specified radius intersect.
+*/
 bool line_segment_circle(Point p1, Point p2, Point circ, double radius) {
 	double dist = FindDistanceToSegment(p1.x, p1.y, p2.x, p2.y, circ.x, circ.y);
 	return dist < radius;
 }
 
+/*
+find distance of (pointX, pointY) to line segment((x1, y1), (x2, y2)).
+*/
 //from http://www.cprogramto.com/c-program-to-find-shortest-distance-between-point-and-line-segment/.
 double FindDistanceToSegment(double x1, double y1, double x2, double y2, double pointX, double pointY)
 {
@@ -185,4 +206,21 @@ pair<bool, string> enter_ip(bool entered, string ip_address, bool keydown[255]) 
 		entered = false;
 	}
 	return pair<bool, string>(entered, ip_address);
+}
+
+/*
+helper function to convert the wall setting pressed to the actual amount of walls.
+*/
+int wall_button_to_wall_amount(int wall_button) {
+	switch (wall_button) {
+	case (few_walls):
+		return few_walls_amount;
+		break;
+	case (medium_walls):
+		return medium_walls_amount;
+		break;
+	case (a_lot_walls):
+		return a_lot_walls_amount;
+		break;
+	}
 }
