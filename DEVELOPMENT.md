@@ -51,6 +51,8 @@
  * added serialization and deserialization methods for different classes, made possible with a split by delimiter helper function taken from the previous frequencycount assignment.
  * MULTIPLAYER GAME IMPLEMENTED!!! Used approximations of double values to int to reduce lag in multiplayer game, but as observed there is minimal impact on gameplay.
  * _TODO on April 28_ : finishing implementing pause, gameover and exception handling for the multiplayer game. 
+### April 27:
+ * added appropriate functions for the restart and rematch buttons when pressed in multiplayer. Multiplayer game engine now correctly handles "gameover" moments when not both of the players are alive.
  ## Days left to work on project: 3 days
 * April 28 (full day)
 * April 29 (full day)
