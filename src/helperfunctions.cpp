@@ -237,6 +237,9 @@ std::vector<std::string> split(const string& input, const string& regex) {
 	return { first, last };
 }
 
+/*
+serialize player input consisting of keys pressed, whether the mouse button is held and the mouse position into a string to send through a connection.
+*/
 string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, double mouse_y) {
 	string to_send;
 	if (keydown['W']) {
@@ -274,13 +277,21 @@ string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, doubl
 		to_send += "F";
 	}
 	to_send += "~";
-	to_send += to_string(round(mouse_x));
+	to_send += to_string(mouse_x);
 	to_send += "~";
-	to_send += to_string(round(mouse_y));
+	to_send += to_string(mouse_y);
 	return to_send;
 }
 
-pair<pair<vector<bool>, bool>, pair<int, int>> deserialize_input(string message) {
+/*
+deserialize a player input string consisting of keys pressed, whether the mouse button is held and the mouse position received through a connection.
+returns an ugly data structure, with the contents being the following in this order:
+1. boolean vector of keys pressed
+2. boolean of whether the mouse is pressed
+3. the mouse's x position
+4. the mouse's y position
+*/
+pair<pair<vector<bool>, bool>, pair<double, double>> deserialize_input(string message) {
 	vector<string> message_array = split(message, "~");
 	vector<bool> key_down;
 	for (int i = 0; i < 4; i++) {
@@ -300,5 +311,5 @@ pair<pair<vector<bool>, bool>, pair<int, int>> deserialize_input(string message)
 	}
 	double mouse_x = stoi(message_array[5]);
 	double mouse_y = stoi(message_array[6]);
-	return pair<pair<vector<bool>, bool>, pair<int, int>>(pair<vector<bool>, bool> (key_down, mouse_down), pair<int, int>(mouse_x, mouse_y));
+	return pair<pair<vector<bool>, bool>, pair<double, double>>(pair<vector<bool>, bool> (key_down, mouse_down), pair<double, double>(mouse_x, mouse_y));
 }

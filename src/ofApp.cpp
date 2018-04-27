@@ -33,6 +33,7 @@ void ofApp::update(){
 		update_pause();
 		break;
 	case ROUND_OVER:
+	case MULTI_ROUND_OVER:
 		update_round_over();
 		break;
 	case HELP:
@@ -56,6 +57,7 @@ void ofApp::draw(){
 	case IN_GAME_MULTI:
 	case PAUSE:
 	case ROUND_OVER:
+	case MULTI_ROUND_OVER:
 		draw_singleplayer_game();
 		break;
 	case MULTI_CONNECT:
@@ -336,6 +338,7 @@ void ofApp::update_menu() {
 }
 
 void ofApp::update_singleplayer_game() {
+	//updates for singleplayer game
 	if (client_server == NONE) {
 		//reduces the firing cooldown of the players.
 		p1.cooldown_reduce();
@@ -397,51 +400,107 @@ void ofApp::update_singleplayer_game() {
 			game_current = ROUND_OVER;
 		}
 	}
+
+	//updates for multiplayer game for client.
+	//no calculations are done on client side; the job of the client is to send the input at every update to the host where the calculations
+	//are handled and the level graphics are sent back to be parsed here.
 	else if (client_server == CLIENT) {
+		//if the connection is terminated reset the game and go back to the main menu
+		if (!multiplayer_client.isConnected()) {
+			multiplayer_client.close();
+
+			levelbounds.clear_level();
+			shots_on_screen.clear_shots();
+
+			p2.set_bot(true);
+			p2.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
+			p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
+			connected_to_host = false;
+			client_server = NONE;
+			game_current = MAIN_MENU;
+		}
 		string to_send = serialize_input(keydown, mouse_down, ofGetMouseX(), ofGetMouseY());
 		multiplayer_client.send(to_send);
 
+		//reading buffer until there are no messages left; causes data loss but drastically reduces lag
 		string message = multiplayer_client.receive();
 		string checker = multiplayer_client.receive();
 		while (checker.size() > 0) {
 			message = checker;
 			checker = multiplayer_client.receive();
 		}
+		//if there is a message update the shots on screen and the players accordingly.
 		if (message.size() > 0) {
 			vector<string> message_array = split(message, "G");
 			if (message_array[0] == "UPDATE") {
 				shots_on_screen.deserialize_update_message(message_array[1]);
 				p2.deserialize_update_game_message(message_array[2]);
 				p1.deserialize_update_game_message(message_array[3]);
+				//denotes whether a shot was fired; if yes, play the shot sound.
 				if (message_array[4] == "S") {
 					shotSound.play();
 				}
 			}
 		}
+
+		//determine whether the game is over.
+		if (!p1.isalive() && !p2.isalive()) {
+			dieSound.play();
+			game_result = TIE;
+			game_current = MULTI_ROUND_OVER;
+		}
+		else if (!p1.isalive()) {
+			dieSound.play();
+			game_result = P2_WIN;
+			game_current = MULTI_ROUND_OVER;
+		}
+		else if (!p2.isalive()) {
+			dieSound.play();
+			game_result = P1_WIN;
+			game_current = MULTI_ROUND_OVER;
+		}
 	}
+
+	//updates for multiplayer game for client.
+	//all calculations are done on the host server; receives input from the client and handles player movement, sending the game status back to the client
+	//at every update.
 	else if (client_server == HOST) {
+		//if the connection is terminated reset the game and go back to the main menu
+		if (multiplayer_server.getNumClients() == 0) {
+			multiplayer_server.close();
+
+			levelbounds.clear_level();
+			shots_on_screen.clear_shots();
+
+			p2.set_bot(true);
+			p2.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
+			p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
+			connected_to_host = false;
+			client_server = NONE;
+			game_current = MAIN_MENU;
+		}
+
 		bool shot_fired = false;
 		//reduces the firing cooldown of the players.
 		p1.cooldown_reduce();
 		p2.cooldown_reduce();
 
-		//determines the players' new direction based on the keys held down at this particular time.
+		//updates the parameters of p1
 		p1.change_direction(keydown);
-
-		//update the direction the players' guns point at.
 		p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
-
-		//after changing directions, move the players.
 		p1.move();
 
+		//reading buffer until there are no messages left; causes data loss but drastically reduces lag
 		string message = multiplayer_server.receive(0);
 		string checker = multiplayer_server.receive(0);
 		while (checker.size() > 0) {
 			message = checker;
 			checker = multiplayer_server.receive(0);
 		}
+
+		//if there is a valid message, update the parameters of p2.
 		if (message.size() > 0 && (message[0] == 'T' || message[0] == 'F')) {
-			pair<pair<vector<bool>, bool>, pair<int, int>> message_pairs = deserialize_input(message);
+			pair<pair<vector<bool>, bool>, pair<double, double>> message_pairs = deserialize_input(message);
 			p2.change_direction_p2(message_pairs.first.first);
 			p2.update_player_facing(message_pairs.second.first, message_pairs.second.second, p1);
 			p2.move();
@@ -452,6 +511,7 @@ void ofApp::update_singleplayer_game() {
 				shots_on_screen.add_shot(p2_shot_params.second.first, p2_shot_params.second.second, p2_shot_params.first.second);
 			}
 		}
+		//otherwise just move them according to the last received input.
 		else {
 			p2.move();
 		}
@@ -486,6 +546,23 @@ void ofApp::update_singleplayer_game() {
 			to_send += "N";
 		}
 		multiplayer_server.send(0, to_send);
+
+		//determine whether the game is over.
+		if (!p1.isalive() && !p2.isalive()) {
+			dieSound.play();
+			game_result = TIE;
+			game_current = MULTI_ROUND_OVER;
+		}
+		else if (!p1.isalive()) {
+			dieSound.play();
+			game_result = P2_WIN;
+			game_current = MULTI_ROUND_OVER;
+		}
+		else if (!p2.isalive()) {
+			dieSound.play();
+			game_result = P1_WIN;
+			game_current = MULTI_ROUND_OVER;
+		}
 	}
 	
 }
@@ -514,46 +591,188 @@ void ofApp::update_pause() {
 }
 
 void ofApp::update_round_over() {
+	//receive message from the client/server if applicable
+	string message;
+	switch (client_server) {
+	case (HOST):
+		message = multiplayer_server.receive(0);
+		break;
+	case (CLIENT):
+		message = multiplayer_client.receive();
+		break;
+	}
+
+	//if there is a message, interpret it and determine what button the other user pressed and update game state accordingly.
+	if (message.size() > 0) {
+		//other user pressed rematch
+		if (message == "REMATCH") {
+			shots_on_screen.clear_shots();
+			switch (client_server) {
+			case (HOST):
+				p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+				p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+				break;
+			case (CLIENT):
+				p2.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+				p1.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+				break;
+			}
+			for (int i = 0; i < 255; i++) {
+				keydown[i] = false;
+			}
+			game_current = IN_GAME_MULTI;
+			return;
+		}
+		//other user pressed back to main
+		else if (message == "BCKMAIN") {
+			levelbounds.clear_level();
+			shots_on_screen.clear_shots();
+			switch (client_server) {
+			case (HOST):
+				p1.reset_player(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
+				p2.reset_player(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
+				break;
+			case (CLIENT):
+				p2.reset_player(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
+				p1.reset_player(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
+				break;
+			}
+			for (int i = 0; i < 255; i++) {
+				keydown[i] = false;
+			}
+			game_current = MULTI_MENU;
+			return;
+		}
+	}
+
 	//detect pressed buttons
 	if (mouse_down && !mouse_held) {
 		switch (buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), game_current)) {
 
-			//rematch button; does not regenerate walls.
+		//rematch button; does not regenerate walls.
 		case (rematch_button):
-			mouse_held = true;
+			switch (client_server) {
 
-			//clear all shots in the level.
-			shots_on_screen.clear_shots();
+			//case for singleplayer game
+			case (NONE):
+				mouse_held = true;
 
-			//reset both players
-			p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-			p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+				//clear all shots in the level.
+				shots_on_screen.clear_shots();
 
-			//clears keys; this prevents weird issues with holding down keys at the time of the rematch
-			for (int i = 0; i < 255; i++) {
-				keydown[i] = false;
+				//reset both players
+				p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+				p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+
+				//clears keys; this prevents weird issues with holding down keys at the time of the rematch
+				for (int i = 0; i < 255; i++) {
+					keydown[i] = false;
+				}
+				game_current = IN_GAME_SINGLE;
+				break;
+
+			//case for host server; only difference is a message is sent to client signifying the button was pressed
+			case (HOST):
+				mouse_held = true;
+
+				//clear all shots in the level.
+				shots_on_screen.clear_shots();
+
+				//reset both players
+				p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+				p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+
+				//clears keys; this prevents weird issues with holding down keys at the time of the rematch
+				for (int i = 0; i < 255; i++) {
+					keydown[i] = false;
+				}
+				multiplayer_server.send(0, "REMATCH");
+				game_current = IN_GAME_MULTI;
+				break;
+
+			//case for client; only difference is a message is sent to server signifying the button was pressed (and p1 p2 positions swapped).
+			case (CLIENT):
+				mouse_held = true;
+
+				//clear all shots in the level.
+				shots_on_screen.clear_shots();
+
+				//reset both players
+				p2.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+				p1.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+
+				//clears keys; this prevents weird issues with holding down keys at the time of the rematch
+				for (int i = 0; i < 255; i++) {
+					keydown[i] = false;
+				}
+				multiplayer_client.send("REMATCH");
+				game_current = IN_GAME_MULTI;
+				break;
 			}
-			game_current = IN_GAME_SINGLE;
-			break;
-
+		break;
 		//return to main menu
 		case (round_over_back_to_menu):
-			mouse_held = true;
+			switch (client_server) {
 
-			//clear all non-boundary walls and shots in the level.
-			levelbounds.clear_level();
-			shots_on_screen.clear_shots();
+			//case for singleplayer game
+			case (NONE):
+				mouse_held = true;
 
-			//reset both players and set p1 back to the display area
-			p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+				//clear all non-boundary walls and shots in the level.
+				levelbounds.clear_level();
+				shots_on_screen.clear_shots();
 
-			//clears keys; this prevents weird issues with holding down keys at the time of going back to main menu
-			for (int i = 0; i < 255; i++) {
-				keydown[i] = false;
+				//reset both players and set p1 back to the display area
+				p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
+				p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+
+				//clears keys; this prevents weird issues with holding down keys at the time of going back to main menu
+				for (int i = 0; i < 255; i++) {
+					keydown[i] = false;
+				}
+				game_current = MAIN_MENU;
+				break;
+
+			//case for host server; only difference is a message is sent to client signifying the button was pressed
+			case (HOST):
+				mouse_held = true;
+
+				//clear all non-boundary walls and shots in the level.
+				levelbounds.clear_level();
+				shots_on_screen.clear_shots();
+
+				//reset both players and set p1 back to the display area
+				p1.reset_player(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
+				p2.reset_player(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
+
+				//clears keys; this prevents weird issues with holding down keys at the time of going back to main menu
+				for (int i = 0; i < 255; i++) {
+					keydown[i] = false;
+				}
+				game_current = MULTI_MENU;
+				multiplayer_server.send(0, "BCKMAIN");
+				break;
+
+			//case for client; only difference is a message is sent to server signifying the button was pressed (and p1 p2 positions swapped).
+			case (CLIENT):
+				mouse_held = true;
+
+				//clear all non-boundary walls and shots in the level.
+				levelbounds.clear_level();
+				shots_on_screen.clear_shots();
+
+				//reset both players and set p1 back to the display area
+				p2.reset_player(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
+				p1.reset_player(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
+
+				//clears keys; this prevents weird issues with holding down keys at the time of going back to main menu
+				for (int i = 0; i < 255; i++) {
+					keydown[i] = false;
+				}
+				game_current = MULTI_MENU;
+				multiplayer_client.send("BCKMAIN");
+				break;
 			}
-			game_current = MAIN_MENU;
-			break;
 		}
 	}
 }
@@ -667,6 +886,7 @@ void ofApp::draw_singleplayer_game() {
 		break;
 
 	//game is over
+	case (MULTI_ROUND_OVER):
 	case (ROUND_OVER):
 		//draw an overlaying rectangle to prevent black text from mixing in with the walls
 		ofSetColor(255, 255, 255, 128);

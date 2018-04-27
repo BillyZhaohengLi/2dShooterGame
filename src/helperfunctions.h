@@ -81,6 +81,17 @@ splits a string into an array by a delimiter. taken from https://stackoverflow.c
 */
 std::vector<std::string> split(const string& input, const string& regex);
 
+/*
+serialize player input consisting of keys pressed, whether the mouse button is held and the mouse position into a string to send through a connection.
+*/
 string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, double mouse_y);
 
-pair<pair<vector<bool>, bool>, pair<int, int>> deserialize_input(string message);
+/*
+deserialize a player input string consisting of keys pressed, whether the mouse button is held and the mouse position received through a connection.
+returns an ugly data structure, with the contents being the following in this order:
+1. boolean vector of keys pressed
+2. boolean of whether the mouse is pressed
+3. the mouse's x position
+4. the mouse's y position
+*/
+pair<pair<vector<bool>, bool>, pair<double, double>> deserialize_input(string message);
