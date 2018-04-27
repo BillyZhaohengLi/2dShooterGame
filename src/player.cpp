@@ -244,14 +244,14 @@ void Player::set_color(int color_palette) {
 		//yellow
 	case (yellow_button):
 		red = 255;
-		blue = 255;
-		green = 0;
+		blue = 0;
+		green = 255;
 		break;
 		//magenta
 	case (magenta_button):
 		red = 255;
-		blue = 0;
-		green = 255;
+		blue = 255;
+		green = 0;
 		break;
 		//cyan
 	case (cyan_button):
@@ -497,9 +497,9 @@ void Player::set_bot(bool bot) {
 deserialize a message sent over a multiplayer connection and update a player accordingly.
 */
 void Player::deserialize_update_message(string message) {
+	vector<string> message_array = split(message.substr(6), "~");
 	//set the player's new color based on the color received.
-	int new_color = message.at(6) - '0';
-	switch (new_color) {
+	switch (stoi(message_array[0])) {
 	case (red_color):
 		red = 255;
 		green = 0;
@@ -532,26 +532,15 @@ void Player::deserialize_update_message(string message) {
 		break;
 	}
 	//interpret the rest of the message; consists of the name, the x and y coordinates the player is facing separated by 2 ~ characters.
-	string params[3];
-	string received = message.substr(7);
-	int cell_count = 0;
-	for (int i = 0; i < received.length(); i++) {
-		if (received[i] == '~') {
-			cell_count++;
-		}
-		else {
-			params[cell_count] += received[i];
-		}
-	}
-	set_name(params[0]);
-	facing_x = stoi(params[1]);
-	facing_y = stoi(params[2]);
+	set_name(message_array[1]);
+	facing_x = stoi(message_array[2]);
+	facing_y = stoi(message_array[3]);
 }
 
 /*
 send a player over the connection as a serialized string.
 */
 string Player::serialized_string() {
-	string to_send = "PLAYER" + to_string(get_color()) + name + "~" + to_string(facing_x) + "~" + to_string(facing_y);
+	string to_send = "PLAYER" + to_string(get_color()) + "~" + name + "~" + to_string(facing_x) + "~" + to_string(facing_y);
 	return to_send;
 }

@@ -204,21 +204,39 @@ void ofApp::update_menu() {
 		case (start_singleplayer_button):
 			//sets the typed name to the player
 			p1.set_name(player_name);
+			switch (client_server) {
+			case (NONE):
+				//generate walls
+				levelbounds.random_level_generator(walls_amount);
 
-			//sets a random name and color for the bot
-			p2.randomize_name();
-			p2.randomize_color();
+				//sets a random name and color for the bot
+				p2.randomize_name();
+				p2.randomize_color();
 
-			//reset players to be ready for the game
-			p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-			p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+				//reset players to be ready for the game
+				p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+				p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
 
-			//generate walls
-			levelbounds.random_level_generator(walls_amount);				
+				mouse_held = true;
+				entered = false;
+				game_current = IN_GAME_SINGLE;
+				break;
+			case (HOST):
+				//generate walls
+				levelbounds.random_level_generator(walls_amount);
 
-			mouse_held = true;
-			entered = false;
-			game_current = IN_GAME_SINGLE;
+				//reset players to be ready for the game
+				p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+				p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+
+				mouse_held = true;
+				entered = false;
+				game_current = IN_GAME_MULTI;
+				break;
+			case (CLIENT):
+				//due to the structure of the game engine the client cannot start a game.
+				break;
+			}
 			break;
 
 		//multiplayer button; takes the player to the multiplayer interface and starts the TCP server

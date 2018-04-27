@@ -1,20 +1,20 @@
 #include "shot.h"
 /*
-constructor; creates a shot at the designated x and y position with a trajectory defined by an initial angle.
+constructor; creates a shot at the designated x and y position with a trajectory defined by an initial angle_.
 */
-ShotInLevel::Shot::Shot(double x, double y, double initial_angle) {
+ShotInLevel::Shot::Shot(double x, double y, double initial_angle_) {
 	xpos_ = x;
 	ypos_ = y;
-	angle = initial_angle;
-	bounces_remaining = shot_bounces;
+	angle_ = initial_angle_;
+	bounces_remaining_ = shot_bounces;
 }
 
 /*
-move the shot in the direction defined by its angle; called every update.
+move the shot in the direction defined by its angle_; called every update.
 */
 void ShotInLevel::Shot::move() {
-	xpos_ = xpos_ + shot_length * cos(angle);
-	ypos_ = ypos_ + shot_length * sin(angle);
+	xpos_ = xpos_ + shot_length * cos(angle_);
+	ypos_ = ypos_ + shot_length * sin(angle_);
 }
 
 /*
@@ -26,10 +26,10 @@ void ShotInLevel::Shot::draw_shot() {
 }
 
 /*
-add a shot at the specified location traveling in a specified angle. Calls the Shot constructor.
+add a shot at the specified location traveling in a specified angle_. Calls the Shot constructor.
 */
-void ShotInLevel::add_shot(double xpos, double ypos, double initial_angle) {
-	shots_in_level.push_back(Shot(xpos, ypos, initial_angle));
+void ShotInLevel::add_shot(double xpos, double ypos, double initial_angle_) {
+	shots_in_level.push_back(Shot(xpos, ypos, initial_angle_));
 }
 
 /*
@@ -70,4 +70,21 @@ removes all current shots in the level.
 */
 void ShotInLevel::clear_shots() {
 	shots_in_level.clear();
+}
+
+string ShotInLevel::serialized_string() {
+	string to_return = "G";
+	for (int i = 0; i < shots_in_level.size(); i++) {
+		to_return += (to_string(round(shots_in_level[i].xpos_)) + "~" + to_string(round(shots_in_level[i].ypos_)) + "~" + to_string(round(shots_in_level[i].angle_)) + "~");
+	}
+	return to_return;
+}
+
+void ShotInLevel::deserialize_update_message(string message) {
+	shots_in_level.clear();
+	vector<string> message_array = split(message.substr(1, message.size() - 2), "~");
+	for (int i = 0; i < message_array.size(); i += 3) {
+		Shot temp = Shot(stoi(message_array[i]), stoi(message_array[i + 1]), stoi(message_array[i + 2]));
+		shots_in_level.push_back(temp);
+	}
 }

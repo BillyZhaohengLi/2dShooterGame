@@ -1,5 +1,6 @@
 #pragma once
 #include <algorithm>
+#include <regex>
 #include "ofMain.h"
 #include "const.h"
 /*
@@ -74,3 +75,8 @@ pair<bool, string> enter_ip(bool entered, string ip_address, bool keydown[255]);
 helper function to convert the wall setting pressed to the actual amount of walls.
 */
 int wall_button_to_wall_amount(int wall_button);
+
+/*
+splits a string into an array by a delimiter. taken from https://stackoverflow.com/questions/9435385/split-a-string-using-c11.
+*/
+std::vector<std::string> split(const string& input, const string& regex);

@@ -27,12 +27,12 @@ public:
 		/*
 		the angle of the shot's trajectory.
 		*/
-		double angle;
+		double angle_;
 
 		/*
 		the number of times the shot can bounce; reduced by 1 every time the shot bounces off a wall and when it hits 0, the shot is deleted.
 		*/
-		int bounces_remaining;
+		int bounces_remaining_;
 
 		/*
 		constructor; creates a shot at the designated x and y position with a trajectory defined by an initial angle.
@@ -79,4 +79,14 @@ public:
 	removes all current shots in the level.
 	*/
 	void clear_shots();
+
+	/*
+	serialized string format of all shots in the level. Used in multiplayer; walls are generated at the host server and sent to the client.
+	*/
+	string serialized_string();
+
+	/*
+	deserialize an update message from the host server and adds the appropriate shots to the ShotsInLevel in the client program.
+	*/
+	void deserialize_update_message(string message);
 };

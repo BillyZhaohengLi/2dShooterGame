@@ -112,4 +112,14 @@ public:
 	clears the level; removes all non-boundary walls
 	*/
 	void clear_level();
+
+	/*
+	serialized string format of all wall segments in the level. Used in multiplayer; walls are generated at the host server and sent to the client.
+	*/
+	string serialized_string();
+
+	/*
+	deserialize an update message from the host server and adds the appropriate wall segments to the wall object in the client program.
+	*/
+	void deserialize_update_message(string message);
 };

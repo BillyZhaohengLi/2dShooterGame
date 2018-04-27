@@ -506,3 +506,26 @@ void Wall::clear_level() {
 		walls.pop_back();
 	}
 }
+
+/*
+serialized string format of all wall segments in the level. Used in multiplayer; walls are generated at the host server and sent to the client.
+*/
+string Wall::serialized_string() {
+	string to_return = "W";
+	//the boundary walls are omitted as they are the same for any instance of the program, hence the for loop starting at 4.
+	for (int i = 4; i < walls.size(); i++) {
+		to_return += (to_string(walls[i].xpos_) + "~" + to_string(walls[i].ypos_) + "~" + to_string(walls[i].xspan_) + "~" + to_string(walls[i].yspan_) + "~");
+	}
+	return to_return;
+}
+
+/*
+deserialize an update message from the host server and adds the appropriate wall segments to the wall object in the client program.
+*/
+void Wall::deserialize_update_message(string message) {
+	vector<string> message_array = split(message.substr(1, message.size() - 2), "~");
+	for (int i = 0; i < message_array.size(); i += 4) {
+		WallSegment temp = WallSegment(stoi(message_array[i]), stoi(message_array[i + 1]), stoi(message_array[i + 2]), stoi(message_array[i + 3]));
+		walls.push_back(temp);
+	}
+}
