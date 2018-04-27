@@ -398,7 +398,15 @@ void ofApp::update_singleplayer_game() {
 		}
 	}
 	else if (client_server == CLIENT) {
+		string to_send = serialize_input(keydown, mouse_down, ofGetMouseX(), ofGetMouseY());
+		multiplayer_client.send(to_send);
+
 		string message = multiplayer_client.receive();
+		string checker = multiplayer_client.receive();
+		while (checker.size() > 0) {
+			message = checker;
+			checker = multiplayer_client.receive();
+		}
 		if (message.size() > 0) {
 			vector<string> message_array = split(message, "G");
 			if (message_array[0] == "UPDATE") {
@@ -410,9 +418,6 @@ void ofApp::update_singleplayer_game() {
 				}
 			}
 		}
-
-		string to_send = serialize_input(keydown, mouse_down, ofGetMouseX(), ofGetMouseY());
-		multiplayer_client.send(to_send);
 	}
 	else if (client_server == HOST) {
 		bool shot_fired = false;
@@ -430,10 +435,14 @@ void ofApp::update_singleplayer_game() {
 		p1.move();
 
 		string message = multiplayer_server.receive(0);
+		string checker = multiplayer_server.receive(0);
+		while (checker.size() > 0) {
+			message = checker;
+			checker = multiplayer_server.receive(0);
+		}
 		if (message.size() > 0 && (message[0] == 'T' || message[0] == 'F')) {
-			pair<pair<bool*, bool>, pair<double, double>> message_pairs = deserialize_input(message);
-			p2.change_direction(message_pairs.first.first);
-			delete message_pairs.first.first;
+			pair<pair<vector<bool>, bool>, pair<int, int>> message_pairs = deserialize_input(message);
+			p2.change_direction_p2(message_pairs.first.first);
 			p2.update_player_facing(message_pairs.second.first, message_pairs.second.second, p1);
 			p2.move();
 			pair<pair<bool, double>, pair<double, double>> p2_shot_params = p2.shoot_prompt(message_pairs.first.second, false);

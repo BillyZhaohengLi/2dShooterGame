@@ -83,4 +83,4 @@ std::vector<std::string> split(const string& input, const string& regex);
 
 string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, double mouse_y);
 
-pair<pair<bool*, bool>, pair<double, double>> deserialize_input(string message);
+pair<pair<vector<bool>, bool>, pair<int, int>> deserialize_input(string message);

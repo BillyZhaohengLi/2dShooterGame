@@ -239,15 +239,34 @@ std::vector<std::string> split(const string& input, const string& regex) {
 
 string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, double mouse_y) {
 	string to_send;
-	for (int i = 0; i < 255; i++) {
-		if (keydown[i]) {
-			to_send += "T";
-		}
-		else {
-			to_send += "F";
-		}
-		to_send += "~";
+	if (keydown['W']) {
+		to_send += "T";
 	}
+	else {
+		to_send += "F";
+	}
+	to_send += "~";
+	if (keydown['A']) {
+		to_send += "T";
+	}
+	else {
+		to_send += "F";
+	}
+	to_send += "~";
+	if (keydown['S']) {
+		to_send += "T";
+	}
+	else {
+		to_send += "F";
+	}
+	to_send += "~";
+	if (keydown['D']) {
+		to_send += "T";
+	}
+	else {
+		to_send += "F";
+	}
+	to_send += "~";
 	if (mouse_down) {
 		to_send += "T";
 	}
@@ -255,31 +274,31 @@ string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, doubl
 		to_send += "F";
 	}
 	to_send += "~";
-	to_send += to_string(mouse_x);
+	to_send += to_string(round(mouse_x));
 	to_send += "~";
-	to_send += to_string(mouse_y);
+	to_send += to_string(round(mouse_y));
 	return to_send;
 }
 
-pair<pair<bool*, bool>, pair<double, double>> deserialize_input(string message) {
+pair<pair<vector<bool>, bool>, pair<int, int>> deserialize_input(string message) {
 	vector<string> message_array = split(message, "~");
-	bool* key_down = new bool[255];
-	for (int i = 0; i < 255; i++) {
+	vector<bool> key_down;
+	for (int i = 0; i < 4; i++) {
 		if (message_array[i] == "T") {
-			key_down[i] = true;
+			key_down.push_back(true);
 		}
 		else {
-			key_down[i] = false;
+			key_down.push_back(false);
 		}
 	}
 	bool mouse_down;
-	if (message_array[255] == "T") {
+	if (message_array[4] == "T") {
 		mouse_down = true;
 	}
 	else {
 		mouse_down = false;
 	}
-	double mouse_x = stod(message_array[256]);
-	double mouse_y = stod(message_array[257]);
-	return pair<pair<bool*, bool>, pair<double, double>>(pair<bool*, bool> (key_down, mouse_down), pair<double, double>(mouse_x, mouse_y));
+	double mouse_x = stoi(message_array[5]);
+	double mouse_y = stoi(message_array[6]);
+	return pair<pair<vector<bool>, bool>, pair<int, int>>(pair<vector<bool>, bool> (key_down, mouse_down), pair<int, int>(mouse_x, mouse_y));
 }

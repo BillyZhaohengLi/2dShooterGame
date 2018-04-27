@@ -161,6 +161,8 @@ public:
 	*/
 	void change_direction(bool keydown[255]);
 
+	void change_direction_p2(vector<bool> input);
+
 	/*
 	prompts the player to shoot a bullet. Has different outcomes based on whether the player is a bot.
 	the return value is a very ugly data structure consisting of the values in the following order:

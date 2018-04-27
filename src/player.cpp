@@ -385,6 +385,58 @@ void Player::change_direction(bool keydown[255]) {
 	}
 }
 
+void Player::change_direction_p2(vector<bool> input) {
+	int vert_displacement = 0;
+	int hor_displacement = 0;
+	if (input[0]) {
+		vert_displacement--;
+	}
+	if (input[1]) {
+		hor_displacement--;
+	}
+	if (input[2]) {
+		vert_displacement++;
+	}
+	if (input[3]) {
+		hor_displacement++;
+	}
+
+	//sets the player's new direction based on the keys held down.
+	if (vert_displacement == -1) {
+		if (hor_displacement == -1) {
+			change_direction(NORTHWEST);
+		}
+		else if (hor_displacement == 0) {
+			change_direction(NORTH);
+		}
+		else {
+			change_direction(NORTHEAST);
+		}
+	}
+	else if (vert_displacement == 0) {
+		if (hor_displacement == -1) {
+			change_direction(WEST);
+		}
+		else if (hor_displacement == 0) {
+			change_direction(STOP);
+		}
+		else {
+			change_direction(EAST);
+		}
+	}
+	else {
+		if (hor_displacement == -1) {
+			change_direction(SOUTHWEST);
+		}
+		else if (hor_displacement == 0) {
+			change_direction(SOUTH);
+		}
+		else {
+			change_direction(SOUTHEAST);
+		}
+	}
+}
+
 /*
 prompts the player to shoot a bullet. Has different outcomes based on whether the player is a bot.
 the return value is a very ugly data structure consisting of the values in the following order:
