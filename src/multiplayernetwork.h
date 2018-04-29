@@ -13,7 +13,9 @@ public:
 	bool server_setup();
 	void close();
 	bool client_setup(string ip_address);
-	bool check_connection();
+	bool is_connected();
+	void send(string message);
+
 	connection get_status();
-	vector<string> receive();
+	string receive();
 };

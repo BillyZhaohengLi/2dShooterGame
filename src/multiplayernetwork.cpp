@@ -35,7 +35,7 @@ bool MultiplayerNetwork::client_setup(string ip_address) {
 	return connected;
 }
 
-bool MultiplayerNetwork::check_connection() {
+bool MultiplayerNetwork::is_connected() {
 	if (status == HOST) {
 		return server.getNumClients() > 0;
 	}
@@ -47,29 +47,37 @@ bool MultiplayerNetwork::check_connection() {
 	}
 }
 
+void MultiplayerNetwork::send(string message) {
+	if (status == HOST) {
+		server.send(0, message);
+	}
+	else if (status == CLIENT) {
+		client.send(message);
+	}
+}
+
 connection MultiplayerNetwork::get_status() {
 	return status;
 }
 
-vector<string> MultiplayerNetwork::receive() {
-	vector<string> message_array;
+string MultiplayerNetwork::receive() {
 	if (status == HOST) {
 		string message = server.receive(0);
 		string checker = server.receive(0);
 		while (checker.size() > 0) {
 			message = checker;
-			message_array.push_back(message);
 			checker = server.receive(0);
 		}
+		return message;
 	}
 	else if (status == CLIENT) {
 		string message = client.receive();
 		string checker = client.receive();
 		while (checker.size() > 0) {
 			message = checker;
-			message_array.push_back(message);
 			checker = client.receive();
 		}
+		return message;
 	}
-	return message_array;
+	return "";
 }

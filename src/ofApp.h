@@ -10,6 +10,7 @@
 #include "add_buttons_text.h"
 #include "ofxCenteredTrueTypeFont.h"
 #include "ofxNetwork.h"
+#include "multiplayernetwork.h"
 #include <mmsystem.h>
 
 class ofApp : public ofBaseApp{
@@ -33,6 +34,7 @@ class ofApp : public ofBaseApp{
 		
 		//update helper functions
 		void update_menu();
+		void update_waiting_room();
 		void update_singleplayer_game();
 		void update_pause();
 		void update_round_over();
@@ -49,11 +51,9 @@ class ofApp : public ofBaseApp{
 		ofSoundPlayer dieSound;
 
 		//tcp server and client; used for multiplayer
-		ofxTCPServer multiplayer_server;
-		ofxTCPClient multiplayer_client;
+		MultiplayerNetwork multiplayer_network;
 
-		//boolean for whether the user is connected to a host. Only used as a signal to switch to the multiplayer main menu. By default not connected.
-		bool connected_to_host = false;
+		string buffer;
 
 		//array of booleans used to store which keys are held down.
 		bool keydown[255];
@@ -67,9 +67,6 @@ class ofApp : public ofBaseApp{
 		//boolean for handling player input for player name in main menu; used to prevent multiple keys being entered with one press
 		//due to how fast update is called. By default nothing has been entered yet.
 		bool entered = false;
-
-		//boolean for handling whether the player is in multiplayer mode. Game defaults to starting in singleplayer.
-		bool in_multi = false;
 
 		//the amount of walls to generate in a level when the start button is clicked. Defaults to the minimum option.
 		int walls_amount = few_walls_amount;
@@ -97,9 +94,6 @@ class ofApp : public ofBaseApp{
 
 		//enum for game outcome.
 		winner game_result;
-
-		//enum for the state of the program; used to handle communication based on whether the program is a client or a host. By default the program is neither.
-		connection client_server = NONE;
 
 		//players in the game. By default p1 is the player character and p2 is a bot.
 		Player p1 = Player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4, blue_button, false, "default");
