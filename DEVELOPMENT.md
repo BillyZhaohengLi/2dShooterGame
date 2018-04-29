@@ -53,6 +53,8 @@
  * _TODO on April 28_ : finishing implementing pause, gameover and exception handling for the multiplayer game. 
 ### April 27:
  * added appropriate functions for the restart and rematch buttons when pressed in multiplayer. Multiplayer game engine now correctly handles "gameover" moments when not both of the players are alive.
+### April 29:
+ * added multiplayernetwork class; wrapper class for server and client to simplify the main game engine.
  ## Days left to work on project: 3 days
 * April 28 (full day)
 * April 29 (full day)
