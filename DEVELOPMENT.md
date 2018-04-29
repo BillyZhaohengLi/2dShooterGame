@@ -55,6 +55,8 @@
  * added appropriate functions for the restart and rematch buttons when pressed in multiplayer. Multiplayer game engine now correctly handles "gameover" moments when not both of the players are alive.
 ### April 29:
  * added multiplayernetwork class; wrapper class for server and client to simplify the main game engine.
+ * further reduced lag by changing data transmission to be "lossy": if multiple messages end up being received in a frame only the newest one is read.
+ * added waiting rooms to await confirmation from the other user for operations such as starting games and returning to menu; ensures both players are in sync on the same interface.
  ## Days left to work on project: 3 days
 * April 28 (full day)
 * April 29 (full day)
