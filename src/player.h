@@ -109,6 +109,8 @@ public:
 	resets the player (sets alive to true) at a given location and puts their weapon on cooldown (basically prepared for a new game).
 	*/
 	void reset_player(double new_x, double new_y);
+
+	
 	
 	/*
 	updates the direction the player is facing (used to draw the player's gun). Has different outcomes based on whether the player is a bot.

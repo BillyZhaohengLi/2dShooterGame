@@ -104,21 +104,26 @@ void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 	//rematch
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.92,
 		level_width_multiplier * wall_width * 0.22, level_height_multiplier * wall_width * 0.04, 0, 255, 0, "Rematch", 
-		vector<game_state> {ROUND_OVER, MULTI_ROUND_OVER}, character_name);
+		vector<game_state> {ROUND_OVER}, character_name);
 	//back to main menu
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.6, level_height_multiplier * wall_width * 0.92,
 		level_width_multiplier * wall_width * 0.22, level_height_multiplier * wall_width * 0.04, 0, 255, 0, "Return to menu", 
-		vector<game_state> {ROUND_OVER, MULTI_ROUND_OVER}, character_name);
+		vector<game_state> {ROUND_OVER}, character_name);
 
 	//MULTIPLAYER BUTTONS
 	//connect button
-	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.7,
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.59,
 		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Connect", 
+		vector<game_state> {MULTI_CONNECT}, button_text);
+
+	//start server button; instantiates the server in the program
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.72,
+		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Create server", 
 		vector<game_state> {MULTI_CONNECT}, button_text);
 
 	//back button; returns to main menu
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.85,
-		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Back", 
+		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Back",
 		vector<game_state> {MULTI_CONNECT}, button_text);
 
 	//MULTIPLAYER MENU BUTTONS
@@ -126,6 +131,11 @@ void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.68, level_height_multiplier * wall_width * 0.89,
 		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "Disconnect", 
 		vector<game_state> {MULTI_MENU}, button_text);
+
+	//back button; returns to main menu
+	buttons_in_level.add_button(level_width_multiplier * wall_width * 0.35, level_height_multiplier * wall_width * 0.85,
+		level_width_multiplier * wall_width * 0.3, level_height_multiplier * wall_width * 0.1, 0, 255, 0, "OK",
+		vector<game_state> {DISCONNECTED}, button_text);
 
 	//DRAW TEXT
 	//text for main menu
@@ -181,6 +191,9 @@ void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 		false, MULTI_MENU, character_name);
 	text_in_level.add_text("2D Shooter Game", level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.15,
 		true, MULTI_MENU, game_title_text);
+
+	text_in_level.add_text("Your multiplayer session has ended.", level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.35,
+		false, DISCONNECTED, character_name);
 
 	//add the fonts to the text object to be used in game
 	text_in_level.add_font(game_title_text);

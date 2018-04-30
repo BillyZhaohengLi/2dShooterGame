@@ -15,7 +15,7 @@ public:
 	bool client_setup(string ip_address);
 	bool is_connected();
 	void send(string message);
-
+	void disconnect_additional_clients();
 	connection get_status();
 	string receive();
 };

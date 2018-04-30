@@ -19,6 +19,9 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
+	//one server can only have one client at a time; disconnect all additional clients.
+	multiplayer_network.disconnect_additional_clients();
+
 	//call separate update functions based on current game state
 	switch (game_current) {
 	case MAIN_MENU:
@@ -36,7 +39,6 @@ void ofApp::update(){
 		update_pause();
 		break;
 	case ROUND_OVER:
-	case MULTI_ROUND_OVER:
 		update_round_over();
 		break;
 	case HELP:
@@ -44,6 +46,9 @@ void ofApp::update(){
 		break;
 	case MULTI_CONNECT:
 		update_multi_connect();
+		break;
+	case DISCONNECTED:
+		update_disconnected();
 		break;
 	}
 }
@@ -60,7 +65,6 @@ void ofApp::draw(){
 	case IN_GAME_MULTI:
 	case PAUSE:
 	case ROUND_OVER:
-	case MULTI_ROUND_OVER:
 		draw_singleplayer_game();
 		break;
 	case MULTI_CONNECT:
@@ -174,7 +178,7 @@ void ofApp::update_menu() {
 			multiplayer_network.close();
 			p2.set_bot(true);
 			p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			game_current = MAIN_MENU;
+			game_current = DISCONNECTED;
 		}
 		//otherwise recieve a message from the client
 		message = multiplayer_network.receive();
@@ -187,18 +191,11 @@ void ofApp::update_menu() {
 			p2.deserialize_update_model_message(message);
 		}
 		else if (message.substr(0, 6) == "UPDATE") {
-			switch (multiplayer_network.get_status()) {
-			case (HOST):
-				p1.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
-				p2.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-				break;
-			case (CLIENT):
-				p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
-				p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-				break;
-			}
+			reset_game(p1, p2, shots_on_screen);
 			levelbounds.deserialize_update_message(message.substr(6));
 			game_current = IN_GAME_MULTI;
+			cout << p1.get_location().first << "\n";
+			cout << p1.get_location().second << "\n";
 			return;
 		}
 	}
@@ -222,8 +219,7 @@ void ofApp::update_menu() {
 			levelbounds.random_level_generator(walls_amount);
 
 			//reset players to be ready for the game
-			p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-			p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+			reset_game(p1, p2, shots_on_screen);
 
 			mouse_held = true;
 			entered = false;
@@ -247,7 +243,6 @@ void ofApp::update_menu() {
 		//multiplayer button; takes the player to the multiplayer interface and starts the TCP server
 		case (start_multiplayer_button):
 			mouse_held = true;
-			multiplayer_network.server_setup();
 			game_current = MULTI_CONNECT;
 			break;
 
@@ -267,11 +262,9 @@ void ofApp::update_menu() {
 			mouse_held = true;
 			//close either the server or the client based on what the program was connected to the session as.
 			multiplayer_network.close();
-
-			//set variables back to default
 			p2.set_bot(true);
 			p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			game_current = MAIN_MENU;
+			game_current = DISCONNECTED;
 			break;
 
 		//palette buttons; modifies the player color based on the palette clicked (also unticks all other color palettes)
@@ -314,6 +307,12 @@ void ofApp::update_menu() {
 }
 
 void ofApp::update_waiting_room() {
+	if (!multiplayer_network.is_connected()) {
+		multiplayer_network.close();
+		p2.set_bot(true);
+		p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
+		game_current = DISCONNECTED;
+	}
 	string message = multiplayer_network.receive();
 	if (message[0] == 'U' || message[0] == 'T' || message[0] == 'F') {
 		game_current = IN_GAME_MULTI;
@@ -402,7 +401,7 @@ void ofApp::update_singleplayer_game() {
 			p2.set_bot(true);
 			p2.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
 			p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			game_current = MAIN_MENU;
+			game_current = DISCONNECTED;
 			return;
 		}
 		string to_send = serialize_input(keydown, mouse_down, ofGetMouseX(), ofGetMouseY());
@@ -428,17 +427,17 @@ void ofApp::update_singleplayer_game() {
 		if (!p1.isalive() && !p2.isalive()) {
 			dieSound.play();
 			game_result = TIE;
-			game_current = MULTI_ROUND_OVER;
+			game_current = ROUND_OVER;
 		}
 		else if (!p1.isalive()) {
 			dieSound.play();
 			game_result = P2_WIN;
-			game_current = MULTI_ROUND_OVER;
+			game_current = ROUND_OVER;
 		}
 		else if (!p2.isalive()) {
 			dieSound.play();
 			game_result = P1_WIN;
-			game_current = MULTI_ROUND_OVER;
+			game_current = ROUND_OVER;
 		}
 	}
 
@@ -456,7 +455,7 @@ void ofApp::update_singleplayer_game() {
 			p2.set_bot(true);
 			p2.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
 			p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			game_current = MAIN_MENU;
+			game_current = DISCONNECTED;
 			return;
 		}
 
@@ -525,17 +524,17 @@ void ofApp::update_singleplayer_game() {
 		if (!p1.isalive() && !p2.isalive()) {
 			dieSound.play();
 			game_result = TIE;
-			game_current = MULTI_ROUND_OVER;
+			game_current = ROUND_OVER;
 		}
 		else if (!p1.isalive()) {
 			dieSound.play();
 			game_result = P2_WIN;
-			game_current = MULTI_ROUND_OVER;
+			game_current = ROUND_OVER;
 		}
 		else if (!p2.isalive()) {
 			dieSound.play();
 			game_result = P1_WIN;
-			game_current = MULTI_ROUND_OVER;
+			game_current = ROUND_OVER;
 		}
 	}
 	
@@ -566,15 +565,26 @@ void ofApp::update_pause() {
 
 void ofApp::update_round_over() {
 	//receive message from the client/server if applicable
+	if (!multiplayer_network.is_connected() && multiplayer_network.get_status() != NONE) {
+		multiplayer_network.close();
+
+		levelbounds.clear_level();
+		shots_on_screen.clear_shots();
+
+		p2.set_bot(true);
+		p2.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
+		p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
+		game_current = DISCONNECTED;
+		return;
+	}
 	string message = multiplayer_network.receive();
 
 	//if there is a message, interpret it and determine what button the other user pressed and update game state accordingly.
 	if (message.size() > 0) {
 		//other user pressed rematch
 		if (message == "REMATCH") {
-			shots_on_screen.clear_shots();
-			p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-			p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+			//reset players and shots
+			reset_game(p1, p2, shots_on_screen);
 			for (int i = 0; i < 255; i++) {
 				keydown[i] = false;
 			}
@@ -611,12 +621,8 @@ void ofApp::update_round_over() {
 		case (rematch_button):
 			mouse_held = true;
 
-			//clear all shots in the level.
-			shots_on_screen.clear_shots();
-
-			//reset both players
-			p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-			p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+			//reset both players and clear shots
+			reset_game(p1, p2, shots_on_screen);
 
 			//clears keys; this prevents weird issues with holding down keys at the time of the rematch
 			for (int i = 0; i < 255; i++) {
@@ -647,6 +653,7 @@ void ofApp::update_round_over() {
 
 				//clear all non-boundary walls and shots in the level.
 				levelbounds.clear_level();
+
 				shots_on_screen.clear_shots();
 
 				//reset both players and set p1 back to the display area
@@ -727,6 +734,7 @@ void ofApp::update_multi_connect() {
 	ip_address = temp.second;
 
 	if (multiplayer_network.is_connected()) {
+		multiplayer_string = "";
 		//set players to appropriate locations in the level
 		if (multiplayer_network.get_status() == HOST) {
 			p1.set_location(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
@@ -748,18 +756,49 @@ void ofApp::update_multi_connect() {
 
 	//detect pressed buttons
 	if (mouse_down && !mouse_held) {
+		bool setup;
 		switch (buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), game_current)) {
 
 		//connect to a server at the specified ip address.
 		case (multi_connect_button):
 			mouse_held = true;
-			multiplayer_network.client_setup(ip_address);
+			setup = multiplayer_network.client_setup(ip_address);
+			if (!setup) {
+				multiplayer_string = "connection failed. Please try again.";
+			}
 			break;
-
+		case (multi_server_button):
+			mouse_held = true;
+			if (multiplayer_string == "you are now hosting a server. Please wait for another user to connect." ||
+				multiplayer_string == "you are already hosting a server.") {
+				multiplayer_string = "you are already hosting a server.";
+			}
+			else {
+				setup = multiplayer_network.server_setup();
+				if (!setup) {
+					multiplayer_string = "setup failed; there is already a server running on this machine.";
+				}
+				else {
+					multiplayer_string = "you are now hosting a server. Please wait for another user to connect.";
+				}
+			}
+			break;
 		//go back to main menu
 		case (multi_connect_back_to_menu):
 			mouse_held = true;
+			multiplayer_string = "";
 			multiplayer_network.close();
+			game_current = MAIN_MENU;
+			break;
+		}
+	}
+}
+
+void ofApp::update_disconnected() {
+	if (mouse_down && !mouse_held) {
+		switch (buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), game_current)) {
+		case (disconnected_confirm_button):
+			mouse_held = true;
 			game_current = MAIN_MENU;
 			break;
 		}
@@ -803,7 +842,6 @@ void ofApp::draw_singleplayer_game() {
 		break;
 
 	//game is over
-	case (MULTI_ROUND_OVER):
 	case (ROUND_OVER):
 		//draw an overlaying rectangle to prevent black text from mixing in with the walls
 		ofSetColor(255, 255, 255, 128);
@@ -833,5 +871,9 @@ void ofApp::draw_singleplayer_game() {
 void ofApp::draw_multi_connect() {
 	//draw the current entered ip address
 	text_in_level.draw_dynamic_text("IP address:" + ip_address, level_width_multiplier * wall_width * 0.1,
+		level_height_multiplier * wall_width * 0.45, false, 2);
+
+	//draw the current entered ip address
+	text_in_level.draw_dynamic_text(multiplayer_string, level_width_multiplier * wall_width * 0.1,
 		level_height_multiplier * wall_width * 0.55, false, 2);
 }

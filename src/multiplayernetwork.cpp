@@ -64,7 +64,7 @@ string MultiplayerNetwork::receive() {
 	if (status == HOST) {
 		string message = server.receive(0);
 		string checker = server.receive(0);
-		while (checker.size() > 0) {
+		while (checker.size() > 0 && server.getNumClients() > 0) {
 			message = checker;
 			checker = server.receive(0);
 		}
@@ -80,4 +80,14 @@ string MultiplayerNetwork::receive() {
 		return message;
 	}
 	return "";
+}
+
+void MultiplayerNetwork::disconnect_additional_clients() {
+	if (status == HOST && server.getNumClients() > 1) {
+		for (int i = 1; i < server.getLastID(); i++) {
+			if (server.isClientConnected(i)) {
+				server.disconnectClient(i);
+			}
+		}
+	}
 }

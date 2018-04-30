@@ -90,3 +90,9 @@ public:
 	*/
 	void deserialize_update_message(string message);
 };
+
+/*
+resets both players to opposite corners in the map and clear all shots in the leve. 
+Appears so many times in the main game engine that it deserves to be a standalone helper method.
+*/
+void reset_game(Player& p1, Player& p2, ShotInLevel& shots_in_level);

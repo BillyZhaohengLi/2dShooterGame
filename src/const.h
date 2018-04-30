@@ -76,8 +76,8 @@ enum direction { STOP = 0, NORTH = 1, SOUTH = 2, EAST = 3, WEST = 4, NORTHEAST =
 /*
 game state enum; 
 */
-enum game_state { MAIN_MENU = 0, IN_GAME_SINGLE = 2, PAUSE = 3, ROUND_OVER = 4, HELP = 5,
-	MULTI_CONNECT = 6 , MULTI_MENU = 7, IN_GAME_MULTI = 8, MULTI_ROUND_OVER = 9, WAITING_ROOM = 10};
+enum game_state { MAIN_MENU = 0, IN_GAME_SINGLE = 1, IN_GAME_MULTI = 2, PAUSE = 3, ROUND_OVER = 4, HELP = 5,
+	MULTI_CONNECT = 6 , MULTI_MENU = 7, WAITING_ROOM = 8, DISCONNECTED = 9};
 
 /*
 enum to determine game winner;
@@ -119,10 +119,13 @@ const int round_over_back_to_menu = 16;
 
 //multiplayer connect buttons
 const int multi_connect_button = 17;
-const int multi_connect_back_to_menu = 18;
+const int multi_server_button = 18;
+const int multi_connect_back_to_menu = 19;
 
 //multiplayer menu buttons
-const int multi_disconnect_button = 19;
+const int multi_disconnect_button = 20;
+
+const int disconnected_confirm_button = 21;
 
 /*
 constants for color codes of the player

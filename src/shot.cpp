@@ -90,3 +90,19 @@ void ShotInLevel::deserialize_update_message(string message) {
 		}
 	}
 }
+
+/*
+resets both players to opposite corners in the map. Appears so many times in the main game engine that it deserves to be a standalone helper method.
+*/
+void reset_game(Player& p1, Player& p2, ShotInLevel& shots_in_level) {
+	shots_in_level.clear_shots();
+	int pos = rand() % 100;
+	if (pos > 50) {
+		p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+		p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+	}
+	else {
+		p2.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
+		p1.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
+	}
+}

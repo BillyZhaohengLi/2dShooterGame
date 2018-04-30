@@ -619,3 +619,4 @@ string Player::serialized_game_string() {
 		return to_send + "F";
 	}
 }
+

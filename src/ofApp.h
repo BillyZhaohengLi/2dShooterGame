@@ -40,6 +40,7 @@ class ofApp : public ofBaseApp{
 		void update_round_over();
 		void update_help();
 		void update_multi_connect();
+		void update_disconnected();
 
 		//draw helper functions
 		void draw_menu();
@@ -54,6 +55,7 @@ class ofApp : public ofBaseApp{
 		MultiplayerNetwork multiplayer_network;
 
 		string buffer;
+		string multiplayer_string;
 
 		//array of booleans used to store which keys are held down.
 		bool keydown[255];
