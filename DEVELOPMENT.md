@@ -59,8 +59,9 @@
  * added waiting rooms to await confirmation from the other user for operations such as starting games and returning to menu; ensures both players are in sync on the same interface.
  * added text to the multiplayer connect menu to tell the player whether the connection/setting up a server was successful or not.
  * added a disconnected interface shown to users in multiplayer when their partner disconnects. Servers will now also automatically disconnect additional clients when there are more than 1 client connect to it.
+ * cleaned up a lot of code; ofApp.cpp down from 900 lines to 650 by moving repeated lines of codes to helper functions; updated comments for differents classes in project, renamed constants and enums according to C++ naming guide.
  * main project done at this point.
- * _TODO on April 30_ : clean up the code in the program to make it more readable and add test cases to test for robustness. If there is still enough time remaining, add a better algorithm for the singleplayer bot.
+ * _TODO on April 30_ : add test cases for different functions to test for robustness, change rgb variables in objects to ofColor objects. If there is still enough time remaining, add a better algorithm for the singleplayer bot.
  ## Days left to work on project: 1 day
 * April 30 (half day)
 * ~~April 31 (half day)~~ proof that studying CS makes you delusional.
