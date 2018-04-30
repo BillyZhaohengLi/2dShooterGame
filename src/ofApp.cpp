@@ -1,6 +1,6 @@
 #include "ofApp.h"
 
-//--------------------------------------------------------------
+//---setup; load different game elements to prepare for game
 void ofApp::setup(){
 	//load sounds
 	shotSound.load("fire_shot.wav");
@@ -10,19 +10,27 @@ void ofApp::setup(){
 	add_buttons_text(buttons_in_level, text_in_level);
 
 	//tick the appropriate settings buttons in main menu
-	buttons_in_level.tick_button(blue_button);
-	buttons_in_level.tick_button(few_walls);
+	buttons_in_level.tick_button(kBluePalette);
+	buttons_in_level.tick_button(kFewWallsButton);
 
 	//add boundaries to the level (the boundaries are fixed for each game anyways, better done sooner than later)
 	levelbounds.add_boundary();
 }
 
-//--------------------------------------------------------------
+//---update function; call separate subdivided update functions based on current game state
 void ofApp::update(){
 	//one server can only have one client at a time; disconnect all additional clients.
 	multiplayer_network.disconnect_additional_clients();
 
-	//call separate update functions based on current game state
+	//handles the case when the program's partner disconnects in multiplayer; in this case this should be handled here to close the server and
+	//go into the correct interface (disconnect) ASAP. Also resets the game elements to the singleplayer menu state.
+	if (multiplayer_network.get_status() != NONE && !multiplayer_network.is_connected() && 
+		game_current != MULTI_CONNECT) {
+		multiplayer_network.close();
+		reset_to_menu(p1, p2, shots_on_screen, levelbounds, multiplayer_network.get_status(), keydown);
+		game_current = DISCONNECTED;
+	}
+
 	switch (game_current) {
 	case MAIN_MENU:
 	case MULTI_MENU:
@@ -53,9 +61,8 @@ void ofApp::update(){
 	}
 }
 
-//--------------------------------------------------------------
+//---draw function; specific drawing subdivided to separate draw functions based on current game state
 void ofApp::draw(){
-	//specific drawing done by separate draw functions based on current game state
 	switch (game_current) {
 	case MAIN_MENU:
 	case MULTI_MENU:
@@ -73,29 +80,24 @@ void ofApp::draw(){
 	}
 
 	//draw button and text in level
-	ofSetColor(0, 0, 0);
 	text_in_level.draw_text(game_current);
 	buttons_in_level.draw_button(game_current);
 }
 
-//--------------------------------------------------------------
+//---keypressed; sets the relevant cell in the keydown array to true.
 void ofApp::keyPressed(int key){
 	if (key >= 0 && key <= 255) {
-		//sets the relevant cell in the keydown array to true
-		if (game_current == IN_GAME_SINGLE) {
+		if (game_current == IN_GAME_SINGLE || game_current == IN_GAME_MULTI) {
 			//if there is a game currently going on set the keys to case insensitive
 			keydown[toupper(key)] = true;
 			//if pause is pressed during a single player game pause the game
-			if (toupper(key) == 'P') {
+			if (toupper(key) == 'P' && game_current == IN_GAME_SINGLE) {
 				game_current = PAUSE;
 			}
 		}
-		else if (game_current == IN_GAME_MULTI) {
-			keydown[toupper(key)] = true;
-		}
 		else if (game_current == PAUSE) {
-			//if pause is pressed during pause then resume the game
 			keydown[toupper(key)] = true;
+			//if pause is pressed during pause then resume the game
 			if (toupper(key) == 'P') {
 				game_current = IN_GAME_SINGLE;
 			}
@@ -106,14 +108,11 @@ void ofApp::keyPressed(int key){
 	}
 }
 
-//--------------------------------------------------------------
+//---keyreleased; sets the relevant cell in the keydown array to false.
 void ofApp::keyReleased(int key){
 	if (key >= 0 && key <= 255) {
-		//sets the relevant cell in the keydown array to true
-		if (game_current == IN_GAME_SINGLE || game_current == PAUSE) {
-			keydown[toupper(key)] = false;
-		}
-		else if (game_current == IN_GAME_MULTI) {
+		//if there is a game currently going on set the keys to case insensitive
+		if (game_current == IN_GAME_SINGLE || game_current == PAUSE || game_current == IN_GAME_MULTI) {
 			keydown[toupper(key)] = false;
 		}
 		else {
@@ -122,116 +121,68 @@ void ofApp::keyReleased(int key){
 	}
 }
 
-//--------------------------------------------------------------
-void ofApp::mouseMoved(int x, int y ){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseDragged(int x, int y, int button){
-
-}
-
-//--------------------------------------------------------------
+//---mouse pressed; sets mouse_down to true
 void ofApp::mousePressed(int x, int y, int button){
 	mouse_down = true;
 }
 
-//--------------------------------------------------------------
+//---mouse released; sets mouse_down and mouse_held to false.
 void ofApp::mouseReleased(int x, int y, int button){
 	mouse_down = false;
 	mouse_held = false;
 }
 
-//--------------------------------------------------------------
-void ofApp::mouseEntered(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::mouseExited(int x, int y){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::windowResized(int w, int h){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::gotMessage(ofMessage msg){
-
-}
-
-//--------------------------------------------------------------
-void ofApp::dragEvent(ofDragInfo dragInfo){ 
-
-}
-
 void ofApp::update_menu() {
-	string message;
-
-	//receive message; also handle the case if the connection is terminated
-	if (multiplayer_network.get_status() != NONE) {
-		//if the connection is terminated set variables accordingly, close the servere and go back to main menu
-		if (!multiplayer_network.is_connected()) {
-			multiplayer_network.close();
-			p2.set_bot(true);
-			p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			game_current = DISCONNECTED;
-		}
-		//otherwise recieve a message from the client
-		message = multiplayer_network.receive();
-	}
-
-	//handle message from partner
+	//receive and handle message from partner; if singleplayer this part is skipped since the size of message will be 0.
+	string message = multiplayer_network.receive();
 	if (message.size() > 0) {
 		//if the message begins with "PLAYER" then it is a message to update the opponent's player model;
 		if (message.substr(0, 6) == "PLAYER") {
 			p2.deserialize_update_model_message(message);
 		}
+		//if the message begins with "UPDATE" then it is a message to update the generated walls in the level and start the game.
 		else if (message.substr(0, 6) == "UPDATE") {
-			reset_game(p1, p2, shots_on_screen);
+			reset_game(p1, p2, shots_on_screen, keydown);
 			levelbounds.deserialize_update_message(message.substr(6));
 			game_current = IN_GAME_MULTI;
-			cout << p1.get_location().first << "\n";
-			cout << p1.get_location().second << "\n";
 			return;
 		}
 	}
 
 	//helper function to enter name
-	pair<bool, string> temp = enter_name(entered, player_name, keydown);
-	entered = temp.first;
-	player_name = temp.second;
+	enter_name(entered, player_name, keydown);
 
 	//check if any button is pressed
 	if (mouse_down && !mouse_held) {
+		mouse_held = true;
 		int pressed = buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), game_current);
 		switch (pressed) {
 
 		//single player button; sets the player name to whatever the user entered.
-		case (start_singleplayer_button):
+		case (kStartSingleplayerButton):
 			//sets the typed name to the player
 			p1.set_name(player_name);
+			entered = false;
 
 			//generate walls
 			levelbounds.random_level_generator(walls_amount);
 
 			//reset players to be ready for the game
-			reset_game(p1, p2, shots_on_screen);
+			reset_game(p1, p2, shots_on_screen, keydown);
 
-			mouse_held = true;
-			entered = false;
 			switch (multiplayer_network.get_status()) {
+
+			//case for singleplayer game
 			case (NONE):
 				//sets a random name and color for the bot
-				p2.randomize_name();
-				p2.randomize_color();
+				p2.randomize_appearance();
 				game_current = IN_GAME_SINGLE;
 				return;
 				break;
+
+			//case for multiplayer game
 			default:
+				//sends the signal to the partner to start the game; while waiting for response move into waiting room
 				multiplayer_network.send("UPDATE" + levelbounds.serialized_string());
 				buffer = "UPDATE" + levelbounds.serialized_string();
 				game_current = WAITING_ROOM;
@@ -241,57 +192,51 @@ void ofApp::update_menu() {
 			break;
 
 		//multiplayer button; takes the player to the multiplayer interface and starts the TCP server
-		case (start_multiplayer_button):
-			mouse_held = true;
+		case (kStartMultiplayerButton):
 			game_current = MULTI_CONNECT;
 			break;
 
 		//help button; sends the player to the help interface
-		case (help_button):
-			mouse_held = true;
+		case (kHelpButton):
 			game_current = HELP;
 			break;
 
 		//exit button; exits the program.
-		case (exit_button):
+		case (kExitButton):
 			std::exit(0);
 			break;
 
 		//disconnect from the session.
-		case (multi_disconnect_button):
-			mouse_held = true;
-			//close either the server or the client based on what the program was connected to the session as.
+		case (kMultiDisconnectButton):
+			//close either the server or the client based on what the program was connected to the session as and reset the game objects.
 			multiplayer_network.close();
-			p2.set_bot(true);
-			p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
+			reset_to_menu(p1, p2, shots_on_screen, levelbounds, multiplayer_network.get_status(), keydown);
 			game_current = DISCONNECTED;
 			break;
 
 		//palette buttons; modifies the player color based on the palette clicked (also unticks all other color palettes)
-		case (red_button):
-		case (green_button):
-		case (blue_button):
-		case (yellow_button):
-		case (magenta_button):
-		case (cyan_button):
-			for (int i = red_button; i <= cyan_button; i++) {
+		case (kRedPalette):
+		case (kGreenPalette):
+		case (kBluePalette):
+		case (kYellowPalette):
+		case (kMagentaPalette):
+		case (kCyanPalette):
+			for (int i = kRedPalette; i <= kCyanPalette; i++) {
 				buttons_in_level.untick_button(i);
 			}
 			buttons_in_level.tick_button(pressed);
 			p1.set_color(pressed);
-			mouse_held = true;
 			break;
 
 		//button for generating walls in the level. (unticks all other wall choices)
-		case (few_walls):
-		case (medium_walls):
-		case (a_lot_walls):
-			for (int i = few_walls; i <= a_lot_walls; i++) {
+		case (kFewWallsButton):
+		case (kMediumWallsButton):
+		case (kALotWallsButton):
+			for (int i = kFewWallsButton; i <= kALotWallsButton; i++) {
 				buttons_in_level.untick_button(i);
 			}
 			buttons_in_level.tick_button(pressed);
 			walls_amount = wall_button_to_wall_amount(pressed);
-			mouse_held = true;
 			break;
 		}
 	}
@@ -307,16 +252,14 @@ void ofApp::update_menu() {
 }
 
 void ofApp::update_waiting_room() {
-	if (!multiplayer_network.is_connected()) {
-		multiplayer_network.close();
-		p2.set_bot(true);
-		p1.set_location(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-		game_current = DISCONNECTED;
-	}
+	//waiting room; the program which initiated a change of interface should wait here for response from their partner
+	//to ensure that they are on the same interface.
 	string message = multiplayer_network.receive();
+	//messages beginning with 'U', 'T' and 'F' signify that the partner is in the multiplayer game and the program should proceed.
 	if (message[0] == 'U' || message[0] == 'T' || message[0] == 'F') {
 		game_current = IN_GAME_MULTI;
 	}
+	//messages beginning with 'P' signify that the partner is back in the main menu and the program should proceed, if the program is currently in the game over screen
 	else if (message[0] == 'P' && buffer == "BCKMAIN") {
 		game_current = MULTI_MENU;
 	}
@@ -369,20 +312,10 @@ void ofApp::update_singleplayer_game() {
 		shots_on_screen.hit_player(p1);
 		shots_on_screen.hit_player(p2);
 
-		//determine if either player is dead.
-		if (!p1.isalive() && !p2.isalive()) {
+		//determine if either player is dead; if this is the case, play the dead sound, generate the game outcome message and change game interface.
+		if (!p1.isalive() || !p2.isalive()) {
 			dieSound.play();
-			game_result = TIE;
-			game_current = ROUND_OVER;
-		}
-		else if (!p1.isalive()) {
-			dieSound.play();
-			game_result = P2_WIN;
-			game_current = ROUND_OVER;
-		}
-		else if (!p2.isalive()) {
-			dieSound.play();
-			game_result = P1_WIN;
+			game_outcome_message = generate_game_over_message(p1, p2);
 			game_current = ROUND_OVER;
 		}
 	}
@@ -391,19 +324,6 @@ void ofApp::update_singleplayer_game() {
 	//no calculations are done on client side; the job of the client is to send the input at every update to the host where the calculations
 	//are handled and the level graphics are sent back to be parsed here.
 	else if (multiplayer_network.get_status() == CLIENT) {
-		//if the connection is terminated reset the game and go back to the main menu
-		if (!multiplayer_network.is_connected()) {
-			multiplayer_network.close();
-
-			levelbounds.clear_level();
-			shots_on_screen.clear_shots();
-
-			p2.set_bot(true);
-			p2.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			game_current = DISCONNECTED;
-			return;
-		}
 		string to_send = serialize_input(keydown, mouse_down, ofGetMouseX(), ofGetMouseY());
 		multiplayer_network.send(to_send);
 
@@ -423,20 +343,10 @@ void ofApp::update_singleplayer_game() {
 			}
 		}
 
-		//determine whether the game is over.
-		if (!p1.isalive() && !p2.isalive()) {
+		//determine if either player is dead; if this is the case, play the dead sound, generate the game outcome message and change game interface.
+		if (!p1.isalive() || !p2.isalive()) {
 			dieSound.play();
-			game_result = TIE;
-			game_current = ROUND_OVER;
-		}
-		else if (!p1.isalive()) {
-			dieSound.play();
-			game_result = P2_WIN;
-			game_current = ROUND_OVER;
-		}
-		else if (!p2.isalive()) {
-			dieSound.play();
-			game_result = P1_WIN;
+			game_outcome_message = generate_game_over_message(p1, p2);
 			game_current = ROUND_OVER;
 		}
 	}
@@ -445,35 +355,25 @@ void ofApp::update_singleplayer_game() {
 	//all calculations are done on the host server; receives input from the client and handles player movement, sending the game status back to the client
 	//at every update.
 	else if (multiplayer_network.get_status() == HOST) {
-		//if the connection is terminated reset the game and go back to the main menu
-		if (!multiplayer_network.is_connected()) {
-			multiplayer_network.close();
-
-			levelbounds.clear_level();
-			shots_on_screen.clear_shots();
-
-			p2.set_bot(true);
-			p2.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			game_current = DISCONNECTED;
-			return;
-		}
-
 		bool shot_fired = false;
 		//reduces the firing cooldown of the players.
 		p1.cooldown_reduce();
 		p2.cooldown_reduce();
 
-		//updates the parameters of p1
+		//updates the parameters of p1; for a detailed description see the singleplayer game engine.
 		p1.change_direction(keydown);
 		p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
 		p1.move();
 		levelbounds.collision_resolver(p1);
+		pair<pair<bool, double>, pair<double, double>> p1_shot_params = p1.shoot_prompt(mouse_down, false);
+		if (p1_shot_params.first.first) {
+			shot_fired = true;
+			shotSound.play();
+			shots_on_screen.add_shot(p1_shot_params.second.first, p1_shot_params.second.second, p1_shot_params.first.second);
+		}
 
-		//reading buffer until there are no messages left; causes data loss but drastically reduces lag
+		//if there is a valid message, update the parameters of p2; otherwise don't do anything with them.
 		string message = multiplayer_network.receive();
-
-		//if there is a valid message, update the parameters of p2.
 		if (message.size() > 0 && (message[0] == 'T' || message[0] == 'F')) {
 			pair<pair<vector<bool>, bool>, pair<double, double>> message_pairs = deserialize_input(message);
 			p2.change_direction_p2(message_pairs.first.first);
@@ -486,18 +386,6 @@ void ofApp::update_singleplayer_game() {
 				shotSound.play();
 				shots_on_screen.add_shot(p2_shot_params.second.first, p2_shot_params.second.second, p2_shot_params.first.second);
 			}
-		}
-		//otherwise just move them according to the last received input.
-		else {
-			p2.move();
-			levelbounds.collision_resolver(p2);
-		}
-
-		pair<pair<bool, double>, pair<double, double>> p1_shot_params = p1.shoot_prompt(mouse_down, false);
-		if (p1_shot_params.first.first) {
-			shot_fired = true;
-			shotSound.play();
-			shots_on_screen.add_shot(p1_shot_params.second.first, p1_shot_params.second.second, p1_shot_params.first.second);
 		}
 
 		//move all shots on the screen.
@@ -520,43 +408,24 @@ void ofApp::update_singleplayer_game() {
 		}
 		multiplayer_network.send(to_send);
 
-		//determine whether the game is over.
-		if (!p1.isalive() && !p2.isalive()) {
+		//determine if either player is dead; if this is the case, play the dead sound, generate the game outcome message and change game interface.
+		if (!p1.isalive() || !p2.isalive()) {
 			dieSound.play();
-			game_result = TIE;
+			game_outcome_message = generate_game_over_message(p1, p2);
 			game_current = ROUND_OVER;
 		}
-		else if (!p1.isalive()) {
-			dieSound.play();
-			game_result = P2_WIN;
-			game_current = ROUND_OVER;
-		}
-		else if (!p2.isalive()) {
-			dieSound.play();
-			game_result = P1_WIN;
-			game_current = ROUND_OVER;
-		}
-	}
-	
+	}	
 }
 
 void ofApp::update_pause() {
 	//detect pressed buttons
 	if (mouse_down && !mouse_held) {
+		mouse_held = true;
 		switch (buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), game_current)) {
-
 		//go back to main menu
-		case (paused_back_to_menu):
-			mouse_held = true;
-
-			//clear the level; remove all non-boundary walls and shots
-			levelbounds.clear_level();
-			shots_on_screen.clear_shots();
-
-			//reset both players and set p1 back to the display area
-			p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-			p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
-
+		case (kPausedToMenuButton):
+			//reset the level
+			reset_to_menu(p1, p2, shots_on_screen, levelbounds, multiplayer_network.get_status(), keydown);
 			game_current = MAIN_MENU;
 			break;
 		}
@@ -565,49 +434,19 @@ void ofApp::update_pause() {
 
 void ofApp::update_round_over() {
 	//receive message from the client/server if applicable
-	if (!multiplayer_network.is_connected() && multiplayer_network.get_status() != NONE) {
-		multiplayer_network.close();
-
-		levelbounds.clear_level();
-		shots_on_screen.clear_shots();
-
-		p2.set_bot(true);
-		p2.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-		p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-		game_current = DISCONNECTED;
-		return;
-	}
 	string message = multiplayer_network.receive();
 
 	//if there is a message, interpret it and determine what button the other user pressed and update game state accordingly.
 	if (message.size() > 0) {
 		//other user pressed rematch
 		if (message == "REMATCH") {
-			//reset players and shots
-			reset_game(p1, p2, shots_on_screen);
-			for (int i = 0; i < 255; i++) {
-				keydown[i] = false;
-			}
+			reset_game(p1, p2, shots_on_screen, keydown);
 			game_current = IN_GAME_MULTI;
 			return;
 		}
 		//other user pressed back to main
 		else if (message == "BCKMAIN") {
-			levelbounds.clear_level();
-			shots_on_screen.clear_shots();
-			switch (multiplayer_network.get_status()) {
-			case (HOST):
-				p1.reset_player(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
-				p2.reset_player(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
-				break;
-			case (CLIENT):
-				p2.reset_player(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
-				p1.reset_player(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
-				break;
-			}
-			for (int i = 0; i < 255; i++) {
-				keydown[i] = false;
-			}
+			reset_to_menu(p1, p2, shots_on_screen, levelbounds, multiplayer_network.get_status(), keydown);
 			game_current = MULTI_MENU;
 			return;
 		}
@@ -615,19 +454,13 @@ void ofApp::update_round_over() {
 
 	//detect pressed buttons
 	if (mouse_down && !mouse_held) {
+		mouse_held = true;
 		switch (buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), game_current)) {
 
-		//rematch button; does not regenerate walls.
-		case (rematch_button):
-			mouse_held = true;
+		//rematch button; does not regenerate walls, but reset the players and the shots.
+		case (kRematchButton):
+			reset_game(p1, p2, shots_on_screen, keydown);
 
-			//reset both players and clear shots
-			reset_game(p1, p2, shots_on_screen);
-
-			//clears keys; this prevents weird issues with holding down keys at the time of the rematch
-			for (int i = 0; i < 255; i++) {
-				keydown[i] = false;
-			}
 			switch (multiplayer_network.get_status()) {
 
 			//case for singleplayer game
@@ -643,67 +476,18 @@ void ofApp::update_round_over() {
 				break;
 			}
 		break;
-		//return to main menu
-		case (round_over_back_to_menu):
+		//return to main menu; reset all appropriate game objects.
+		case (kRoundOverToMenuButton):
+			reset_to_menu(p1, p2, shots_on_screen, levelbounds, multiplayer_network.get_status(), keydown);
 			switch (multiplayer_network.get_status()) {
 
 			//case for singleplayer game
 			case (NONE):
-				mouse_held = true;
-
-				//clear all non-boundary walls and shots in the level.
-				levelbounds.clear_level();
-
-				shots_on_screen.clear_shots();
-
-				//reset both players and set p1 back to the display area
-				p1.reset_player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4);
-				p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
-
-				//clears keys; this prevents weird issues with holding down keys at the time of going back to main menu
-				for (int i = 0; i < 255; i++) {
-					keydown[i] = false;
-				}
 				game_current = MAIN_MENU;
 				break;
 
-			//case for host server; only difference is a message is sent to client signifying the button was pressed
-			case (HOST):
-				mouse_held = true;
-
-				//clear all non-boundary walls and shots in the level.
-				levelbounds.clear_level();
-				shots_on_screen.clear_shots();
-
-				//reset both players and set p1 back to the display area
-				p1.reset_player(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
-				p2.reset_player(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
-
-				//clears keys; this prevents weird issues with holding down keys at the time of going back to main menu
-				for (int i = 0; i < 255; i++) {
-					keydown[i] = false;
-				}
-				multiplayer_network.send("BCKMAIN");
-				buffer = "BCKMAIN";
-				game_current = WAITING_ROOM;
-				break;
-
-			//case for client; only difference is a message is sent to server signifying the button was pressed (and p1 p2 positions swapped).
-			case (CLIENT):
-				mouse_held = true;
-
-				//clear all non-boundary walls and shots in the level.
-				levelbounds.clear_level();
-				shots_on_screen.clear_shots();
-
-				//reset both players and set p1 back to the display area
-				p2.reset_player(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
-				p1.reset_player(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
-
-				//clears keys; this prevents weird issues with holding down keys at the time of going back to main menu
-				for (int i = 0; i < 255; i++) {
-					keydown[i] = false;
-				}
+			//case for multiplayer game; sends a message to the partner to go back to main menu.
+			default:
 				multiplayer_network.send("BCKMAIN");
 				buffer = "BCKMAIN";
 				game_current = WAITING_ROOM;
@@ -716,11 +500,11 @@ void ofApp::update_round_over() {
 void ofApp::update_help() {
 	//detect pressed buttons
 	if (mouse_down && !mouse_held) {
+		mouse_held = true;
 		switch (buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), game_current)) {
 
 		//go back to main menu
-		case (help_back_to_menu):
-			mouse_held = true;
+		case (kHelpToMenuButton):
 			game_current = MAIN_MENU;
 			break;
 		}
@@ -729,23 +513,11 @@ void ofApp::update_help() {
 
 void ofApp::update_multi_connect() {
 	//enter ip address
-	pair<bool, string> temp = enter_ip(entered, ip_address, keydown);
-	entered = temp.first;
-	ip_address = temp.second;
+	enter_ip(entered, ip_address, keydown);
 
 	if (multiplayer_network.is_connected()) {
 		multiplayer_string = "";
-		//set players to appropriate locations in the level
-		if (multiplayer_network.get_status() == HOST) {
-			p1.set_location(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
-			p2.set_location(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
-		}
-		else {
-			p1.set_location(level_width_multiplier * wall_width * 0.55, level_height_multiplier * wall_width * 0.4);
-			p2.set_location(level_width_multiplier * wall_width * 0.45, level_height_multiplier * wall_width * 0.4);
-		}
-		//set p2 to not be a bot since p2 is now player-controlled
-		p2.set_bot(false);
+		reset_to_menu(p1, p2, shots_on_screen, levelbounds, multiplayer_network.get_status(), keydown);
 
 		//send the details of the player to the other user
 		multiplayer_network.send(p1.serialized_model_string());
@@ -757,35 +529,40 @@ void ofApp::update_multi_connect() {
 	//detect pressed buttons
 	if (mouse_down && !mouse_held) {
 		bool setup;
+		mouse_held = true;
 		switch (buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), game_current)) {
 
 		//connect to a server at the specified ip address.
-		case (multi_connect_button):
-			mouse_held = true;
+		case (kConnectToServerButton):
 			setup = multiplayer_network.client_setup(ip_address);
+			//if the connection was not successful, show the failure message
 			if (!setup) {
-				multiplayer_string = "connection failed. Please try again.";
+				multiplayer_string = kConnectFail;
 			}
 			break;
-		case (multi_server_button):
-			mouse_held = true;
-			if (multiplayer_string == "you are now hosting a server. Please wait for another user to connect." ||
-				multiplayer_string == "you are already hosting a server.") {
-				multiplayer_string = "you are already hosting a server.";
+		
+		//start a multiplayer server
+		case (kStartServerButton):
+			//prevent a second server from starting if this program instance is already hosting one
+			if (multiplayer_string == kHostingServer || multiplayer_string == kAlreadyHost) {
+				multiplayer_string = kAlreadyHost;
 			}
+			//otherwise attempt to set up a server
 			else {
 				setup = multiplayer_network.server_setup();
+				//setup failed
 				if (!setup) {
-					multiplayer_string = "setup failed; there is already a server running on this machine.";
+					multiplayer_string = kServerConflict;
 				}
+				//setup success
 				else {
-					multiplayer_string = "you are now hosting a server. Please wait for another user to connect.";
+					multiplayer_string = kHostingServer;
 				}
 			}
 			break;
+
 		//go back to main menu
-		case (multi_connect_back_to_menu):
-			mouse_held = true;
+		case (kMultiConnectToMenuButton):
 			multiplayer_string = "";
 			multiplayer_network.close();
 			game_current = MAIN_MENU;
@@ -796,9 +573,9 @@ void ofApp::update_multi_connect() {
 
 void ofApp::update_disconnected() {
 	if (mouse_down && !mouse_held) {
+		mouse_held = true;
 		switch (buttons_in_level.on_button(ofGetMouseX(), ofGetMouseY(), game_current)) {
-		case (disconnected_confirm_button):
-			mouse_held = true;
+		case (kDisconnectConfirmButton):
 			game_current = MAIN_MENU;
 			break;
 		}
@@ -807,13 +584,13 @@ void ofApp::update_disconnected() {
 
 void ofApp::draw_menu() {
 	//draw player name
-	text_in_level.draw_dynamic_text(player_name, level_width_multiplier * wall_width * 0.1, 
-		level_height_multiplier * wall_width * 0.4, false, 2);
+	text_in_level.draw_dynamic_text(player_name, kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.4, false, 2);
 
 	//draw the demo player
 	p1.draw_player();
 
-	//if the player is connect also draw the opponent
+	//if there is a connected partner also draw the opponent
 	if (multiplayer_network.is_connected()) {
 		p2.draw_player();
 	}
@@ -832,48 +609,44 @@ void ofApp::draw_singleplayer_game() {
 
 	//draw additional objects based on game state
 	switch (game_current) {
-	
+
 	//game is paused
 	case (PAUSE):
 		//draw an overlaying rectangle to prevent black text from mixing in with the walls
 		ofSetColor(255, 255, 255, 128);
-		ofDrawRectangle(level_width_multiplier * wall_width * 0.25, level_height_multiplier * wall_width * 0.25, level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.5);
-		ofSetColor(0, 0, 0);
+		ofDrawRectangle(kLevelWidthMultiplier * kWallWidth * 0.25, kLevelHeightMultiplier * kWallWidth * 0.25, 
+			kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.5);
 		break;
 
 	//game is over
 	case (ROUND_OVER):
 		//draw an overlaying rectangle to prevent black text from mixing in with the walls
 		ofSetColor(255, 255, 255, 128);
-		ofDrawRectangle(level_width_multiplier * wall_width * 0.1, level_height_multiplier * wall_width * 0.9, level_width_multiplier * wall_width * 0.8, level_height_multiplier * wall_width * 0.08);
-		ofSetColor(0, 0, 0);
+		ofDrawRectangle(kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.9,
+			kLevelWidthMultiplier * kWallWidth * 0.8, kLevelHeightMultiplier * kWallWidth * 0.08);
 
 		//draw the match outcome
-		string game_outcome_message;
-		switch (game_result) {
-		case (TIE):
-			game_outcome_message = "It's a tie.";
-			break;
-		case (P1_WIN):
-			game_outcome_message = p1.get_name() + " wins!";
-			break;
-		case (P2_WIN):
-			game_outcome_message = p2.get_name() + " wins!";
-			break;
-		}
-		text_in_level.draw_dynamic_text(game_outcome_message, level_width_multiplier * wall_width * 0.12,
-			level_height_multiplier * wall_width * 0.95, false, 2);
+		text_in_level.draw_dynamic_text(game_outcome_message, kLevelWidthMultiplier * kWallWidth * 0.12,
+			kLevelHeightMultiplier * kWallWidth * 0.95, false, 2);
 		break;
 	}
-		
 }
 
 void ofApp::draw_multi_connect() {
 	//draw the current entered ip address
-	text_in_level.draw_dynamic_text("IP address:" + ip_address, level_width_multiplier * wall_width * 0.1,
-		level_height_multiplier * wall_width * 0.45, false, 2);
+	text_in_level.draw_dynamic_text("IP address:" + ip_address, kLevelWidthMultiplier * kWallWidth * 0.1,
+		kLevelHeightMultiplier * kWallWidth * 0.45, false, 2);
 
-	//draw the current entered ip address
-	text_in_level.draw_dynamic_text(multiplayer_string, level_width_multiplier * wall_width * 0.1,
-		level_height_multiplier * wall_width * 0.55, false, 2);
+	//draw the text signifying the status of the multiplayer network (e.g. server set up, connection failed)
+	text_in_level.draw_dynamic_text(multiplayer_string, kLevelWidthMultiplier * kWallWidth * 0.1,
+		kLevelHeightMultiplier * kWallWidth * 0.55, false, 2);
 }
+
+//---methods down here are default openframeworks functions which were not used in this program.
+void ofApp::mouseMoved(int x, int y) {}
+void ofApp::mouseDragged(int x, int y, int button) {}
+void ofApp::mouseEntered(int x, int y) {}
+void ofApp::mouseExited(int x, int y) {}
+void ofApp::windowResized(int w, int h) {}
+void ofApp::dragEvent(ofDragInfo dragInfo) {}
+void ofApp::gotMessage(ofMessage msg) {}

@@ -26,7 +26,7 @@ private:
 		/*
 		the interface the text is in.
 		*/
-		game_state to_show_;
+		GameState to_show_;
 
 		/*
 		the font the text is in.
@@ -36,7 +36,7 @@ private:
 		/*
 		typical constructor.
 		*/
-		GameText(string content, int xpos, int ypos, bool centered, game_state to_show, ofxCenteredTrueTypeFont font);
+		GameText(string content, int xpos, int ypos, bool centered, GameState to_show, ofxCenteredTrueTypeFont font);
 
 		/*
 		draw the text using the allocated font.
@@ -57,7 +57,7 @@ public:
 	/*
 	add a text snippet. Calls the GameText constructor.
 	*/
-	void add_text(string content, int xpos, int ypos, bool centered, game_state to_show, ofxCenteredTrueTypeFont font);
+	void add_text(string content, int xpos, int ypos, bool centered, GameState to_show, ofxCenteredTrueTypeFont font);
 
 	/*
 	add a font.
@@ -67,7 +67,7 @@ public:
 	/*
 	draw all text in the current interface. Calls the draw methods of GameText objects.
 	*/
-	void draw_text(game_state game_current);
+	void draw_text(GameState game_current);
 
 	/*
 	draw a string using a pre-existing font. Used to draw dynamic strings such as names and ip addresses.

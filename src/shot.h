@@ -81,7 +81,7 @@ public:
 	void clear_shots();
 
 	/*
-	serialized string format of all shots in the level. Used in multiplayer; walls are generated at the host server and sent to the client.
+	serialized string format of all shots in the level. Used in multiplayer; shots are managed at the host server and sent to the client.
 	*/
 	string serialized_string();
 
@@ -90,9 +90,3 @@ public:
 	*/
 	void deserialize_update_message(string message);
 };
-
-/*
-resets both players to opposite corners in the map and clear all shots in the leve. 
-Appears so many times in the main game engine that it deserves to be a standalone helper method.
-*/
-void reset_game(Player& p1, Player& p2, ShotInLevel& shots_in_level);

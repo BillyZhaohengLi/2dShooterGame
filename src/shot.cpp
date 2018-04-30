@@ -6,15 +6,15 @@ ShotInLevel::Shot::Shot(double x, double y, double initial_angle_) {
 	xpos_ = x;
 	ypos_ = y;
 	angle_ = initial_angle_;
-	bounces_remaining_ = shot_bounces;
+	bounces_remaining_ = kShotBounces;
 }
 
 /*
 move the shot in the direction defined by its angle_; called every update.
 */
 void ShotInLevel::Shot::move() {
-	xpos_ = xpos_ + shot_length * cos(angle_);
-	ypos_ = ypos_ + shot_length * sin(angle_);
+	xpos_ = xpos_ + kShotLength * cos(angle_);
+	ypos_ = ypos_ + kShotLength * sin(angle_);
 }
 
 /*
@@ -22,7 +22,7 @@ draw the shot using ofDrawCircle.
 */
 void ShotInLevel::Shot::draw_shot() {
 	ofSetColor(255, 0, 0);
-	ofDrawCircle(xpos_, ypos_, shot_radius);
+	ofDrawCircle(xpos_, ypos_, kShotRadius);
 }
 
 /*
@@ -59,7 +59,7 @@ void ShotInLevel::hit_player(Player &player_to_check) {
 	for (int i = 0; i < shots_in_level.size(); i++) {
 		double x_dist = shots_in_level[i].xpos_ - player_location.first;
 		double y_dist = shots_in_level[i].ypos_ - player_location.second;
-		if (sqrt(x_dist * x_dist + y_dist * y_dist) < (player_radius + shot_radius)) {
+		if (sqrt(x_dist * x_dist + y_dist * y_dist) < (kPlayerRadius + kShotRadius)) {
 			player_to_check.kill_player();
 		}
 	}
@@ -72,6 +72,9 @@ void ShotInLevel::clear_shots() {
 	shots_in_level.clear();
 }
 
+/*
+serialized string format of all shots in the level. Used in multiplayer; shots are managed at the host server and sent to the client.
+*/
 string ShotInLevel::serialized_string() {
 	string to_return = "G";
 	for (int i = 0; i < shots_in_level.size(); i++) {
@@ -80,6 +83,9 @@ string ShotInLevel::serialized_string() {
 	return to_return;
 }
 
+/*
+deserialize an update message from the host server and adds the appropriate shots to the ShotsInLevel in the client program.
+*/
 void ShotInLevel::deserialize_update_message(string message) {
 	shots_in_level.clear();
 	vector<string> message_array = split(message.substr(0, message.size() - 1), "~");
@@ -88,21 +94,5 @@ void ShotInLevel::deserialize_update_message(string message) {
 			Shot temp = Shot(stoi(message_array[i]), stoi(message_array[i + 1]), stoi(message_array[i + 2]));
 			shots_in_level.push_back(temp);
 		}
-	}
-}
-
-/*
-resets both players to opposite corners in the map. Appears so many times in the main game engine that it deserves to be a standalone helper method.
-*/
-void reset_game(Player& p1, Player& p2, ShotInLevel& shots_in_level) {
-	shots_in_level.clear_shots();
-	int pos = rand() % 100;
-	if (pos > 50) {
-		p1.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-		p2.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
-	}
-	else {
-		p2.reset_player(wall_width * 2.5, (level_height_multiplier - 2.5) * wall_width);
-		p1.reset_player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5);
 	}
 }

@@ -1,173 +1,190 @@
 #pragma once
+
+/*
+message for a failed connection attempt to a server.
+*/
+static const char* kConnectFail = "Connection failed. Please try again.";
+
+/*
+message for successfully hosting a server.
+*/
+static const char* kHostingServer = "you are now hosting a server. Please wait for another user to connect.";
+
+/*
+message for clicking the 'create server' button when already hosting a server.
+*/
+static const char* kAlreadyHost = "you are already hosting a server.";
+
+/*
+message for failing to host a server, usually due to another instance of the program hosting a server on the same machine.
+*/
+static const char* kServerConflict = "setup failed; there is already a server running on this machine.";
+
 /*
 pi. self-explanatory.
 */
-const double pi = 3.14159265359;
+const double kPi = 3.14159265359;
 
 /*
 width of the level; not necessarily the window width.
 */
-const int level_width_multiplier = 32;
+const int kLevelWidthMultiplier = 32;
 
 /*
 height of the level; not necessarily the window height.
 */
-const int level_height_multiplier = 24;
+const int kLevelHeightMultiplier = 24;
 
 /*
 guideline width for creating wall segments.
 */
-const int wall_width = 32;
+const int kWallWidth = 32;
 
 /*
 radius of the player (who is a circle).
 */
-const int player_radius = 15;
+const int kPlayerRadius = 15;
 
 /*
 radius of shots.
 */
-const int shot_radius = 3;
+const int kShotRadius = 3;
 
 /*
 velocity of the player.
 */
-const int player_velocity = 4;
+const int kPlayerVelocity = 4;
 
 /*
 cooldown between firing shots in ticks.
 */
-const int player_shot_cooldown = 30;
+const int kPlayerShotCooldown = 30;
 
 /*
 the "length" of a shot; only used in shot-wall collisions to calculate trajectory; has nothing to do with shot-player collisions.
 */
-const int shot_length = 12;
+const int kShotLength = 12;
 
 /*
 buffer value used in resolving collisions.
 */
-const double epsilon = 0.00005;
+const double kEpsilon = 0.00005;
 
 /*
 amount of times a shot can bounce.
 */
-const int shot_bounces = 6;
+const int kShotBounces = 6;
 
 /*
 the cooldown between the bot changing directions. Unused by players.
 */
-const int bot_change_direction_cd = 30;
+const int kBotChangeDirectionCd = 30;
 
 /*
 the maximum name length of the player.
 */
-const int max_name_length = 16;
+const int kMaxNameLength = 16;
 
 /*
 the maximum ip address length. (e.g. 255.255.255.255 - exactly 15 characters).
 */
-const int max_ip_length = 15;
+const int kMaxIpLength = 15;
 /*
 direction enum; used to determine the player's orientation.
 */
-enum direction { STOP = 0, NORTH = 1, SOUTH = 2, EAST = 3, WEST = 4, NORTHEAST = 5, NORTHWEST = 6, SOUTHEAST = 7, SOUTHWEST = 8 };
+enum Direction { STOP = 0, NORTH = 1, SOUTH = 2, EAST = 3, WEST = 4, NORTHEAST = 5, NORTHWEST = 6, SOUTHEAST = 7, SOUTHWEST = 8 };
 
 /*
-game state enum; 
+game state enum; used for determining what interface the program is in.
 */
-enum game_state { MAIN_MENU = 0, IN_GAME_SINGLE = 1, IN_GAME_MULTI = 2, PAUSE = 3, ROUND_OVER = 4, HELP = 5,
+enum GameState { MAIN_MENU = 0, IN_GAME_SINGLE = 1, IN_GAME_MULTI = 2, PAUSE = 3, ROUND_OVER = 4, HELP = 5,
 	MULTI_CONNECT = 6 , MULTI_MENU = 7, WAITING_ROOM = 8, DISCONNECTED = 9};
-
-/*
-enum to determine game winner;
-*/
-enum winner { TIE = 0, P1_WIN = 1, P2_WIN = 2 };
 
 /*
 enum for connection status of the program.
 */
-enum connection { NONE = 0, HOST = 1, CLIENT = 2 };
+enum Connection { NONE = 0, HOST = 1, CLIENT = 2 };
 
 /*
 indices of Buttons in the AllButtons object.
 */
 //single player menu buttons
-const int start_singleplayer_button = 0;
-const int start_multiplayer_button = 1;
-const int help_button = 2;
-const int exit_button = 3;
-const int red_button = 4;
-const int green_button = 5;
-const int blue_button = 6;
-const int yellow_button = 7;
-const int magenta_button = 8;
-const int cyan_button = 9;
-const int few_walls = 10;
-const int medium_walls = 11;
-const int a_lot_walls = 12;
+const int kStartSingleplayerButton = 0;
+const int kStartMultiplayerButton = 1;
+const int kHelpButton = 2;
+const int kExitButton = 3;
+const int kRedPalette = 4;
+const int kGreenPalette = 5;
+const int kBluePalette = 6;
+const int kYellowPalette = 7;
+const int kMagentaPalette = 8;
+const int kCyanPalette = 9;
+const int kFewWallsButton = 10;
+const int kMediumWallsButton = 11;
+const int kALotWallsButton = 12;
 
 //paused buttons
-const int paused_back_to_menu = 13;
+const int kPausedToMenuButton = 13;
 
 //help buttons
-const int help_back_to_menu = 14;
+const int kHelpToMenuButton = 14;
 
 //round over buttons
-const int rematch_button = 15;
-const int round_over_back_to_menu = 16;
+const int kRematchButton = 15;
+const int kRoundOverToMenuButton = 16;
 
 //multiplayer connect buttons
-const int multi_connect_button = 17;
-const int multi_server_button = 18;
-const int multi_connect_back_to_menu = 19;
+const int kConnectToServerButton = 17;
+const int kStartServerButton = 18;
+const int kMultiConnectToMenuButton = 19;
 
 //multiplayer menu buttons
-const int multi_disconnect_button = 20;
+const int kMultiDisconnectButton = 20;
 
-const int disconnected_confirm_button = 21;
+//disconnected menu buttons
+const int kDisconnectConfirmButton = 21;
 
 /*
 constants for color codes of the player
 */
-const int red_color = 0;
-const int green_color = 1;
-const int blue_color = 2;
-const int yellow_color = 3;
-const int magenta_color = 4;
-const int cyan_color = 5;
+const int kRedColor = 0;
+const int kGreenColor = 1;
+const int kBlueColor = 2;
+const int kYellowColor = 3;
+const int kMagentaColor = 4;
+const int kCyanColor = 5;
 
 /*
 constants for the amount of walls to be generated in a level; corresponds to the wall setting buttons.
 */
-const int few_walls_amount = 8;
-const int medium_walls_amount = 16;
-const int a_lot_walls_amount = 32;
+const int kFewWallsAmount = 8;
+const int kMediumWallsAmount = 16;
+const int kALotWallsAmount = 32;
 
 /*
 start and end of printable ascii character range.
 */
-const int character_start = 32;
-const int character_end = 126;
+const int kCharacterStart = 32;
+const int kCharacterEnd = 126;
 
 /*
 start and end of printable integer character range.
 */
-const int integer_start = 48;
-const int integer_end = 57;
+const int kIntegerStart = 48;
+const int kIntegerEnd = 57;
 
 /*
 ascii value of backspace button.
 */
-const int backspace_ascii = 8;
+const int kBackspaceAscii = 8;
 
 /*
 ascii value of period.
 */
-const int period_ascii = 46;
+const int kPeriodAscii = 46;
 
 /*
 port number used for multiplayer connections. (Fixing this makes so that only one multiplayer server can be started per ip address).
 */
-const int multiplayer_port = 11999;
+const int kMultiplayerPort = 11999;
 

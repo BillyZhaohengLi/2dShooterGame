@@ -5,8 +5,8 @@
 //========================================================================
 int main( ){
 	ofGLFWWindowSettings settings;
-	settings.width = level_width_multiplier * wall_width;
-	settings.height = level_height_multiplier * wall_width;
+	settings.width = kLevelWidthMultiplier * kWallWidth;
+	settings.height = kLevelHeightMultiplier * kWallWidth;
 	settings.decorated = false;
 	settings.windowMode = OF_WINDOW;
 	ofCreateWindow(settings);		// <-------- setup the GL context

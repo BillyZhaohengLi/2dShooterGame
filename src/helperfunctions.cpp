@@ -139,20 +139,20 @@ bool rectOverlap(Point l1, Point r1, Point l2, Point r2)
 helper function for entering name called in update. Takes in the keys pressed, whether the name was altered in the previous frame and the player's name
 and returns whether the name was altered and the new name.
 */
-pair<bool, string> enter_name(bool entered, string player_name, bool keydown[255]) {
+void enter_name(bool& entered, string& player_name, bool keydown[255]) {
 	//enter name
 	bool something_pressed = false;
-	for (int i = character_start; i < character_end; i++) {
+	for (int i = kCharacterStart; i < kCharacterEnd; i++) {
 		if (keydown[i]) {
 			something_pressed = true;
 			//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
-			if (player_name.length() < max_name_length && !entered) {
+			if (player_name.length() < kMaxNameLength && !entered) {
 				player_name += i;
 			}
 		}
 	}
 	//8 is the backspace button; if it is pressed pop the last letter the player entered.
-	if (keydown[backspace_ascii]) {
+	if (keydown[kBackspaceAscii]) {
 		something_pressed = true;
 		if (player_name.length() > 0 && !entered) {
 			player_name.pop_back();
@@ -165,34 +165,33 @@ pair<bool, string> enter_name(bool entered, string player_name, bool keydown[255
 	else {
 		entered = false;
 	}
-	return pair<bool, string>(entered, player_name);
 }
 
 /*
 helper function for entering ip address called in update. Takes in the keys pressed, whether the ip address was altered in the previous frame and the player's name
 and returns whether the name was altered and the new ip address.
 */
-pair<bool, string> enter_ip(bool entered, string ip_address, bool keydown[255]) {
+void enter_ip(bool& entered, string& ip_address, bool keydown[255]) {
 	//enter name
 	bool something_pressed = false;
-	if (keydown[period_ascii]) {
+	if (keydown[kPeriodAscii]) {
 		something_pressed = true;
 		//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
-		if (ip_address.length() < max_ip_length && !entered) {
+		if (ip_address.length() < kMaxIpLength && !entered) {
 			ip_address += '.';
 		}
 	}
-	for (int i = integer_start; i <= integer_end; i++) {
+	for (int i = kIntegerStart; i <= kIntegerEnd; i++) {
 		if (keydown[i]) {
 			something_pressed = true;
 			//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
-			if (ip_address.length() < max_ip_length && !entered) {
+			if (ip_address.length() < kMaxIpLength && !entered) {
 				ip_address += i;
 			}
 		}
 	}
 	//8 is the backspace button; if it is pressed pop the last letter the player entered.
-	if (keydown[backspace_ascii]) {
+	if (keydown[kBackspaceAscii]) {
 		something_pressed = true;
 		if (ip_address.length() > 0 && !entered) {
 			ip_address.pop_back();
@@ -205,7 +204,6 @@ pair<bool, string> enter_ip(bool entered, string ip_address, bool keydown[255]) 
 	else {
 		entered = false;
 	}
-	return pair<bool, string>(entered, ip_address);
 }
 
 /*
@@ -213,16 +211,17 @@ helper function to convert the wall setting pressed to the actual amount of wall
 */
 int wall_button_to_wall_amount(int wall_button) {
 	switch (wall_button) {
-	case (few_walls):
-		return few_walls_amount;
+	case (kFewWallsButton):
+		return kFewWallsAmount;
 		break;
-	case (medium_walls):
-		return medium_walls_amount;
+	case (kMediumWallsButton):
+		return kMediumWallsAmount;
 		break;
-	case (a_lot_walls):
-		return a_lot_walls_amount;
+	case (kALotWallsButton):
+		return kALotWallsAmount;
 		break;
 	}
+	return 0;
 }
 
 /*
@@ -238,7 +237,7 @@ std::vector<std::string> split(const string& input, const string& regex) {
 }
 
 /*
-serialize player input consisting of keys pressed, whether the mouse button is held and the mouse position into a string to send through a connection.
+serialize player input consisting of keys pressed, whether the mouse button is held and the mouse position into a string to send through a Connection.
 */
 string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, double mouse_y) {
 	string to_send;
@@ -284,7 +283,7 @@ string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, doubl
 }
 
 /*
-deserialize a player input string consisting of keys pressed, whether the mouse button is held and the mouse position received through a connection.
+deserialize a player input string consisting of keys pressed, whether the mouse button is held and the mouse position received through a Connection.
 returns an ugly data structure, with the contents being the following in this order:
 1. boolean vector of keys pressed
 2. boolean of whether the mouse is pressed

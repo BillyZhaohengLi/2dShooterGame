@@ -11,6 +11,7 @@
 #include "ofxCenteredTrueTypeFont.h"
 #include "ofxNetwork.h"
 #include "multiplayernetwork.h"
+#include "objecthelperfunctions.h"
 #include <mmsystem.h>
 
 class ofApp : public ofBaseApp{
@@ -22,15 +23,8 @@ class ofApp : public ofBaseApp{
 
 		void keyPressed(int key);
 		void keyReleased(int key);
-		void mouseMoved(int x, int y );
-		void mouseDragged(int x, int y, int button);
 		void mousePressed(int x, int y, int button);
 		void mouseReleased(int x, int y, int button);
-		void mouseEntered(int x, int y);
-		void mouseExited(int x, int y);
-		void windowResized(int w, int h);
-		void dragEvent(ofDragInfo dragInfo);
-		void gotMessage(ofMessage msg);
 		
 		//update helper functions
 		void update_menu();
@@ -56,6 +50,7 @@ class ofApp : public ofBaseApp{
 
 		string buffer;
 		string multiplayer_string;
+		string game_outcome_message;
 
 		//array of booleans used to store which keys are held down.
 		bool keydown[255];
@@ -63,7 +58,7 @@ class ofApp : public ofBaseApp{
 		//boolean on whether the left mouse button is held down.
 		bool mouse_down;
 
-		//boolean on whether the mouse is held; used to prevent crashing interfaces
+		//boolean on whether the mouse is held; used to prevent more than one button being triggered with one mouse press
 		bool mouse_held;
 
 		//boolean for handling player input for player name in main menu; used to prevent multiple keys being entered with one press
@@ -71,7 +66,7 @@ class ofApp : public ofBaseApp{
 		bool entered = false;
 
 		//the amount of walls to generate in a level when the start button is clicked. Defaults to the minimum option.
-		int walls_amount = few_walls_amount;
+		int walls_amount = kFewWallsAmount;
 
 		//wall object containing the walls in the level.
 		Wall levelbounds;
@@ -86,7 +81,7 @@ class ofApp : public ofBaseApp{
 		AllText text_in_level;
 
 		//the current interface the program is in. instantiated to start at main menu
-		game_state game_current = MAIN_MENU;
+		GameState game_current = MAIN_MENU;
 
 		//store player name.
 		string player_name;
@@ -94,10 +89,16 @@ class ofApp : public ofBaseApp{
 		//store ip address.
 		string ip_address;
 
-		//enum for game outcome.
-		winner game_result;
-
 		//players in the game. By default p1 is the player character and p2 is a bot.
-		Player p1 = Player(level_width_multiplier * wall_width * 0.5, level_height_multiplier * wall_width * 0.4, blue_button, false, "default");
-		Player p2 = Player((level_width_multiplier - 2.5) * wall_width, wall_width * 2.5, blue_button, true, "default");
+		Player p1 = Player(kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.4, kBluePalette, false, "default");
+		Player p2 = Player((kLevelWidthMultiplier - 2.5) * kWallWidth, kWallWidth * 2.5, kBluePalette, true, "default");
+
+		//methods down here are default openframeworks functions which were not used in this program.
+		void mouseMoved(int x, int y);
+		void mouseDragged(int x, int y, int button);
+		void mouseEntered(int x, int y);
+		void mouseExited(int x, int y);
+		void windowResized(int w, int h);
+		void dragEvent(ofDragInfo dragInfo);
+		void gotMessage(ofMessage msg);
 };

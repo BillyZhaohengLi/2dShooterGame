@@ -31,7 +31,7 @@ private:
 	/*
 	direction the player is facing. Used to determine movement.
 	*/
-	direction facing;
+	Direction facing;
 
 	/*
 	direction the player is facing; used to draw the player, has nothing to do with movement.
@@ -93,7 +93,7 @@ public:
 	/*
 	change the direction the player is facing; called when the player enters some sort of combination of WASD keys.
 	*/
-	void change_direction(direction change_to);
+	void change_direction(Direction change_to);
 
 	/*
 	moves the player. Called at every update function; modifies player coordinates based on the direction they are facing.
@@ -110,12 +110,11 @@ public:
 	*/
 	void reset_player(double new_x, double new_y);
 
-	
-	
 	/*
 	updates the direction the player is facing (used to draw the player's gun). Has different outcomes based on whether the player is a bot.
 	*/
 	void update_player_facing(int mouse_x, int mouse_y, Player opponent);
+
 	/*
 	draws the player using ofDrawCircle.
 	*/
@@ -156,13 +155,14 @@ public:
 	*/
 	int get_color();
 
-	pair<int, int> get_facing();
-
 	/*
 	changes the player's direction based on what keys are held down. Has different outcomes based on whether the player is a bot.
 	*/
 	void change_direction(bool keydown[255]);
 
+	/*
+	changes the player's direction based on a vector of size 4 containing which of the WASD keys are held down. Used for p2 in multiplayer.
+	*/
 	void change_direction_p2(vector<bool> input);
 
 	/*
@@ -176,14 +176,9 @@ public:
 	pair<pair<bool, double>, pair<double, double>> shoot_prompt(bool mouse_down, bool clear_shot);
 
 	/*
-	sets randomized names for bots.
+	sets randomized names and colors for bots.
 	*/
-	void randomize_name();
-
-	/*
-	sets randomized colors for bots.
-	*/
-	void randomize_color();
+	void randomize_appearance();
 
 	/*
 	set whether the player is a bot.
@@ -191,18 +186,22 @@ public:
 	void set_bot(bool bot);
 
 	/*
-	deserialize a message sent over a multiplayer connection and update a player accordingly.
+	deserialize a message sent over a multiplayer Connection and update the player model accordingly.
 	*/
 	void deserialize_update_model_message(string message);
 
-	void deserialize_update_game_message(string message);
 	/*
-	send a player over the connection as a serialized string.
+	desearilaize a message sent over a multiplayer Connection and update the player's game parameters (position, firing status, etc.) accordingly.
+	*/
+	void deserialize_update_game_message(string message);
+
+	/*
+	send a player's color and name over the Connection as a serialized string.
 	*/
 	string serialized_model_string();
 
 	/*
-	send a player's position, direction facing, shot cooldown and whether they're alive over the connection as a serialized string.
+	send a player's position, direction facing, shot cooldown and whether they're alive over the Connection as a serialized string.
 	*/
 	string serialized_game_string();
 

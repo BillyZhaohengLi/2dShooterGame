@@ -41,7 +41,7 @@ bool Player::isalive() {
 /*
 change the direction the player is facing; called when the player enters some sort of combination of WASD keys.
 */
-void Player::change_direction(direction change_to) {
+void Player::change_direction(Direction change_to) {
 	facing = change_to;
 }
 
@@ -55,32 +55,32 @@ void Player::move() {
 		case STOP:
 			break;
 		case WEST:
-			xpos -= player_velocity;
+			xpos -= kPlayerVelocity;
 			break;
 		case EAST:
-			xpos += player_velocity;
+			xpos += kPlayerVelocity;
 			break;
 		case NORTH:
-			ypos -= player_velocity;
+			ypos -= kPlayerVelocity;
 			break;
 		case SOUTH:
-			ypos += player_velocity;
+			ypos += kPlayerVelocity;
 			break;
 		case NORTHWEST:
-			xpos -= (player_velocity * (sqrt(2) / 2));
-			ypos -= (player_velocity * (sqrt(2) / 2));
+			xpos -= (kPlayerVelocity * (sqrt(2) / 2));
+			ypos -= (kPlayerVelocity * (sqrt(2) / 2));
 			break;
 		case NORTHEAST:
-			xpos += (player_velocity * (sqrt(2) / 2));
-			ypos -= (player_velocity * (sqrt(2) / 2));
+			xpos += (kPlayerVelocity * (sqrt(2) / 2));
+			ypos -= (kPlayerVelocity * (sqrt(2) / 2));
 			break;
 		case SOUTHWEST:
-			xpos -= (player_velocity * (sqrt(2) / 2));
-			ypos += (player_velocity * (sqrt(2) / 2));
+			xpos -= (kPlayerVelocity * (sqrt(2) / 2));
+			ypos += (kPlayerVelocity * (sqrt(2) / 2));
 			break;
 		case SOUTHEAST:
-			xpos += (player_velocity * (sqrt(2) / 2));
-			ypos += (player_velocity * (sqrt(2) / 2));
+			xpos += (kPlayerVelocity * (sqrt(2) / 2));
+			ypos += (kPlayerVelocity * (sqrt(2) / 2));
 			break;
 		}
 	}
@@ -98,7 +98,7 @@ revives the player (sets alive to true) at a given location and puts their weapo
 */
 void Player::reset_player(double new_x, double new_y) {
 	alive = true;
-	shot_cooldown = player_shot_cooldown / 2;
+	shot_cooldown = kPlayerShotCooldown / 2;
 	xpos = new_x;
 	ypos = new_y;
 }
@@ -123,30 +123,30 @@ draws the player using ofDrawCircle.
 */
 void Player::draw_player() {
 	ofSetColor(red, green, blue);
-	name_font.drawStringCentered(name, xpos, ypos - player_radius * 1.8);
+	name_font.drawStringCentered(name, xpos, ypos - kPlayerRadius * 1.8);
 	if (alive) {
 		ofSetColor(red, green, blue);
 
 		//draw the player circle corresponding with the hitbox
-		ofDrawCircle(xpos, ypos, player_radius);
+		ofDrawCircle(xpos, ypos, kPlayerRadius);
 		ofSetColor(0, 0, 0);
 		ofSetLineWidth(4);
 
 		//draw a smiley face on the player
-		ofDrawCircle(xpos - cos(pi / 4) * player_radius * 0.5, ypos - cos(pi / 4) * player_radius * 0.5, player_radius * 0.2);
-		ofDrawCircle(xpos + cos(pi / 4) * player_radius * 0.5, ypos - cos(pi / 4) * player_radius * 0.5, player_radius * 0.2);
-		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.75, ypos + cos(pi / 4) * player_radius * 0.5, xpos - cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75);
-		ofDrawLine(xpos + cos(pi / 4) * player_radius * 0.75, ypos + cos(pi / 4) * player_radius * 0.5, xpos + cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75);
-		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75, xpos + cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.75);
+		ofDrawCircle(xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos - cos(kPi / 4) * kPlayerRadius * 0.5, kPlayerRadius * 0.2);
+		ofDrawCircle(xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos - cos(kPi / 4) * kPlayerRadius * 0.5, kPlayerRadius * 0.2);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.5, xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75);
+		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.5, xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75, xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75);
 		double gun_angle = atan2(facing_y - ypos, facing_x - xpos);
 		//draw the gun; if the player is firing add a firing effect.
-		if (shot_cooldown >= player_shot_cooldown * 0.9) {
-			ofDrawLine(xpos + cos(gun_angle) * player_radius, ypos + sin(gun_angle) * player_radius, xpos + cos(gun_angle) * player_radius * 1.25, ypos + sin(gun_angle) * player_radius * 1.25);
+		if (shot_cooldown >= kPlayerShotCooldown * 0.9) {
+			ofDrawLine(xpos + cos(gun_angle) * kPlayerRadius, ypos + sin(gun_angle) * kPlayerRadius, xpos + cos(gun_angle) * kPlayerRadius * 1.25, ypos + sin(gun_angle) * kPlayerRadius * 1.25);
 			ofSetColor(255, 255, 0, 128);
-			ofDrawCircle(xpos + cos(gun_angle) * player_radius * 1.25, ypos + sin(gun_angle) * player_radius * 1.25, 6);
+			ofDrawCircle(xpos + cos(gun_angle) * kPlayerRadius * 1.25, ypos + sin(gun_angle) * kPlayerRadius * 1.25, 6);
 		}
 		else {
-			ofDrawLine(xpos + cos(gun_angle) * player_radius, ypos + sin(gun_angle) * player_radius, xpos + cos(gun_angle) * player_radius * 1.5, ypos + sin(gun_angle) * player_radius * 1.5);
+			ofDrawLine(xpos + cos(gun_angle) * kPlayerRadius, ypos + sin(gun_angle) * kPlayerRadius, xpos + cos(gun_angle) * kPlayerRadius * 1.5, ypos + sin(gun_angle) * kPlayerRadius * 1.5);
 		}
 	}
 	//if the player is dead draw them in black.
@@ -154,18 +154,18 @@ void Player::draw_player() {
 		ofSetColor(red, green, blue);
 
 		//draw the player circle
-		ofDrawCircle(xpos, ypos, player_radius);
+		ofDrawCircle(xpos, ypos, kPlayerRadius);
 		ofSetColor(0, 0, 0);
 		ofSetLineWidth(3);
 
 		//draw a sad face on the player
-		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.15, ypos - cos(pi / 4) * player_radius * 0.15, xpos - cos(pi / 4) * player_radius * 0.85, ypos - cos(pi / 4) * player_radius * 0.85);
-		ofDrawLine(xpos + cos(pi / 4) * player_radius * 0.15, ypos - cos(pi / 4) * player_radius * 0.15, xpos + cos(pi / 4) * player_radius * 0.85, ypos - cos(pi / 4) * player_radius * 0.85);
-		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.15, ypos - cos(pi / 4) * player_radius * 0.85, xpos - cos(pi / 4) * player_radius * 0.85, ypos - cos(pi / 4) * player_radius * 0.15);
-		ofDrawLine(xpos + cos(pi / 4) * player_radius * 0.15, ypos - cos(pi / 4) * player_radius * 0.85, xpos + cos(pi / 4) * player_radius * 0.85, ypos - cos(pi / 4) * player_radius * 0.15);
-		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.75, ypos + cos(pi / 4) * player_radius * 0.75, xpos - cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.5);
-		ofDrawLine(xpos + cos(pi / 4) * player_radius * 0.75, ypos + cos(pi / 4) * player_radius * 0.75, xpos + cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.5);
-		ofDrawLine(xpos - cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.5, xpos + cos(pi / 4) * player_radius * 0.5, ypos + cos(pi / 4) * player_radius * 0.5);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.15, xpos - cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.85);
+		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.15, xpos + cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.85);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.85, xpos - cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.15);
+		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.85, xpos + cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.15);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.75, xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5);
+		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.75, xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5, xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5);
 	}
 }
 
@@ -173,7 +173,7 @@ void Player::draw_player() {
 fires a shot; returns the angle at which the shot was fired and sets cooldown to a designated value.
 */
 double Player::fire_shot() {
-	shot_cooldown = player_shot_cooldown;
+	shot_cooldown = kPlayerShotCooldown;
 	return atan2(facing_y - ypos, facing_x - xpos);
 }
 
@@ -199,13 +199,13 @@ set the player's name. Also alters font size based on the new name's length.
 void Player::set_name(string new_name) {
 	name = new_name;
 	if (new_name.length() < 8) {
-		name_font.loadFont("verdana.ttf", player_radius * 0.8);
+		name_font.loadFont("verdana.ttf", kPlayerRadius * 0.8);
 	}
 	else if (new_name.length() < 12) {
-		name_font.loadFont("verdana.ttf", player_radius * 0.7);
+		name_font.loadFont("verdana.ttf", kPlayerRadius * 0.7);
 	}
 	else {
-		name_font.loadFont("verdana.ttf", player_radius * 0.6);
+		name_font.loadFont("verdana.ttf", kPlayerRadius * 0.6);
 	}
 	name_font.setLineHeight(18.0f);
 	name_font.setLetterSpacing(1.037);
@@ -224,37 +224,37 @@ sets the player's color via a color palette.
 void Player::set_color(int color_palette) {
 	switch (color_palette) {
 		//red
-	case (red_button):
+	case (kRedPalette):
 		red = 255;
 		blue = 0;
 		green = 0;
 		break;
 		//blue
-	case (blue_button):
+	case (kBluePalette):
 		red = 0;
 		blue = 255;
 		green = 0;
 		break;
 		//green
-	case (green_button):
+	case (kGreenPalette):
 		red = 0;
 		blue = 0;
 		green = 255;
 		break;
 		//yellow
-	case (yellow_button):
+	case (kYellowPalette):
 		red = 255;
 		blue = 0;
 		green = 255;
 		break;
 		//magenta
-	case (magenta_button):
+	case (kMagentaPalette):
 		red = 255;
 		blue = 255;
 		green = 0;
 		break;
 		//cyan
-	case (cyan_button):
+	case (kCyanPalette):
 		red = 0;
 		blue = 255;
 		green = 255;
@@ -264,30 +264,26 @@ void Player::set_color(int color_palette) {
 
 int Player::get_color() {
 	if (red == 255 && green == 0 && blue == 0) {
-		return red_color;
+		return kRedColor;
 	}
 	else if (red == 0 && green == 255 && blue == 0) {
-		return green_color;
+		return kGreenColor;
 	}
 	else if (red == 0 && green == 0 && blue == 255) {
-		return blue_color;
+		return kBlueColor;
 	}
 	else if (red == 255 && green == 255 && blue == 0) {
-		return yellow_color;
+		return kYellowColor;
 	}
 	else if (red == 255 && green == 0 && blue == 255) {
-		return magenta_color;
+		return kMagentaColor;
 	}
 	else if (red == 0 && green == 255 && blue == 255) {
-		return cyan_color;
+		return kCyanColor;
 	}
 	else {
 		return -1;
 	}
-}
-
-pair<int, int> Player::get_facing() {
-	return pair<int, int>(facing_x, facing_y);
 }
 
 /*
@@ -377,7 +373,7 @@ void Player::change_direction(bool keydown[255]) {
 				facing = SOUTHEAST;
 				break;
 			}
-			change_direction_cd = (rand() % 3 + 1) * bot_change_direction_cd;
+			change_direction_cd = (rand() % 3 + 1) * kBotChangeDirectionCd;
 		}
 		else {
 			change_direction_cd--;
@@ -385,6 +381,9 @@ void Player::change_direction(bool keydown[255]) {
 	}
 }
 
+/*
+changes the player's direction based on a vector of size 4 containing which of the WASD keys are held down. Used for p2 in multiplayer.
+*/
 void Player::change_direction_p2(vector<bool> input) {
 	int vert_displacement = 0;
 	int hor_displacement = 0;
@@ -454,8 +453,8 @@ pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_d
 
 			//return the values as specified above.
 			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(true, shot_angle), pair<double, double>(
-				xpos + (player_radius - shot_length + shot_radius + epsilon) * cos(shot_angle), 
-				ypos + (player_radius - shot_length + shot_radius + epsilon) * sin(shot_angle)));
+				xpos + (kPlayerRadius - kShotLength + kShotRadius + kEpsilon) * cos(shot_angle), 
+				ypos + (kPlayerRadius - kShotLength + kShotRadius + kEpsilon) * sin(shot_angle)));
 		}
 		else {
 			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), pair<double, double>(0, 0));
@@ -468,16 +467,16 @@ pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_d
 
 			//return the values as specified above.
 			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(true, shot_angle), pair<double, double>(
-				xpos + (player_radius * 0.9) * cos(shot_angle), ypos + (player_radius * 0.9) * sin(shot_angle)));
+				xpos + (kPlayerRadius * 0.9) * cos(shot_angle), ypos + (kPlayerRadius * 0.9) * sin(shot_angle)));
 		}
 		return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), pair<double, double>(0, 0));
 	}
 }
 
 /*
-sets randomized names for bots. Hmm, I wonder what these names are?
+sets randomized names and colors for bots. Hmm, I wonder what these names are?
 */
-void Player::randomize_name() {
+void Player::randomize_appearance() {
 	int roll_dice = rand() % 5;
 	string new_name;
 	switch (roll_dice) {
@@ -529,13 +528,8 @@ void Player::randomize_name() {
 		set_name(new_name);
 		break;
 	}
-}
 
-/*
-sets randomized colors for bots.
-*/
-void Player::randomize_color() {
-	set_color(rand() % 6 + red_button);
+	set_color(rand() % 6 + kRedPalette);
 }
 
 /*
@@ -546,38 +540,38 @@ void Player::set_bot(bool bot) {
 }
 
 /*
-deserialize a message sent over a multiplayer connection and update a player accordingly.
+deserialize a message sent over a multiplayer Connection and update a player accordingly.
 */
 void Player::deserialize_update_model_message(string message) {
 	vector<string> message_array = split(message.substr(6), "~");
 	//set the player's new color based on the color received.
 	switch (stoi(message_array[0])) {
-	case (red_color):
+	case (kRedColor):
 		red = 255;
 		green = 0;
 		blue = 0;
 		break;
-	case (green_color):
+	case (kGreenColor):
 		red = 0;
 		green = 255;
 		blue = 0;
 		break;
-	case (blue_color):
+	case (kBlueColor):
 		red = 0;
 		green = 0;
 		blue = 255;
 		break;
-	case (yellow_color):
+	case (kYellowColor):
 		red = 255;
 		green = 255;
 		blue = 0;
 		break;
-	case (magenta_color):
+	case (kMagentaColor):
 		red = 255;
 		green = 0;
 		blue = 255;
 		break;
-	case (cyan_color):
+	case (kCyanColor):
 		red = 0;
 		green = 255;
 		blue = 255;
@@ -589,6 +583,9 @@ void Player::deserialize_update_model_message(string message) {
 	facing_y = stoi(message_array[3]);
 }
 
+/*
+desearilaize a message sent over a multiplayer Connection and update the player's game parameters (position, firing status, etc.) accordingly.
+*/
 void Player::deserialize_update_game_message(string message) {
 	vector<string> message_array = split(message, "~");
 	xpos = stoi(message_array[0]);
@@ -602,13 +599,16 @@ void Player::deserialize_update_game_message(string message) {
 }
 
 /*
-send a player over the connection as a serialized string.
+send a player over the Connection as a serialized string.
 */
 string Player::serialized_model_string() {
 	string to_send = "PLAYER" + to_string(get_color()) + "~" + name + "~" + to_string(facing_x) + "~" + to_string(facing_y);
 	return to_send;
 }
 
+/*
+send a player's position, direction facing, shot cooldown and whether they're alive over the Connection as a serialized string.
+*/
 string Player::serialized_game_string() {
 	string to_send = "G" + to_string(round(xpos)) + "~" + to_string(round(ypos)) + "~" + to_string(round(facing_x)) +
 		"~" + to_string(round(facing_y)) + "~" + to_string(shot_cooldown) + "~";
