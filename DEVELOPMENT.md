@@ -57,9 +57,11 @@
  * added multiplayernetwork class; wrapper class for server and client to simplify the main game engine.
  * further reduced lag by changing data transmission to be "lossy": if multiple messages end up being received in a frame only the newest one is read.
  * added waiting rooms to await confirmation from the other user for operations such as starting games and returning to menu; ensures both players are in sync on the same interface.
+ * added text to the multiplayer connect menu to tell the player whether the connection/setting up a server was successful or not.
+ * added a disconnected interface shown to users in multiplayer when their partner disconnects. Servers will now also automatically disconnect additional clients when there are more than 1 client connect to it.
+ * main project done at this point.
+ * _TODO on April 30_ : clean up the code in the program to make it more readable and add test cases to test for robustness. If there is still enough time remaining, add a better algorithm for the singleplayer bot.
  ## Days left to work on project: 3 days
-* April 28 (full day)
-* April 29 (full day)
 * April 30 (half day)
 * ~~April 31 (half day)~~ proof that studying CS makes you delusional.
 * May 1 (half day)
