@@ -61,7 +61,7 @@
  * added a disconnected interface shown to users in multiplayer when their partner disconnects. Servers will now also automatically disconnect additional clients when there are more than 1 client connect to it.
  * main project done at this point.
  * _TODO on April 30_ : clean up the code in the program to make it more readable and add test cases to test for robustness. If there is still enough time remaining, add a better algorithm for the singleplayer bot.
- ## Days left to work on project: 3 days
+ ## Days left to work on project: 1 day
 * April 30 (half day)
 * ~~April 31 (half day)~~ proof that studying CS makes you delusional.
 * May 1 (half day)
