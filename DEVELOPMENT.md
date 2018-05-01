@@ -65,6 +65,8 @@
 ### April 30:
  * changed all rgb values in objects to ofColor objects.
  * fixed a minor bug with multiplayer engine caused by additional clients connecting to a server.
+ * being disconnected from multiplayer now shows whether your game session ended normally or if you connected to a server already playing with another client.
+ * _TODO on May 1_ : add test cases for different functions to test for robustness; If there is still enough time remaining, add a better algorithm for the singleplayer bot.
  ## Days left to work on project: 0.5 days
 * ~~April 31 (half day)~~ proof that studying CS makes you delusional.
 * May 1 (half day)
