@@ -42,6 +42,7 @@ void AllText::add_font(ofxCenteredTrueTypeFont font) {
 draw all text in the current interface. Calls the draw methods of GameText objects.
 */
 void AllText::draw_text(GameState game_current) {
+	ofSetColor(ofColor::black);
 	for (int i = 0; i < text_in_game.size(); i++) {
 		if (game_current == text_in_game[i].to_show_) {
 			text_in_game[i].draw_text();

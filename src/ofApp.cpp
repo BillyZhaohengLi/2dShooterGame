@@ -28,7 +28,12 @@ void ofApp::update(){
 		game_current != MULTI_CONNECT) {
 		multiplayer_network.close();
 		reset_to_menu(p1, p2, shots_on_screen, levelbounds, multiplayer_network.get_status(), keydown);
-		game_current = DISCONNECTED;
+		if (multiplayer_network.received_message_from_server()) {
+			game_current = DISCONNECTED;
+		}
+		else {
+			game_current = DISCONNECTED_BY_HOST;
+		}
 	}
 
 	switch (game_current) {
@@ -56,6 +61,7 @@ void ofApp::update(){
 		update_multi_connect();
 		break;
 	case DISCONNECTED:
+	case DISCONNECTED_BY_HOST:
 		update_disconnected();
 		break;
 	}
@@ -351,7 +357,7 @@ void ofApp::update_singleplayer_game() {
 		}
 	}
 
-	//updates for multiplayer game for client.
+	//updates for multiplayer game for host.
 	//all calculations are done on the host server; receives input from the client and handles player movement, sending the game status back to the client
 	//at every update.
 	else if (multiplayer_network.get_status() == HOST) {

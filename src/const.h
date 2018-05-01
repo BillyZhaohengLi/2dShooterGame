@@ -98,7 +98,7 @@ enum Direction { STOP = 0, NORTH = 1, SOUTH = 2, EAST = 3, WEST = 4, NORTHEAST =
 game state enum; used for determining what interface the program is in.
 */
 enum GameState { MAIN_MENU = 0, IN_GAME_SINGLE = 1, IN_GAME_MULTI = 2, PAUSE = 3, ROUND_OVER = 4, HELP = 5,
-	MULTI_CONNECT = 6 , MULTI_MENU = 7, WAITING_ROOM = 8, DISCONNECTED = 9};
+	MULTI_CONNECT = 6 , MULTI_MENU = 7, WAITING_ROOM = 8, DISCONNECTED = 9, DISCONNECTED_BY_HOST = 10};
 
 /*
 enum for connection status of the program.

@@ -49,12 +49,12 @@ void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//green color palette
-	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.85, kLevelHeightMultiplier * kWallWidth * 0.4,
+	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.8, kLevelHeightMultiplier * kWallWidth * 0.4,
 		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::green, "",
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//blue color palette
-	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.8, kLevelHeightMultiplier * kWallWidth * 0.4,
+	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.85, kLevelHeightMultiplier * kWallWidth * 0.4,
 		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::blue, "", 
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
@@ -136,7 +136,7 @@ void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 	//confirmation button which shows up after the user gets disconnected from a multiplayer session.
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.35, kLevelHeightMultiplier * kWallWidth * 0.85,
 		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "OK",
-		vector<GameState> {DISCONNECTED}, button_text);
+		vector<GameState> {DISCONNECTED, DISCONNECTED_BY_HOST}, button_text);
 
 	//DRAW TEXT
 	//text for main menu
@@ -196,6 +196,9 @@ void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 	//text for disconnected interface
 	text_in_level.add_text("Your multiplayer session has ended.", kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.35,
 		false, DISCONNECTED, character_name);
+
+	text_in_level.add_text("There is already another user connected to this server.", kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.35,
+		false, DISCONNECTED_BY_HOST, character_name);
 
 	//add the fonts to the text object to be used in game
 	text_in_level.add_font(game_title_text);

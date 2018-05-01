@@ -154,56 +154,45 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	Point wall_SW = Point(xpos_, ypos_ + yspan_);
 	Point wall_SE = Point(xpos_ + xspan_, ypos_ + yspan_);
 
-	//the shot trajectory intersects the west wall
-	if (doIntersect(shot_before, shot_now, wall_NW, wall_SW)) {
-		//if the shot is coming from the left
-		if (to_bounce.angle_ >= -kPi / 2 && to_bounce.angle_ <= kPi / 2) {
-			bounced = true;
-			to_bounce.bounces_remaining_--;
-			to_bounce.xpos_ = xpos_ * 2 - to_bounce.xpos_;
-			if (to_bounce.angle_ <= 0) {
-				to_bounce.angle_ = -kPi - to_bounce.angle_;
-			}
-			else {
-				to_bounce.angle_ = kPi - to_bounce.angle_;
-			}
-		}
-	}
-	//the shot trajectory intersects the east wall
-	//else-if is not used here since it can be mathematically proven that every shot can only be bounced once per frame per wall segment.
-	if (doIntersect(shot_before, shot_now, wall_NE, wall_SE)) {
-		//if the shot is coming from the right
-		if (to_bounce.angle_ <= -kPi / 2 || to_bounce.angle_ >= kPi / 2) {
-			bounced = true;
-			to_bounce.bounces_remaining_--;
-			to_bounce.xpos_ = (xpos_ + xspan_) * 2 - to_bounce.xpos_;
-			if (to_bounce.angle_ <= -kPi / 2) {
-				to_bounce.angle_ = -kPi - to_bounce.angle_;
-			}
-			else {
-				to_bounce.angle_ = kPi - to_bounce.angle_;
-			}
-		}
-	}
-	//the shot trajectory intersects the north wall
-	if (doIntersect(shot_before, shot_now, wall_NW, wall_NE)) {
-		//if the shot is coming from the top
-		if (to_bounce.angle_ >= 0) {
-			to_bounce.bounces_remaining_--;
-			bounced = true;
-			to_bounce.ypos_ = ypos_ * 2 - to_bounce.ypos_;
-			to_bounce.angle_ = -to_bounce.angle_;
-		}
-	}
-	//the shot trajectory intersects the south wall
-	if (doIntersect(shot_before, shot_now, wall_SW, wall_SE)) {
-		//if the shot is coming from the bottom
+	//if the shot trajectory intersects the west wall and comes from the left
+	if (doIntersect(shot_before, shot_now, wall_NW, wall_SW) && 
+		(to_bounce.angle_ >= -kPi / 2 && to_bounce.angle_ <= kPi / 2)) {
+		to_bounce.bounces_remaining_--;
+		bounced = true;
+		to_bounce.xpos_ = xpos_ * 2 - to_bounce.xpos_;
 		if (to_bounce.angle_ <= 0) {
-			to_bounce.bounces_remaining_--;
-			bounced = true;
-			to_bounce.ypos_ = (ypos_ + yspan_) * 2 - to_bounce.ypos_;
-			to_bounce.angle_ = -to_bounce.angle_;
+			to_bounce.angle_ = -kPi - to_bounce.angle_;
 		}
+		else {
+			to_bounce.angle_ = kPi - to_bounce.angle_;
+		}
+	}
+	//if the shot trajectory intersects the east wall and comes from the right
+	else if (doIntersect(shot_before, shot_now, wall_NE, wall_SE) && 
+		(to_bounce.angle_ <= -kPi / 2 || to_bounce.angle_ >= kPi / 2)) {
+		to_bounce.bounces_remaining_--;
+		bounced = true;
+		to_bounce.xpos_ = (xpos_ + xspan_) * 2 - to_bounce.xpos_;
+		if (to_bounce.angle_ <= -kPi / 2) {
+			to_bounce.angle_ = -kPi - to_bounce.angle_;
+		}
+		else {
+			to_bounce.angle_ = kPi - to_bounce.angle_;
+		}
+	}
+	//if the shot trajectory intersects the north wall and comes from the top
+	else if (doIntersect(shot_before, shot_now, wall_NW, wall_NE) && (to_bounce.angle_ >= 0)) {
+		to_bounce.bounces_remaining_--;
+		bounced = true;
+		to_bounce.ypos_ = ypos_ * 2 - to_bounce.ypos_;
+		to_bounce.angle_ = -to_bounce.angle_;
+	}
+	//if the shot trajectory intersects the south wall and comes from the bottom
+	else if (doIntersect(shot_before, shot_now, wall_SW, wall_SE) && (to_bounce.angle_ <= 0)) {
+		to_bounce.bounces_remaining_--;
+		bounced = true;
+		to_bounce.ypos_ = (ypos_ + yspan_) * 2 - to_bounce.ypos_;
+		to_bounce.angle_ = -to_bounce.angle_;
 	}
 	return bounced;
 }
@@ -268,6 +257,7 @@ bounces shots off walls in a level. Calls bounce_shots of each wall segment for 
 void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 	//vector containing indices of the shots which have no bounces remaining; they will be deleted after the bouncing is finished.
 	vector<int> to_remove;
+	//repeat resolving collisions until no shots are colliding with walls
 	bool bounced;
 	do {
 		bounced = false;

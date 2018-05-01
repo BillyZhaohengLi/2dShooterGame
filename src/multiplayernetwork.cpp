@@ -4,6 +4,7 @@ default constructor; sets status to "NONE".
 */
 MultiplayerNetwork::MultiplayerNetwork() {
 	status = NONE;
+	received_message = false;
 }
 
 /*
@@ -12,10 +13,12 @@ if the setup is successful changes status to "HOST".
 */
 bool MultiplayerNetwork::server_setup() {
 	client.close();
-	status = NONE;
+	status = NONE; 
+	received_message = false;
 	bool connected = server.setup(kMultiplayerPort);
 	if (connected) {
 		status = HOST;
+		received_message = true;
 	}
 	return connected;
 }
@@ -28,6 +31,7 @@ bool MultiplayerNetwork::client_setup(string ip_address) {
 	server.disconnectAllClients();
 	server.close();
 	status = NONE;
+	received_message = false;
 	bool connected = client.setup(ip_address, kMultiplayerPort);
 	if (connected) {
 		status = CLIENT;
@@ -93,6 +97,7 @@ string MultiplayerNetwork::receive() {
 		string message = server.receive(0);
 		string checker = server.receive(0);
 		while (checker.size() > 0 && server.getNumClients() > 0) {
+			received_message = true;
 			message = checker;
 			checker = server.receive(0);
 		}
@@ -102,6 +107,7 @@ string MultiplayerNetwork::receive() {
 		string message = client.receive();
 		string checker = client.receive();
 		while (checker.size() > 0) {
+			received_message = true;
 			message = checker;
 			checker = client.receive();
 		}
@@ -129,4 +135,13 @@ void MultiplayerNetwork::disconnect_additional_clients() {
 			}
 		}
 	}
+}
+
+/*
+returns whether a client has received a message from a server in the period of time it was connected to it.
+Used to determine whether the client was disconnected due to trying to connect to a server already hosting another client
+(as this client will not receive any messages because all messages are sent to client No.0).
+*/
+bool MultiplayerNetwork::received_message_from_server() {
+	return received_message;
 }
