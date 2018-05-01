@@ -62,8 +62,10 @@
  * cleaned up a lot of code; ofApp.cpp down from 900 lines to 650 by moving repeated lines of codes to helper functions; updated comments for differents classes in project, renamed constants and enums according to C++ naming guide.
  * main project done at this point.
  * _TODO on April 30_ : add test cases for different functions to test for robustness, change rgb variables in objects to ofColor objects. If there is still enough time remaining, add a better algorithm for the singleplayer bot.
- ## Days left to work on project: 1 day
-* April 30 (half day)
+### April 30:
+ * changed all rgb values in objects to ofColor objects.
+ * fixed a minor bug with multiplayer engine caused by additional clients connecting to a server.
+ ## Days left to work on project: 0.5 days
 * ~~April 31 (half day)~~ proof that studying CS makes you delusional.
 * May 1 (half day)
 * May 2 (half day, but best not to make any major changes on this day; excluded for now)
