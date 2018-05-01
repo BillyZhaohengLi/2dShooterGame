@@ -19,7 +19,7 @@ void ofApp::setup(){
 
 //---update function; call separate subdivided update functions based on current game state
 void ofApp::update(){
-	//one server can only have one client at a time; disconnect all additional clients.
+	//one server can only have one client at a time; disconnect all clients beside client 0.
 	multiplayer_network.disconnect_additional_clients();
 
 	//handles the case when the program's partner disconnects in multiplayer; in this case this should be handled here to close the server and
@@ -613,7 +613,7 @@ void ofApp::draw_singleplayer_game() {
 	//game is paused
 	case (PAUSE):
 		//draw an overlaying rectangle to prevent black text from mixing in with the walls
-		ofSetColor(255, 255, 255, 128);
+		ofSetColor(ofColor::white, 128);
 		ofDrawRectangle(kLevelWidthMultiplier * kWallWidth * 0.25, kLevelHeightMultiplier * kWallWidth * 0.25, 
 			kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.5);
 		break;
@@ -621,7 +621,7 @@ void ofApp::draw_singleplayer_game() {
 	//game is over
 	case (ROUND_OVER):
 		//draw an overlaying rectangle to prevent black text from mixing in with the walls
-		ofSetColor(255, 255, 255, 128);
+		ofSetColor(ofColor::white, 128);
 		ofDrawRectangle(kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.9,
 			kLevelWidthMultiplier * kWallWidth * 0.8, kLevelHeightMultiplier * kWallWidth * 0.08);
 

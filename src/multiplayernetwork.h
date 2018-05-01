@@ -68,7 +68,7 @@ public:
 	Connection get_status();
 
 	/*
-	disconnects every client but the first one to connect from a server. Does nothing if the server is not in use or
+	disconnects every client but client 0 from a server. Does nothing if the server is not in use or
 	if there is exactly one client connected to said server.
 	*/
 	void disconnect_additional_clients();

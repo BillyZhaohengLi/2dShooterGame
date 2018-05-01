@@ -3,14 +3,12 @@
 button constructor.
 */
 AllButtons::Button::Button(int x, int y, int width, int height, 
-	int red, int green, int blue, string label, vector<GameState> to_show, ofxCenteredTrueTypeFont font) {
+	ofColor color, string label, vector<GameState> to_show, ofxCenteredTrueTypeFont font) {
 	xpos_ = x;
 	ypos_ = y;
 	xspan_ = width;
 	yspan_ = height;
-	red_ = red;
-	green_ = green;
-	blue_ = blue;
+	color_ = color;
 	label_ = label;
 	to_show_ = to_show;
 	ticked_ = false;
@@ -39,17 +37,17 @@ void AllButtons::Button::draw_button() {
 	//rolling over the button will cause it to be drawn in a lighter color.
 	if (ofGetMouseX() >= xpos_ && ofGetMouseX() <= xpos_ + xspan_ 
 		&& ofGetMouseY() >= ypos_ && ofGetMouseY() <= ypos_ + yspan_) {
-		ofSetColor(127 + red_ / 2, 127 + green_ / 2, 127 + blue_ / 2);
+		ofSetColor(color_ + ofColor::gray);
 	}
 	else {
-		ofSetColor(red_, green_, blue_);
+		ofSetColor(color_);
 	}
 
 	//draw the button body
 	ofDrawRectangle(xpos_, ypos_, xspan_, yspan_);
 
 	//button outline
-	ofSetColor(0, 0, 0);
+	ofSetColor(ofColor::black);
 	ofSetLineWidth(4);
 	ofDrawLine(xpos_, ypos_, xpos_, ypos_ + yspan_);
 	ofDrawLine(xpos_, ypos_, xpos_ + xspan_, ypos_);
@@ -69,8 +67,8 @@ void AllButtons::Button::draw_button() {
 /*
 add a button. Calls the button constructor.
 */
-void AllButtons::add_button(int x, int y, int width, int height, int red, int green, int blue, string label, vector<GameState> to_show, ofxCenteredTrueTypeFont font) {
-	Button temp = Button(x, y, width, height, red, green, blue, label, to_show, font);
+void AllButtons::add_button(int x, int y, int width, int height, ofColor color, string label, vector<GameState> to_show, ofxCenteredTrueTypeFont font) {
+	Button temp = Button(x, y, width, height, color, label, to_show, font);
 	buttons_in_game.push_back(temp);
 }
 

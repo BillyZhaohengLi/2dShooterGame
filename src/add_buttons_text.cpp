@@ -25,117 +25,117 @@ void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 	//MAIN MENU BUTTONS
 	//start game button
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.35, kLevelHeightMultiplier * kWallWidth * 0.76,
-		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, 0, 255, 0, "Start game",
+		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "Start game",
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//multiplayer button (doesn't do anything yet)
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.68, kLevelHeightMultiplier * kWallWidth * 0.76,
-		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, 0, 255, 0, "Multiplayer", 
+		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "Multiplayer",
 		vector<GameState> {MAIN_MENU}, button_text);
 
 	//help button; takes the player to the help interface
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.35, kLevelHeightMultiplier * kWallWidth * 0.89,
-		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, 0, 255, 0, "Help", 
+		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "Help",
 		vector<GameState> {MAIN_MENU}, button_text);
 
 	//exit button; exits the game
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.68, kLevelHeightMultiplier * kWallWidth * 0.89,
-		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, 0, 255, 0, "Exit", 
+		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "Exit",
 		vector<GameState> {MAIN_MENU}, button_text);
 
 	//red color palette
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.75, kLevelHeightMultiplier * kWallWidth * 0.4,
-		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, 255, 0, 0, "", 
-		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
-
-	//blue color palette
-	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.8, kLevelHeightMultiplier * kWallWidth * 0.4,
-		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, 0, 255, 0, "", 
+		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::red, "", 
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//green color palette
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.85, kLevelHeightMultiplier * kWallWidth * 0.4,
-		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, 0, 0, 255, "", 
+		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::green, "",
+		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
+
+	//blue color palette
+	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.8, kLevelHeightMultiplier * kWallWidth * 0.4,
+		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::blue, "", 
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//yellow color palette
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.75, kLevelHeightMultiplier * kWallWidth * 0.44,
-		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, 255, 255, 0, "", 
+		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::yellow, "", 
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//magenta color palette
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.8, kLevelHeightMultiplier * kWallWidth * 0.44,
-		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, 255, 0, 255, "", 
+		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::magenta, "", 
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//cyan color palette
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.85, kLevelHeightMultiplier * kWallWidth * 0.44,
-		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, 0, 255, 255, "", 
+		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::cyan, "", 
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//few wall settings
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.2, kLevelHeightMultiplier * kWallWidth * 0.52,
-		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, 0, 255, 0, "", 
+		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::green, "", 
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//medium wall settings
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.2, kLevelHeightMultiplier * kWallWidth * 0.57,
-		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, 255, 255, 0, "", 
+		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::yellow, "", 
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//lots of walls settings
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.2, kLevelHeightMultiplier * kWallWidth * 0.62,
-		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, 255, 0, 0, "", 
+		kLevelWidthMultiplier * kWallWidth * 0.03, kLevelHeightMultiplier * kWallWidth * 0.03, ofColor::red, "", 
 		vector<GameState> {MAIN_MENU, MULTI_MENU}, button_text);
 
 	//PAUSED BUTTONS
 	//back to main menu
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.55,
-		kLevelWidthMultiplier * kWallWidth * 0.4, kLevelHeightMultiplier * kWallWidth * 0.08, 0, 255, 0, "Return to menu", 
+		kLevelWidthMultiplier * kWallWidth * 0.4, kLevelHeightMultiplier * kWallWidth * 0.08, ofColor::green, "Return to menu",
 		vector<GameState> {PAUSE}, button_text);
 
 	//HELP BUTTONS
 	//back to main menu
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.35, kLevelHeightMultiplier * kWallWidth * 0.8,
-		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, 0, 255, 0, "Back", 
+		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "Back",
 		vector<GameState> {HELP}, button_text);
 
 	//ROUND OVER BUTTONS
 	//rematch
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.35, kLevelHeightMultiplier * kWallWidth * 0.92,
-		kLevelWidthMultiplier * kWallWidth * 0.22, kLevelHeightMultiplier * kWallWidth * 0.04, 0, 255, 0, "Rematch", 
+		kLevelWidthMultiplier * kWallWidth * 0.22, kLevelHeightMultiplier * kWallWidth * 0.04, ofColor::green, "Rematch",
 		vector<GameState> {ROUND_OVER}, character_name);
 	//back to main menu
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.6, kLevelHeightMultiplier * kWallWidth * 0.92,
-		kLevelWidthMultiplier * kWallWidth * 0.22, kLevelHeightMultiplier * kWallWidth * 0.04, 0, 255, 0, "Return to menu", 
+		kLevelWidthMultiplier * kWallWidth * 0.22, kLevelHeightMultiplier * kWallWidth * 0.04, ofColor::green, "Return to menu",
 		vector<GameState> {ROUND_OVER}, character_name);
 
 	//MULTIPLAYER BUTTONS
 	//connect button
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.35, kLevelHeightMultiplier * kWallWidth * 0.59,
-		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, 0, 255, 0, "Connect", 
+		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "Connect",
 		vector<GameState> {MULTI_CONNECT}, button_text);
 
 	//start server button; instantiates the server in the program
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.35, kLevelHeightMultiplier * kWallWidth * 0.72,
-		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, 0, 255, 0, "Create server", 
+		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "Create server",
 		vector<GameState> {MULTI_CONNECT}, button_text);
 
 	//back button; returns to main menu
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.35, kLevelHeightMultiplier * kWallWidth * 0.85,
-		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, 0, 255, 0, "Back",
+		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "Back",
 		vector<GameState> {MULTI_CONNECT}, button_text);
 
 	//MULTIPLAYER MENU BUTTONS
 	//disconnect button; disconnects from the multiplayer session.
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.68, kLevelHeightMultiplier * kWallWidth * 0.89,
-		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, 0, 255, 0, "Disconnect", 
+		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "Disconnect",
 		vector<GameState> {MULTI_MENU}, button_text);
 
 	//DISCONNECTED MENU BUTTONS
 	//confirmation button which shows up after the user gets disconnected from a multiplayer session.
 	buttons_in_level.add_button(kLevelWidthMultiplier * kWallWidth * 0.35, kLevelHeightMultiplier * kWallWidth * 0.85,
-		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, 0, 255, 0, "OK",
+		kLevelWidthMultiplier * kWallWidth * 0.3, kLevelHeightMultiplier * kWallWidth * 0.1, ofColor::green, "OK",
 		vector<GameState> {DISCONNECTED}, button_text);
 
 	//DRAW TEXT

@@ -256,7 +256,7 @@ void Wall::add_wall(int xpos, int ypos, int xspan, int yspan) {
 draw all walls in the level calling ofDrawRectangle_ for each wall segment.
 */
 void Wall::draw_all_walls() {
-	ofSetColor(0, 0, 0);
+	ofSetColor(ofColor::black);
 	for (WallSegment i : walls) {
 		ofDrawRectangle(i.xpos_, i.ypos_, i.xspan_, i.yspan_);
 	}

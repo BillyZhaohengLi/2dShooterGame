@@ -21,7 +21,7 @@ void ShotInLevel::Shot::move() {
 draw the shot using ofDrawCircle.
 */
 void ShotInLevel::Shot::draw_shot() {
-	ofSetColor(255, 0, 0);
+	ofSetColor(ofColor::red);
 	ofDrawCircle(xpos_, ypos_, kShotRadius);
 }
 

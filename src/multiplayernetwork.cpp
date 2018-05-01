@@ -53,11 +53,12 @@ void MultiplayerNetwork::close() {
 /*
 returns whether the program is "connected", defined by either
 1. as a client connected to a host
-2. as a host have at least 1 client connected
+2. as a host have the inital client connected (since the game is between the host and client 0 -
+any client other than number 0 is disconnected immediately)
 */
 bool MultiplayerNetwork::is_connected() {
 	if (status == HOST) {
-		return server.getNumClients() > 0;
+		return server.isClientConnected(0);
 	}
 	else if (status == CLIENT) {
 		return client.isConnected();
@@ -117,7 +118,7 @@ Connection MultiplayerNetwork::get_status() {
 }
 
 /*
-disconnects every client but the first one to connect from a server. Does nothing if the server is not in use or
+disconnects every client but client 0 from a server. Does nothing if the server is not in use or
 if there is exactly one client connected to said server.
 */
 void MultiplayerNetwork::disconnect_additional_clients() {

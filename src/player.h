@@ -24,9 +24,7 @@ private:
 	/*
 	player's rgb values; determines what color the player shows up as.
 	*/
-	int red;
-	int green;
-	int blue;
+	ofColor color;
 
 	/*
 	direction the player is facing. Used to determine movement.

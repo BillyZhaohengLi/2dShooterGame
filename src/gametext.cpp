@@ -53,7 +53,7 @@ void AllText::draw_text(GameState game_current) {
 draw a string using a pre-existing font. Used to draw dynamic strings such as names and ip addresses.
 */
 void AllText::draw_dynamic_text(string content, int xpos, int ypos, bool centered, int text_style) {
-	ofSetColor(0, 0, 0);
+	ofSetColor(ofColor::black);
 	for (int i = 0; i < fonts_in_game.size(); i++) {
 		if (text_style == i) {
 			if (centered) {

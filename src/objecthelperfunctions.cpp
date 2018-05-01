@@ -41,14 +41,14 @@ void reset_to_menu(Player& p1, Player& p2, ShotInLevel& shots_in_level, Wall& wa
 		break;
 	//host; p1 to the left and p2 to the right
 	case HOST:
-		p1.set_location(kLevelWidthMultiplier * kWallWidth * 0.45, kLevelHeightMultiplier * kWallWidth * 0.4);
-		p2.set_location(kLevelWidthMultiplier * kWallWidth * 0.55, kLevelHeightMultiplier * kWallWidth * 0.4);
+		p1.reset_player(kLevelWidthMultiplier * kWallWidth * 0.45, kLevelHeightMultiplier * kWallWidth * 0.4);
+		p2.reset_player(kLevelWidthMultiplier * kWallWidth * 0.55, kLevelHeightMultiplier * kWallWidth * 0.4);
 		p2.set_bot(false);
 		break;
 	//client; p1 to the right and p2 to the left
 	case CLIENT:
-		p1.set_location(kLevelWidthMultiplier * kWallWidth * 0.55, kLevelHeightMultiplier * kWallWidth * 0.4);
-		p2.set_location(kLevelWidthMultiplier * kWallWidth * 0.45, kLevelHeightMultiplier * kWallWidth * 0.4);
+		p1.reset_player(kLevelWidthMultiplier * kWallWidth * 0.55, kLevelHeightMultiplier * kWallWidth * 0.4);
+		p2.reset_player(kLevelWidthMultiplier * kWallWidth * 0.45, kLevelHeightMultiplier * kWallWidth * 0.4);
 		p2.set_bot(false);
 		break;
 	}

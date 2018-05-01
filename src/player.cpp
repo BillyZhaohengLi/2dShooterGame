@@ -122,16 +122,16 @@ void Player::update_player_facing(int mouse_x, int mouse_y, Player opponent) {
 draws the player using ofDrawCircle.
 */
 void Player::draw_player() {
-	ofSetColor(red, green, blue);
+	ofSetColor(color);
 	name_font.drawStringCentered(name, xpos, ypos - kPlayerRadius * 1.8);
+
+	//draw the player circle corresponding with the hitbox
+	ofDrawCircle(xpos, ypos, kPlayerRadius);
+	ofSetColor(ofColor::black);
+	ofSetLineWidth(4);
+
+	//if the player is alive
 	if (alive) {
-		ofSetColor(red, green, blue);
-
-		//draw the player circle corresponding with the hitbox
-		ofDrawCircle(xpos, ypos, kPlayerRadius);
-		ofSetColor(0, 0, 0);
-		ofSetLineWidth(4);
-
 		//draw a smiley face on the player
 		ofDrawCircle(xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos - cos(kPi / 4) * kPlayerRadius * 0.5, kPlayerRadius * 0.2);
 		ofDrawCircle(xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos - cos(kPi / 4) * kPlayerRadius * 0.5, kPlayerRadius * 0.2);
@@ -142,22 +142,15 @@ void Player::draw_player() {
 		//draw the gun; if the player is firing add a firing effect.
 		if (shot_cooldown >= kPlayerShotCooldown * 0.9) {
 			ofDrawLine(xpos + cos(gun_angle) * kPlayerRadius, ypos + sin(gun_angle) * kPlayerRadius, xpos + cos(gun_angle) * kPlayerRadius * 1.25, ypos + sin(gun_angle) * kPlayerRadius * 1.25);
-			ofSetColor(255, 255, 0, 128);
+			ofSetColor(ofColor::yellow, 128);
 			ofDrawCircle(xpos + cos(gun_angle) * kPlayerRadius * 1.25, ypos + sin(gun_angle) * kPlayerRadius * 1.25, 6);
 		}
 		else {
 			ofDrawLine(xpos + cos(gun_angle) * kPlayerRadius, ypos + sin(gun_angle) * kPlayerRadius, xpos + cos(gun_angle) * kPlayerRadius * 1.5, ypos + sin(gun_angle) * kPlayerRadius * 1.5);
 		}
 	}
-	//if the player is dead draw them in black.
+	//if the player is dead
 	else {
-		ofSetColor(red, green, blue);
-
-		//draw the player circle
-		ofDrawCircle(xpos, ypos, kPlayerRadius);
-		ofSetColor(0, 0, 0);
-		ofSetLineWidth(3);
-
 		//draw a sad face on the player
 		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.15, xpos - cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.85);
 		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.15, xpos + cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.85);
@@ -225,60 +218,48 @@ void Player::set_color(int color_palette) {
 	switch (color_palette) {
 		//red
 	case (kRedPalette):
-		red = 255;
-		blue = 0;
-		green = 0;
+		color = ofColor::red;
 		break;
 		//blue
 	case (kBluePalette):
-		red = 0;
-		blue = 255;
-		green = 0;
+		color = ofColor::blue;
 		break;
 		//green
 	case (kGreenPalette):
-		red = 0;
-		blue = 0;
-		green = 255;
+		color = ofColor::green;
 		break;
 		//yellow
 	case (kYellowPalette):
-		red = 255;
-		blue = 0;
-		green = 255;
+		color = ofColor::yellow;
 		break;
 		//magenta
 	case (kMagentaPalette):
-		red = 255;
-		blue = 255;
-		green = 0;
+		color = ofColor::magenta;
 		break;
 		//cyan
 	case (kCyanPalette):
-		red = 0;
-		blue = 255;
-		green = 255;
+		color = ofColor::cyan;
 		break;
 	}
 }
 
 int Player::get_color() {
-	if (red == 255 && green == 0 && blue == 0) {
+	if (color == ofColor::red) {
 		return kRedColor;
 	}
-	else if (red == 0 && green == 255 && blue == 0) {
+	else if (color == ofColor::green) {
 		return kGreenColor;
 	}
-	else if (red == 0 && green == 0 && blue == 255) {
+	else if (color == ofColor::blue) {
 		return kBlueColor;
 	}
-	else if (red == 255 && green == 255 && blue == 0) {
+	else if (color == ofColor::yellow) {
 		return kYellowColor;
 	}
-	else if (red == 255 && green == 0 && blue == 255) {
+	else if (color == ofColor::magenta) {
 		return kMagentaColor;
 	}
-	else if (red == 0 && green == 255 && blue == 255) {
+	else if (color == ofColor::cyan) {
 		return kCyanColor;
 	}
 	else {
@@ -547,34 +528,22 @@ void Player::deserialize_update_model_message(string message) {
 	//set the player's new color based on the color received.
 	switch (stoi(message_array[0])) {
 	case (kRedColor):
-		red = 255;
-		green = 0;
-		blue = 0;
+		color = ofColor::red;
 		break;
 	case (kGreenColor):
-		red = 0;
-		green = 255;
-		blue = 0;
+		color = ofColor::green;
 		break;
 	case (kBlueColor):
-		red = 0;
-		green = 0;
-		blue = 255;
+		color = ofColor::blue;
 		break;
 	case (kYellowColor):
-		red = 255;
-		green = 255;
-		blue = 0;
+		color = ofColor::yellow;
 		break;
 	case (kMagentaColor):
-		red = 255;
-		green = 0;
-		blue = 255;
+		color = ofColor::magenta;
 		break;
 	case (kCyanColor):
-		red = 0;
-		green = 255;
-		blue = 255;
+		color = ofColor::cyan;
 		break;
 	}
 	//interpret the rest of the message; consists of the name, the x and y coordinates the player is facing separated by 2 ~ characters.
