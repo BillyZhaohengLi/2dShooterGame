@@ -49,7 +49,7 @@ private:
 		/*
 		handles collision between a wall segment and an individual shot. If the shot hits the wall "bounces" the shot in an appropriate direction.
 		*/
-		bool bounce_shot(ShotInLevel::Shot &to_bounce);
+		pair<bool, int> bounce_shot(ShotInLevel::Shot &to_bounce);
 	};
 
 	/*

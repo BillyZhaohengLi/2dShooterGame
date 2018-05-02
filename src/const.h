@@ -188,3 +188,8 @@ port number used for multiplayer connections. (Fixing this makes so that only on
 */
 const int kMultiplayerPort = 11999;
 
+const int kNotBounced = 3;
+const int kBouncedTop = 1;
+const int kBouncedBottom = -1;
+const int kBouncedLeft = 2;
+const int kBouncedRight = -2;

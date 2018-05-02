@@ -39,13 +39,6 @@ bool Player::isalive() {
 }
 
 /*
-change the direction the player is facing; called when the player enters some sort of combination of WASD keys.
-*/
-void Player::change_direction(Direction change_to) {
-	facing = change_to;
-}
-
-/*
 moves the player. Called at every update function; modifies player coordinates based on the direction they are facing.
 */
 void Player::move() {
@@ -273,55 +266,7 @@ changes the player's direction based on what keys are held down. Has different o
 void Player::change_direction(bool keydown[255]) {
 	//if the player is not a bot change direction according to held keys
 	if (!is_bot) {
-		int vert_displacement = 0;
-		int hor_displacement = 0;
-		if (keydown['W']) {
-			vert_displacement--;
-		}
-		if (keydown['S']) {
-			vert_displacement++;
-		}
-		if (keydown['A']) {
-			hor_displacement--;
-		}
-		if (keydown['D']) {
-			hor_displacement++;
-		}
-
-		//sets the player's new direction based on the keys held down.
-		if (vert_displacement == -1) {
-			if (hor_displacement == -1) {
-				change_direction(NORTHWEST);
-			}
-			else if (hor_displacement == 0) {
-				change_direction(NORTH);
-			}
-			else {
-				change_direction(NORTHEAST);
-			}
-		}
-		else if (vert_displacement == 0) {
-			if (hor_displacement == -1) {
-				change_direction(WEST);
-			}
-			else if (hor_displacement == 0) {
-				change_direction(STOP);
-			}
-			else {
-				change_direction(EAST);
-			}
-		}
-		else {
-			if (hor_displacement == -1) {
-				change_direction(SOUTHWEST);
-			}
-			else if (hor_displacement == 0) {
-				change_direction(SOUTH);
-			}
-			else {
-				change_direction(SOUTHEAST);
-			}
-		}
+		change_direction_p2({ keydown['W'], keydown['A'], keydown['S'], keydown['D'] });
 	}
 	//otherwise change direction randomly (yes better algorithms can be written but this is not the focus of the project - at least for now).
 	else {
@@ -384,35 +329,35 @@ void Player::change_direction_p2(vector<bool> input) {
 	//sets the player's new direction based on the keys held down.
 	if (vert_displacement == -1) {
 		if (hor_displacement == -1) {
-			change_direction(NORTHWEST);
+			facing = NORTHWEST;
 		}
 		else if (hor_displacement == 0) {
-			change_direction(NORTH);
+			facing = NORTH;
 		}
 		else {
-			change_direction(NORTHEAST);
+			facing = NORTHEAST;
 		}
 	}
 	else if (vert_displacement == 0) {
 		if (hor_displacement == -1) {
-			change_direction(WEST);
+			facing = WEST;
 		}
 		else if (hor_displacement == 0) {
-			change_direction(STOP);
+			facing = STOP;
 		}
 		else {
-			change_direction(EAST);
+			facing = EAST;
 		}
 	}
 	else {
 		if (hor_displacement == -1) {
-			change_direction(SOUTHWEST);
+			facing = SOUTHWEST;
 		}
 		else if (hor_displacement == 0) {
-			change_direction(SOUTH);
+			facing = SOUTH;
 		}
 		else {
-			change_direction(SOUTHEAST);
+			facing = SOUTHEAST;
 		}
 	}
 }

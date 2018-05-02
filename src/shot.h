@@ -48,6 +48,10 @@ public:
 		draw the shot using ofDrawCircle.
 		*/
 		void draw_shot();
+
+		pair<pair<double, double>, pair<double, int>> get_shot_parameters();
+
+		void reset_shot(pair<pair<double, double>, pair<double, int>> parameters);
 	};
 
 	/*
@@ -89,4 +93,8 @@ public:
 	deserialize an update message from the host server and adds the appropriate shots to the ShotsInLevel in the client program.
 	*/
 	void deserialize_update_message(string message);
+
+	pair<pair<double, double>, pair<double, int>> get_shot_parameters(int shot_id);
+
+	void reset_shot(int shot_id, pair<pair<double, double>, pair<double, int>> parameters);
 };

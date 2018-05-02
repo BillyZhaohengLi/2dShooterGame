@@ -96,3 +96,32 @@ void ShotInLevel::deserialize_update_message(string message) {
 		}
 	}
 }
+
+pair<pair<double, double>, pair<double, int>> ShotInLevel::Shot::get_shot_parameters() {
+	return pair<pair<double, double>, pair<double, int>>(pair<double, double>(xpos_, ypos_), pair<double, int>(angle_, bounces_remaining_));
+}
+
+void ShotInLevel::Shot::reset_shot(pair<pair<double, double>, pair<double, int>> parameters) {
+	xpos_ = parameters.first.first;
+	ypos_ = parameters.first.second;
+	angle_ = parameters.second.first;
+	bounces_remaining_ = parameters.second.second;
+}
+
+pair<pair<double, double>, pair<double, int>> ShotInLevel::get_shot_parameters(int shot_id) {
+	pair<pair<double, double>, pair<double, int>> temp;
+	for (int i = 0; i < shots_in_level.size(); i++) {
+		if (shot_id == i) {
+			return shots_in_level[i].get_shot_parameters();
+		}
+	}
+	return temp;
+}
+
+void ShotInLevel::reset_shot(int shot_id, pair<pair<double, double>, pair<double, int>> parameters) {
+	for (int i = 0; i < shots_in_level.size(); i++) {
+		if (shot_id == i) {
+			shots_in_level[i].reset_shot(parameters);
+		}
+	}
+}

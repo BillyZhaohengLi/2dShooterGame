@@ -139,11 +139,12 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 /*
 handles collision between a wall segment and an individual shot. If the shot hits the wall "bounces" the shot in an appropriate direction.
 */
-bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
+pair<bool, int> Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	if (to_bounce.bounces_remaining_ == 0) {
-		return false;
+		return pair<bool, int> (false, kNotBounced);
 	}
 	bool bounced = false;
+	int bounced_direction = kNotBounced;
 	//generate 6 points; two based on the shot's current and previous locations, four based on the four corners of the wall.
 	//check for collision between the shot and the four sides defined by the four points of the wall segment.
 	//if a bounce occurs, the remaining bounces for the shot is decreased by one.
@@ -157,8 +158,10 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	//if the shot trajectory intersects the west wall and comes from the left
 	if (doIntersect(shot_before, shot_now, wall_NW, wall_SW) && 
 		(to_bounce.angle_ >= -kPi / 2 && to_bounce.angle_ <= kPi / 2)) {
+		cout << "left" << "\n";
 		to_bounce.bounces_remaining_--;
 		bounced = true;
+		bounced_direction = kBouncedLeft;
 		to_bounce.xpos_ = xpos_ * 2 - to_bounce.xpos_;
 		if (to_bounce.angle_ <= 0) {
 			to_bounce.angle_ = -kPi - to_bounce.angle_;
@@ -170,8 +173,10 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	//if the shot trajectory intersects the east wall and comes from the right
 	else if (doIntersect(shot_before, shot_now, wall_NE, wall_SE) && 
 		(to_bounce.angle_ <= -kPi / 2 || to_bounce.angle_ >= kPi / 2)) {
+		cout << "right" << "\n";
 		to_bounce.bounces_remaining_--;
 		bounced = true;
+		bounced_direction = kBouncedRight;
 		to_bounce.xpos_ = (xpos_ + xspan_) * 2 - to_bounce.xpos_;
 		if (to_bounce.angle_ <= -kPi / 2) {
 			to_bounce.angle_ = -kPi - to_bounce.angle_;
@@ -182,19 +187,27 @@ bool Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	}
 	//if the shot trajectory intersects the north wall and comes from the top
 	else if (doIntersect(shot_before, shot_now, wall_NW, wall_NE) && (to_bounce.angle_ >= 0)) {
+		cout << "top" << "\n";
 		to_bounce.bounces_remaining_--;
 		bounced = true;
+		bounced_direction = kBouncedTop;
 		to_bounce.ypos_ = ypos_ * 2 - to_bounce.ypos_;
 		to_bounce.angle_ = -to_bounce.angle_;
 	}
 	//if the shot trajectory intersects the south wall and comes from the bottom
 	else if (doIntersect(shot_before, shot_now, wall_SW, wall_SE) && (to_bounce.angle_ <= 0)) {
+		cout << "bottom" << "\n";
 		to_bounce.bounces_remaining_--;
 		bounced = true;
+		bounced_direction = kBouncedBottom;
 		to_bounce.ypos_ = (ypos_ + yspan_) * 2 - to_bounce.ypos_;
 		to_bounce.angle_ = -to_bounce.angle_;
 	}
-	return bounced;
+	if (bounced) {
+		cout << "X: " << to_bounce.xpos_ << "\n";
+		cout << "Y: " << to_bounce.ypos_ << "\n";
+	}
+	return pair<bool, int> (bounced, bounced_direction);
 }
 
 /*
@@ -259,20 +272,63 @@ void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 	vector<int> to_remove;
 	//repeat resolving collisions until no shots are colliding with walls
 	bool bounced;
-	do {
-		bounced = false;
-		for (int i = 0; i < shots_in_level.shots_in_level.size(); i++) {
+	for (int i = 0; i < shots_in_level.shots_in_level.size(); i++) {
+		pair<pair<double, double>, pair<double, int>> parameters = shots_in_level.get_shot_parameters(i);
+		int bounce_direction = kNotBounced;
+		bool reverse_array = false;
+		int bounce_times = 0;
+		int bounced_wall_id = -1;
+		do {
+			if (bounce_times >= 2) {
+				break;
+			}
+			bounced = false;
 			for (int j = 0; j < walls.size(); j++) {
-				if (walls[j].bounce_shot(shots_in_level.shots_in_level[i])) {
-					bounced = true;
+				if (j == bounced_wall_id) {
+					continue;
 				}
-				//if the shot has no bounces left and its index is not already in the to_remove array add its index.
-				if (shots_in_level.shots_in_level[i].bounces_remaining_ <= 0 && std::find(to_remove.begin(), to_remove.end(), i) == to_remove.end()) {
-					to_remove.push_back(i);
+				pair<bool, int> bounce_results = walls[j].bounce_shot(shots_in_level.shots_in_level[i]);
+				if (bounce_results.first) {
+					bounce_times++;
+					bounced_wall_id = j;
+					if (bounce_results.second == -bounce_direction) {
+						reverse_array = true;
+						bounced = false;
+						shots_in_level.reset_shot(i, parameters);
+						break;
+					}
+					bounced = true;
+					bounce_direction = bounce_results.second;
 				}
 			}
+		} while (bounced);
+		if (reverse_array) {
+			int bounce_times = 0;
+			int bounced_wall_id = -1;
+			do {
+				if (bounce_times >= 2) {
+					break;
+				}
+				bounced = false;
+				for (int j = walls.size() - 1; j >= 0; j--) {
+					if (j == bounced_wall_id) {
+						continue;
+					}
+					pair<bool, int> bounce_results = walls[j].bounce_shot(shots_in_level.shots_in_level[i]);
+					if (bounce_results.first) {
+						bounced_wall_id = j;
+						bounce_times++;
+						bounced = true;
+					}
+				}
+			} while (bounced);
 		}
-	} while (bounced);
+
+		//if the shot has no bounces left and its index is not already in the to_remove array add its index.
+		if (shots_in_level.shots_in_level[i].bounces_remaining_ <= 0 && std::find(to_remove.begin(), to_remove.end(), i) == to_remove.end()) {
+			to_remove.push_back(i);
+		}
+	}
 	//remove all shots with the indices in the to_remove array; notice the backward iteration since deleting an elements shifts the indices of all those behind it.
 	for (int i = to_remove.size() - 1; i > -1; i--) {
 		shots_in_level.shots_in_level.erase(shots_in_level.shots_in_level.begin() + to_remove[i]);

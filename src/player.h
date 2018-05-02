@@ -89,11 +89,6 @@ public:
 	bool isalive();
 
 	/*
-	change the direction the player is facing; called when the player enters some sort of combination of WASD keys.
-	*/
-	void change_direction(Direction change_to);
-
-	/*
 	moves the player. Called at every update function; modifies player coordinates based on the direction they are facing.
 	*/
 	void move();
