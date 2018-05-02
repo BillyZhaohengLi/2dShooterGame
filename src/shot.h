@@ -49,8 +49,16 @@ public:
 		*/
 		void draw_shot();
 
+		/*
+		returns an ugly data structure containing the shot parameters of this shot.
+		nothing is actually done with the contents of the data structure; it is only used to reset the shot by being fed back into the shot
+		in the reset_shot method below.
+		*/
 		pair<pair<double, double>, pair<double, int>> get_shot_parameters();
 
+		/*
+		set the shot's parameters based on the index and the aforementioned data structure in get_shot_parameters.
+		*/
 		void reset_shot(pair<pair<double, double>, pair<double, int>> parameters);
 	};
 
@@ -94,7 +102,16 @@ public:
 	*/
 	void deserialize_update_message(string message);
 
+	/*
+	returns an ugly data structure containing the shot parameters of the (shot_id)th shot in the level in terms of array index.
+	nothing is actually done with the contents of the data structure; it is only used to reset the shot by being fed back into the reset_shot
+	method below this if needed in the shot-wall collision algorithm.
+	if the shot is not found returns all 0s.
+	*/
 	pair<pair<double, double>, pair<double, int>> get_shot_parameters(int shot_id);
 
+	/*
+	set a shot's parameters based on the index and the aforementioned data structure in get_shot_parameters.
+	*/
 	void reset_shot(int shot_id, pair<pair<double, double>, pair<double, int>> parameters);
 };

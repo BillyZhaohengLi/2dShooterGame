@@ -269,28 +269,44 @@ bounces shots off walls in a level. Calls bounce_shots of each wall segment for 
 */
 void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 	//vector containing indices of the shots which have no bounces remaining; they will be deleted after the bouncing is finished.
+	//the algorithm below is rather complicated; refer to the detailed explanation in the bottom of this .cpp file for diagrams.
 	vector<int> to_remove;
 	//repeat resolving collisions until no shots are colliding with walls
 	bool bounced;
 	for (int i = 0; i < shots_in_level.shots_in_level.size(); i++) {
+		//take note of the shot's position before any modifications; this is used to reset bounces if things go ugly
 		pair<pair<double, double>, pair<double, int>> parameters = shots_in_level.get_shot_parameters(i);
+
+		//previous bounced direction (see (2) in the diagram at the bottom of .cpp file for a detailed explanation)
 		int bounce_direction = kNotBounced;
+
+		//whether to traverse the wall array from the back to handle collisions (takes care of bugs caused by resolving collisions of wall segments in the wrong order)
 		bool reverse_array = false;
+
+		//how many times this shot has been bounced (see (3) in the diagram at the bottom of .cpp file for a detailed explanation)
 		int bounce_times = 0;
+
+		//the wall id that the shot just bounced off of. Mathematically proven that a shot should not bounce off the same wall two times consecutively; used to break loops.
+		//(see(4) in the diagram at the bottom of.cpp file for a detailed explanation)
 		int bounced_wall_id = -1;
 		do {
+			//if a shot has already bounced twice, then it shouldn't bounce a third time; break a loop (see diagram).
 			if (bounce_times >= 2) {
 				break;
 			}
 			bounced = false;
 			for (int j = 0; j < walls.size(); j++) {
+				//do not resolve collision for a wall that the shot had already collided with in the same frame.
 				if (j == bounced_wall_id) {
 					continue;
 				}
 				pair<bool, int> bounce_results = walls[j].bounce_shot(shots_in_level.shots_in_level[i]);
 				if (bounce_results.first) {
+					//increment times bounced and set the last wall bounced to this one
 					bounce_times++;
 					bounced_wall_id = j;
+					//if a shot's consecutive bounces are in opposite cardinal direction (top and bottom, left and right), then something's wrong (see diagram);
+					//reset the shot, reverse the order of traversal of the wallsement array and resolve the collisions again.
 					if (bounce_results.second == -bounce_direction) {
 						reverse_array = true;
 						bounced = false;
@@ -298,10 +314,12 @@ void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 						break;
 					}
 					bounced = true;
+					//record the bounced direction
 					bounce_direction = bounce_results.second;
 				}
 			}
 		} while (bounced);
+		//resolve bounces in reverse order if needed; the process here is completely analogus to what happens above.
 		if (reverse_array) {
 			int bounce_times = 0;
 			int bounced_wall_id = -1;
@@ -578,4 +596,83 @@ void Wall::deserialize_update_message(string message) {
 	}
 }
 
+
+//----------BEAUTIFUL DIAGRAM FOR EXPLANING THE SPAGETTI SHOT-WALL COLLISION ALGORITHM-------------
+/*
+the shot-wall collision algorithm is made up of calls to the collision resolver of individual wall segments which look like this:
+---------------|
+   I'm a wall  |
+			   |   O shot's previous position
+			   |  /
+			   | /
+			   |/
+			   X
+			  /|\
+			 / | \
+			p  |  O shot's position after resolving collision
+---------------|
+as seen in the diagram above, what it does is it uses some basic trig knowledge to calculate the shot's position given its angle it was travelling in
+and its position before being resolved (marked by p). Simple high-school incidence and reflection angle stuff.
+
+(2) This is where stuff gets tricky; let's have two walls which touch each other form a corner and let's fire a shot at the corner:
+---------------|
+   Wall A      |
+               |
+			   |
+			   |
+			   |  O shot's previous position
+			   | / 
+			   |/   O shot's expected position
+		   p1  X   /
+			\ /|\ /
+-------------X---X-----------------|
+            /              Wall B  |
+		   p2			           |
+								   |
+								   |
+								   |
+now, firing the shot at this combination of wall segments, it is expected that the shot ends up at the expected position by bouncing off wall A
+followed by wall B. But what if wall B comes before wall A in the wallsegment array? The collision with wall B is resolved FIRST and the shot
+ends up in the awkward position of being stuck in the wall, where it bounces between p1 and p2 resolving collisions until it dissappears.
+To prevent this from happening, the bounced_direction variable comes in; in this scenario, the the WRONG way to resolve collisions is to bounce
+off the TOP wall of Wall B followed by the BOTTOM wall of Wall A. TOP is the opposite of BOTTOM, so now we know something's wrong; therefore we
+reset the shot, reverse the order of traversal of the array and now the collision with wall A is correctly evaluated before evaluating the one
+with wall B.
+
+(3) let us consider another scenario:
+              |  OP shot's previous position
+	Wall A	  | /
+	     p3   |/   OE shot's expected position
+		  \   X   /
+		   \ /|\ /
+------------X-|-X-------------|
+           / \|/ \            |
+		  /	  X   \           |
+		 p4	 /|    p1 Wall B  |
+			p2|               |
+in this scenario, Wall A and Wall B are touching corners; again as expected, you would expected a shot fired in a way shown in this diagram to be bounced
+off wall A followed by wall B and we're done.
+That's not what happens; after the shot is at the expected position, the algorithm wrongly thinks that the shot came from the point p2 due to its
+travelling angle; and since p2-OE intersects with the left boundary of Wall B, it gets resolved to p3, then gets resolved to p4, then back to p1,
+back to OE, and so on...
+to prevent this a bounce count is added. Given level layout and the shot speed we can mathematically prove that a shot only needs to resolve at most 2 collisions
+in any given frame. Once the two collisions are resolved we break the loop and none of this stuff will happen anymore.
+
+(4) let us consider a final scenario:
+             |
+ I'm a wall	 |
+             | OE shot's expected position
+			 |/
+			 X
+			/|\
+-----------X-| \
+          / \   \
+         /   \   \
+        p1    \   OP shot's previous position
+		       p2
+In this scenario, a shot is fired at the corner of a wall; the expected behaviour is that it bounces off a wall segment ending up at OE.
+however, similar to (3), after the shot is resolved to OE, the algorithm thinks that the shot came from point p1 and thus has an intersection
+with the bottom segment of the wall - the shot is resolved again to p2 and files straight back at whoever fired it.
+Preventing this is easy; simply not allowing a shot to bounce off a wall two times consecutively does the trick.
+*/
 
