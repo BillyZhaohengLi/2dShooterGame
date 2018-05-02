@@ -70,7 +70,5 @@
 ### May 1:
  * FINALLY fixed a minor bug related to shot-wall collision when firing shots at corners (intersection of walls). Previous weird interactions would happen such as the shot dissappearing or the shot bouncing on the same wall twice consecutively and coming back at the shooter (which is mathematically proven to not supposed to happen)
  * added explanations.txt; used for storing diagrams for some of the more math-heavy functions in the program.
- ## Days left to work on project: 0.5 days
-* ~~April 31 (half day)~~ proof that studying CS makes you delusional.
-* May 1 (half day)
+ ## Days left to work on project: 0 days
 * May 2 (half day, but best not to make any major changes on this day; excluded for now)
