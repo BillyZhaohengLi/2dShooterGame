@@ -149,14 +149,10 @@ public:
 	int get_color();
 
 	/*
-	changes the player's direction based on what keys are held down. Has different outcomes based on whether the player is a bot.
+	changes the player's direction based on a vector of size 4 containing which of the WASD keys are held down.
+	has different outcomes if the player is a bot.
 	*/
-	void change_direction(bool keydown[255]);
-
-	/*
-	changes the player's direction based on a vector of size 4 containing which of the WASD keys are held down. Used for p2 in multiplayer.
-	*/
-	void change_direction_p2(vector<bool> input);
+	void change_direction(vector<bool> input);
 
 	/*
 	prompts the player to shoot a bullet. Has different outcomes based on whether the player is a bot.

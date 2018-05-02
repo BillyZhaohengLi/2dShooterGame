@@ -261,14 +261,60 @@ int Player::get_color() {
 }
 
 /*
-changes the player's direction based on what keys are held down. Has different outcomes based on whether the player is a bot.
+changes the player's direction based on a vector of size 4 containing which of the WASD keys are held down. Used for p2 in multiplayer.
 */
-void Player::change_direction(bool keydown[255]) {
-	//if the player is not a bot change direction according to held keys
+void Player::change_direction(vector<bool> input) {
 	if (!is_bot) {
-		change_direction_p2({ keydown['W'], keydown['A'], keydown['S'], keydown['D'] });
+		int vert_displacement = 0;
+		int hor_displacement = 0;
+		if (input[0]) {
+			vert_displacement--;
+		}
+		if (input[1]) {
+			hor_displacement--;
+		}
+		if (input[2]) {
+			vert_displacement++;
+		}
+		if (input[3]) {
+			hor_displacement++;
+		}
+
+		//sets the player's new direction based on the keys held down.
+		if (vert_displacement == -1) {
+			if (hor_displacement == -1) {
+				facing = NORTHWEST;
+			}
+			else if (hor_displacement == 0) {
+				facing = NORTH;
+			}
+			else {
+				facing = NORTHEAST;
+			}
+		}
+		else if (vert_displacement == 0) {
+			if (hor_displacement == -1) {
+				facing = WEST;
+			}
+			else if (hor_displacement == 0) {
+				facing = STOP;
+			}
+			else {
+				facing = EAST;
+			}
+		}
+		else {
+			if (hor_displacement == -1) {
+				facing = SOUTHWEST;
+			}
+			else if (hor_displacement == 0) {
+				facing = SOUTH;
+			}
+			else {
+				facing = SOUTHEAST;
+			}
+		}
 	}
-	//otherwise change direction randomly (yes better algorithms can be written but this is not the focus of the project - at least for now).
 	else {
 		//if the bot is ready to change directions then roll a new direction to go in.
 		if (change_direction_cd == 0) {
@@ -303,61 +349,6 @@ void Player::change_direction(bool keydown[255]) {
 		}
 		else {
 			change_direction_cd--;
-		}
-	}
-}
-
-/*
-changes the player's direction based on a vector of size 4 containing which of the WASD keys are held down. Used for p2 in multiplayer.
-*/
-void Player::change_direction_p2(vector<bool> input) {
-	int vert_displacement = 0;
-	int hor_displacement = 0;
-	if (input[0]) {
-		vert_displacement--;
-	}
-	if (input[1]) {
-		hor_displacement--;
-	}
-	if (input[2]) {
-		vert_displacement++;
-	}
-	if (input[3]) {
-		hor_displacement++;
-	}
-
-	//sets the player's new direction based on the keys held down.
-	if (vert_displacement == -1) {
-		if (hor_displacement == -1) {
-			facing = NORTHWEST;
-		}
-		else if (hor_displacement == 0) {
-			facing = NORTH;
-		}
-		else {
-			facing = NORTHEAST;
-		}
-	}
-	else if (vert_displacement == 0) {
-		if (hor_displacement == -1) {
-			facing = WEST;
-		}
-		else if (hor_displacement == 0) {
-			facing = STOP;
-		}
-		else {
-			facing = EAST;
-		}
-	}
-	else {
-		if (hor_displacement == -1) {
-			facing = SOUTHWEST;
-		}
-		else if (hor_displacement == 0) {
-			facing = SOUTH;
-		}
-		else {
-			facing = SOUTHEAST;
 		}
 	}
 }

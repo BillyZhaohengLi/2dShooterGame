@@ -280,8 +280,8 @@ void ofApp::update_singleplayer_game() {
 		p2.cooldown_reduce();
 
 		//determines the players' new direction based on the keys held down at this particular time.
-		p1.change_direction(keydown);
-		p2.change_direction(keydown);
+		p1.change_direction({ keydown['W'], keydown['A'], keydown['S'], keydown['D'] });
+		p2.change_direction({ keydown['W'], keydown['A'], keydown['S'], keydown['D'] });
 
 		//update the direction the players' guns point at.
 		p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
@@ -367,7 +367,7 @@ void ofApp::update_singleplayer_game() {
 		p2.cooldown_reduce();
 
 		//updates the parameters of p1; for a detailed description see the singleplayer game engine.
-		p1.change_direction(keydown);
+		p1.change_direction({ keydown['W'], keydown['A'], keydown['S'], keydown['D'] });
 		p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
 		p1.move();
 		levelbounds.collision_resolver(p1);
@@ -382,7 +382,7 @@ void ofApp::update_singleplayer_game() {
 		string message = multiplayer_network.receive();
 		if (message.size() > 0 && (message[0] == 'T' || message[0] == 'F')) {
 			pair<pair<vector<bool>, bool>, pair<double, double>> message_pairs = deserialize_input(message);
-			p2.change_direction_p2(message_pairs.first.first);
+			p2.change_direction(message_pairs.first.first);
 			p2.update_player_facing(message_pairs.second.first, message_pairs.second.second, p1);
 			p2.move();
 			levelbounds.collision_resolver(p2);
@@ -406,6 +406,7 @@ void ofApp::update_singleplayer_game() {
 
 		//send updated game to client
 		string to_send = ("UPDATE" + shots_on_screen.serialized_string() + p1.serialized_game_string() + p2.serialized_game_string() + "G");
+		//determines whether a shot was fired this frame; if yes tell the client to play the shot_fired sound.
 		if (shot_fired) {
 			to_send += "S";
 		}

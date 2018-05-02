@@ -188,7 +188,14 @@ port number used for multiplayer connections. (Fixing this makes so that only on
 */
 const int kMultiplayerPort = 11999;
 
+/*
+constants for which boundary a shot was bounced off a wall segment from.
+*/
+//not bounced
 const int kNotBounced = 3;
+
+//bounced off a specific boundary; note how the values of top and bottom, left and right are opposites.
+//used in the shot-wall collision algorithm; for details see Wall.cpp for the algorithm and an accompanying diagram.
 const int kBouncedTop = 1;
 const int kBouncedBottom = -1;
 const int kBouncedLeft = 2;
