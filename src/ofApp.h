@@ -1,17 +1,17 @@
 #pragma once
 
 #include "ofMain.h"
-#include "wall.h"
-#include "player.h"
 #include "const.h"
-#include "shot.h"
-#include "button.h"
-#include "gametext.h"
-#include "add_buttons_text.h"
-#include "ofxCenteredTrueTypeFont.h"
 #include "ofxNetwork.h"
-#include "multiplayernetwork.h"
-#include "objecthelperfunctions.h"
+#include "game_assets/wall.h"
+#include "game_assets/player.h"
+#include "game_assets/shot.h"
+#include "game_addons/button.h"
+#include "game_addons/gametext.h"
+#include "game_addons/multiplayernetwork.h"
+#include "game_addons/ofxCenteredTrueTypeFont.h"
+#include "helpers/add_buttons_text.h"
+#include "helpers/objecthelperfunctions.h"
 #include <mmsystem.h>
 
 class ofApp : public ofBaseApp{
