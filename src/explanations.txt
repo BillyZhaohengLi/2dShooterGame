@@ -5,14 +5,14 @@
 the shot-wall collision algorithm is made up of calls to the collision resolver of individual wall segments which look like this:
 ---------------|
    I'm a wall  |
-			   |   O shot's previous position
-			   |  /
-			   | /
-			   |/
-			   X
-			  /|\
-			 / | \
-			p  |  O shot's position after resolving collision
+	       |   O shot's previous position
+               |  /
+               | /
+               |/
+               X
+              /|\
+             / | \
+            p  |  O shot's position after resolving collision
 ---------------|
 as seen in the diagram above, what it does is it uses some basic trig knowledge to calculate the shot's position given its angle it was travelling in
 and its position before being resolved (marked by p). Simple high-school incidence and reflection angle stuff.
@@ -21,19 +21,19 @@ and its position before being resolved (marked by p). Simple high-school inciden
 ---------------|
    Wall A      |
                |
-			   |
-			   |
-			   |  O shot's previous position
-			   | / 
-			   |/   O shot's expected position
-		   p1  X   /
-			\ /|\ /
+               |
+               |
+               |  O shot's previous position
+               | / 
+               |/   O shot's expected position
+           p1  X   /
+            \ /|\ /
 -------------X---X-----------------|
             /              Wall B  |
-		   p2			           |
-								   |
-								   |
-								   |
+           p2	                   |
+				   |
+				   |
+				   |
 now, firing the shot at this combination of wall segments, it is expected that the shot ends up at the expected position by bouncing off wall A
 followed by wall B. But what if wall B comes before wall A in the wallsegment array? The collision with wall B is resolved FIRST and the shot
 ends up in the awkward position of being stuck in the wall, where it bounces between p1 and p2 resolving collisions until it dissappears.
@@ -44,15 +44,15 @@ with wall B.
 
 (3) let us consider another scenario:
               |  OP shot's previous position
-	Wall A	  | /
-	     p3   |/   OE shot's expected position
-		  \   X   /
-		   \ /|\ /
+     Wall A   | /
+         p3   |/   OE shot's expected position
+	  \   X   /
+	   \ /|\ /
 ------------X-|-X-------------|
            / \|/ \            |
-		  /	  X   \           |
-		 p4	 /|    p1 Wall B  |
-			p2|               |
+	  /   X   \           |
+	 p4  /|    p1 Wall B  |
+            p2|               |
 in this scenario, Wall A and Wall B are touching corners; again as expected, you would expected a shot fired in a way shown in this diagram to be bounced
 off wall A followed by wall B and we're done.
 That's not what happens; after the shot is at the expected position, the algorithm wrongly thinks that the shot came from the point p2 due to its
@@ -63,16 +63,16 @@ in any given frame. Once the two collisions are resolved we break the loop and n
 
 (4) let us consider a final scenario:
              |
- I'm a wall	 |
+ I'm a wall  |
              | OE shot's expected position
-			 |/
-			 X
-			/|\
+             |/
+	     X
+	    /|\
 -----------X-| \
           / \   \
          /   \   \
         p1    \   OP shot's previous position
-		       p2
+	       p2
 In this scenario, a shot is fired at the corner of a wall; the expected behaviour is that it bounces off a wall segment ending up at OE.
 however, similar to (3), after the shot is resolved to OE, the algorithm thinks that the shot came from point p1 and thus has an intersection
 with the bottom segment of the wall - the shot is resolved again to p2 and files straight back at whoever fired it.
