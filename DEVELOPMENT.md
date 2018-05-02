@@ -69,6 +69,7 @@
  * _TODO on May 1_ : add test cases for different functions to test for robustness; If there is still enough time remaining, add a better algorithm for the singleplayer bot.
 ### May 1:
  * FINALLY fixed a minor bug related to shot-wall collision when firing shots at corners (intersection of walls). Previous weird interactions would happen such as the shot dissappearing or the shot bouncing on the same wall twice consecutively and coming back at the shooter (which is mathematically proven to not supposed to happen)
+ * added explanations.txt; used for storing diagrams for some of the more math-heavy functions in the program.
  ## Days left to work on project: 0.5 days
 * ~~April 31 (half day)~~ proof that studying CS makes you delusional.
 * May 1 (half day)
