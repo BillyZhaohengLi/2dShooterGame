@@ -6,7 +6,6 @@ Point::Point(double xval, double yval) {
 	x = xval;
 	y = yval;
 }
-
 /*
 check whether point r is on line segment pq.
 */
@@ -21,7 +20,8 @@ bool onSegment(Point p, Point q, Point r)
 }
 
 /*
-returns the orientation of triangle pqr defined as whether tracing the triangle in such a manner is CW or CCW motion.
+returns the orientation of triangle pqr defined as whether tracing the triangle in such a 
+manner is CW or CCW motion.
 */
 //code from https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/.
 int orientation(Point p, Point q, Point r)
@@ -70,7 +70,8 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2)
 }
 
 /*
-detect whether the line segment p1p2 and circle centered at point circ with a specified radius intersect.
+detect whether the line segment p1p2 and circle centered at point circ with a specified 
+radius intersect.
 */
 bool line_segment_circle(Point p1, Point p2, Point circ, double radius) {
 	double dist = FindDistanceToSegment(p1.x, p1.y, p2.x, p2.y, circ.x, circ.y);
@@ -136,7 +137,8 @@ bool rectOverlap(Point l1, Point r1, Point l2, Point r2)
 }
 
 /*
-helper function for entering name called in update. Takes in the keys pressed, whether the name was altered in the previous frame and the player's name
+helper function for entering name called in update. Takes in the keys pressed, whether 
+the name was altered in the previous frame and the player's name
 and returns whether the name was altered and the new name.
 */
 void enter_name(bool& entered, string& player_name, bool keydown[255]) {
@@ -145,7 +147,8 @@ void enter_name(bool& entered, string& player_name, bool keydown[255]) {
 	for (int i = kCharacterStart; i < kCharacterEnd; i++) {
 		if (keydown[i]) {
 			something_pressed = true;
-			//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
+			//only one letter can be entered per update; also disables entering when the 
+			//name goes over the maximum name length.
 			if (player_name.length() < kMaxNameLength && !entered) {
 				player_name += i;
 			}
@@ -158,7 +161,8 @@ void enter_name(bool& entered, string& player_name, bool keydown[255]) {
 			player_name.pop_back();
 		}
 	}
-	//boolean variable to prevent multiple letters entered with one key press due to how fast update is called
+	//boolean variable to prevent multiple letters entered with one key press due to how 
+	//fast update is called
 	if (something_pressed) {
 		entered = true;
 	}
@@ -168,7 +172,8 @@ void enter_name(bool& entered, string& player_name, bool keydown[255]) {
 }
 
 /*
-helper function for entering ip address called in update. Takes in the keys pressed, whether the ip address was altered in the previous frame and the player's name
+helper function for entering ip address called in update. Takes in the keys pressed, whether 
+the ip address was altered in the previous frame and the player's name
 and returns whether the name was altered and the new ip address.
 */
 void enter_ip(bool& entered, string& ip_address, bool keydown[255]) {
@@ -176,7 +181,8 @@ void enter_ip(bool& entered, string& ip_address, bool keydown[255]) {
 	bool something_pressed = false;
 	if (keydown[kPeriodAscii]) {
 		something_pressed = true;
-		//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
+		//only one letter can be entered per update; also disables entering when the name 
+		//goes over the maximum name length.
 		if (ip_address.length() < kMaxIpLength && !entered) {
 			ip_address += '.';
 		}
@@ -184,7 +190,8 @@ void enter_ip(bool& entered, string& ip_address, bool keydown[255]) {
 	for (int i = kIntegerStart; i <= kIntegerEnd; i++) {
 		if (keydown[i]) {
 			something_pressed = true;
-			//only one letter can be entered per update; also disables entering when the name goes over the maximum name length.
+			//only one letter can be entered per update; also disables entering when the 
+			//name goes over the maximum name length.
 			if (ip_address.length() < kMaxIpLength && !entered) {
 				ip_address += i;
 			}
@@ -197,7 +204,8 @@ void enter_ip(bool& entered, string& ip_address, bool keydown[255]) {
 			ip_address.pop_back();
 		}
 	}
-	//boolean variable to prevent multiple letters entered with one key press due to how fast update is called
+	//boolean variable to prevent multiple letters entered with one key press due to how 
+	//fast update is called
 	if (something_pressed) {
 		entered = true;
 	}
@@ -225,7 +233,8 @@ int wall_button_to_wall_amount(int wall_button) {
 }
 
 /*
-splits a string into an array by a delimiter. taken from https://stackoverflow.com/questions/9435385/split-a-string-using-c11.
+splits a string into an array by a delimiter. 
+taken from https://stackoverflow.com/questions/9435385/split-a-string-using-c11.
 */
 std::vector<std::string> split(const string& input, const string& regex) {
 	// passing -1 as the submatch index parameter performs splitting
@@ -237,7 +246,8 @@ std::vector<std::string> split(const string& input, const string& regex) {
 }
 
 /*
-serialize player input consisting of keys pressed, whether the mouse button is held and the mouse position into a string to send through a Connection.
+serialize player input consisting of keys pressed, whether the mouse button is held 
+and the mouse position into a string to send through a Connection.
 */
 string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, double mouse_y) {
 	string to_send;
@@ -283,7 +293,8 @@ string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, doubl
 }
 
 /*
-deserialize a player input string consisting of keys pressed, whether the mouse button is held and the mouse position received through a Connection.
+deserialize a player input string consisting of keys pressed, whether the mouse button is 
+held and the mouse position received through a Connection.
 returns an ugly data structure, with the contents being the following in this order:
 1. boolean vector of keys pressed
 2. boolean of whether the mouse is pressed

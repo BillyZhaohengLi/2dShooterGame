@@ -1,5 +1,8 @@
 #pragma once
 #include "add_buttons_text.h"
+
+//helper class only used to add buttons and text into a level; due to the excessive amount of 
+//buttons and text it was separated from main and placed here.
 void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 	//create font used for buttons and text in game
 	ofxCenteredTrueTypeFont game_title_text;
@@ -186,87 +189,128 @@ void add_buttons_text(AllButtons& buttons_in_level, AllText& text_in_level) {
 	//DRAW TEXT
 	//text for main menu
 	text_in_level.add_text("Player name:", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.35, 
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.35, 
 		false, MAIN_MENU, character_name);
+
 	text_in_level.add_text("Player color:", 
-		kLevelWidthMultiplier * kWallWidth * 0.75, kLevelHeightMultiplier * kWallWidth * 0.35, 
+		kLevelWidthMultiplier * kWallWidth * 0.75, 
+		kLevelHeightMultiplier * kWallWidth * 0.35, 
 		false, MAIN_MENU, character_name);
+
 	text_in_level.add_text("Wall settings:", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.5, 
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.5, 
 		false, MAIN_MENU, character_name);
+
 	text_in_level.add_text("Few", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.55, 
+		kLevelWidthMultiplier * kWallWidth * 0.1,
+		kLevelHeightMultiplier * kWallWidth * 0.55, 
 		false, MAIN_MENU, character_name);
+
 	text_in_level.add_text("Some", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.60, 
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.60, 
 		false, MAIN_MENU, character_name);
+
 	text_in_level.add_text("A lot", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.65, 
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.65, 
 		false, MAIN_MENU, character_name);
+
 	text_in_level.add_text("2D Shooter Game", 
-		kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.15, 
+		kLevelWidthMultiplier * kWallWidth * 0.5, 
+		kLevelHeightMultiplier * kWallWidth * 0.15, 
 		true, MAIN_MENU, game_title_text);
 
 	//text for paused interface
 	text_in_level.add_text("Game paused", 
-		kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.3, 
+		kLevelWidthMultiplier * kWallWidth * 0.5, 
+		kLevelHeightMultiplier * kWallWidth * 0.3, 
 		true, PAUSE, character_name);
+
 	text_in_level.add_text("Press P to unpause", 
-		kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.35, 
+		kLevelWidthMultiplier * kWallWidth * 0.5, 
+		kLevelHeightMultiplier * kWallWidth * 0.35, 
 		true, PAUSE, character_name);
 
 	//text for help interface
 	text_in_level.add_text("Help", 
-		kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.15, 
+		kLevelWidthMultiplier * kWallWidth * 0.5, 
+		kLevelHeightMultiplier * kWallWidth * 0.15, 
 		true, HELP, game_title_text);
+
 	text_in_level.add_text("Move: WASD keys", 
-		kLevelWidthMultiplier * kWallWidth * 0.2, kLevelHeightMultiplier * kWallWidth * 0.35, 
+		kLevelWidthMultiplier * kWallWidth * 0.2, 
+		kLevelHeightMultiplier * kWallWidth * 0.35, 
 		false, HELP, character_name);
+
 	text_in_level.add_text("Fire: mouse button", 
-		kLevelWidthMultiplier * kWallWidth * 0.2, kLevelHeightMultiplier * kWallWidth * 0.45, 
+		kLevelWidthMultiplier * kWallWidth * 0.2, 
+		kLevelHeightMultiplier * kWallWidth * 0.45, 
 		false, HELP, character_name);
+
 	text_in_level.add_text("Pause: P (single player only)", 
-		kLevelWidthMultiplier * kWallWidth * 0.2, kLevelHeightMultiplier * kWallWidth * 0.55, 
+		kLevelWidthMultiplier * kWallWidth * 0.2, 
+		kLevelHeightMultiplier * kWallWidth * 0.55, 
 		false, HELP, character_name);
 
 	//text for multiplayer connect interface
 	text_in_level.add_text("Multiplayer connect", 
-		kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.15,
+		kLevelWidthMultiplier * kWallWidth * 0.5, 
+		kLevelHeightMultiplier * kWallWidth * 0.15,
 		true, MULTI_CONNECT, game_title_text);
+
 	text_in_level.add_text("Enter an IP address to LAN connect to or wait for a Connection:", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.35,
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.35,
 		false, MULTI_CONNECT, character_name);
 
 	//text for multiplayer menu interface
 	text_in_level.add_text("Player name:", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.35,
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.35,
 		false, MULTI_MENU, character_name);
+
 	text_in_level.add_text("Player color:", 
-		kLevelWidthMultiplier * kWallWidth * 0.75, kLevelHeightMultiplier * kWallWidth * 0.35,
+		kLevelWidthMultiplier * kWallWidth * 0.75, 
+		kLevelHeightMultiplier * kWallWidth * 0.35,
 		false, MULTI_MENU, character_name);
+
 	text_in_level.add_text("Wall settings:", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.5,
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.5,
 		false, MULTI_MENU, character_name);
+
 	text_in_level.add_text("Few", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.55,
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.55,
 		false, MULTI_MENU, character_name);
+
 	text_in_level.add_text("Some", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.60,
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.60,
 		false, MULTI_MENU, character_name);
+
 	text_in_level.add_text("A lot", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.65,
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.65,
 		false, MULTI_MENU, character_name);
+
 	text_in_level.add_text("2D Shooter Game", 
-		kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.15,
+		kLevelWidthMultiplier * kWallWidth * 0.5, 
+		kLevelHeightMultiplier * kWallWidth * 0.15,
 		true, MULTI_MENU, game_title_text);
 
 	//text for disconnected interface
 	text_in_level.add_text("Your multiplayer session has ended.", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.35,
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.35,
 		false, DISCONNECTED, character_name);
 
 	text_in_level.add_text("There is already another user connected to this server.", 
-		kLevelWidthMultiplier * kWallWidth * 0.1, kLevelHeightMultiplier * kWallWidth * 0.35,
+		kLevelWidthMultiplier * kWallWidth * 0.1, 
+		kLevelHeightMultiplier * kWallWidth * 0.35,
 		false, DISCONNECTED_BY_HOST, character_name);
 
 	//add the fonts to the text object to be used in game
