@@ -20,7 +20,7 @@
 ## Resources used
  * ofxGui and ofxNetwork libraries from openFrameworks.
  * ofxCenteredTrueTypeFont external library from https://github.com/armadillu/ofxCenteredTrueTypeFont/blob/master/src/ofxCenteredTrueTypeFont.h
- * The sounds used in the game are taken from Counter Strike 1.6; the shot sound and the death sound are the P2000 firing sound and death sound used in Counter Strike 1.6 respectively. 
+ * The sounds used in the game are taken from Counter Strike 1.6; the shot sound is the P228 firing sound (p228-1.wav) and the death sound is the player death sound (die1.wav) used in Counter Strike 1.6 respectively. 
  * The text, Verdana.ttf is taken from openFrameworks.
  * Various helper functions in the helperfunction file were "derived" from stackoverflow and geeksforgeeks.
 
