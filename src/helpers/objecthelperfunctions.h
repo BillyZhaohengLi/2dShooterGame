@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "ofMain.h"
+#include "../ofMain.h"
 #include "../const.h"
 #include "../game_assets/player.h"
 #include "../game_assets/shot.h"

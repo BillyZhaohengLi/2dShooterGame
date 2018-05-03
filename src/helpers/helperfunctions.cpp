@@ -241,43 +241,43 @@ serialize player input consisting of keys pressed, whether the mouse button is h
 */
 string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, double mouse_y) {
 	string to_send;
-	if (keydown['W']) {
-		to_send += "T";
+	if (keydown[kUp]) {
+		to_send += kTrueBoolean;
 	}
 	else {
-		to_send += "F";
+		to_send += kFalseBoolean;
 	}
-	to_send += "~";
-	if (keydown['A']) {
-		to_send += "T";
-	}
-	else {
-		to_send += "F";
-	}
-	to_send += "~";
-	if (keydown['S']) {
-		to_send += "T";
+	to_send += kSmallDelimiter;
+	if (keydown[kLeft]) {
+		to_send += kTrueBoolean;
 	}
 	else {
-		to_send += "F";
+		to_send += kFalseBoolean;
 	}
-	to_send += "~";
-	if (keydown['D']) {
-		to_send += "T";
+	to_send += kSmallDelimiter;
+	if (keydown[kDown]) {
+		to_send += kTrueBoolean;
 	}
 	else {
-		to_send += "F";
+		to_send += kFalseBoolean;
 	}
-	to_send += "~";
+	to_send += kSmallDelimiter;
+	if (keydown[kRight]) {
+		to_send += kTrueBoolean;
+	}
+	else {
+		to_send += kFalseBoolean;
+	}
+	to_send += kSmallDelimiter;
 	if (mouse_down) {
-		to_send += "T";
+		to_send += kTrueBoolean;
 	}
 	else {
-		to_send += "F";
+		to_send += kFalseBoolean;
 	}
-	to_send += "~";
+	to_send += kSmallDelimiter;
 	to_send += to_string(mouse_x);
-	to_send += "~";
+	to_send += kSmallDelimiter;
 	to_send += to_string(mouse_y);
 	return to_send;
 }
@@ -291,10 +291,10 @@ returns an ugly data structure, with the contents being the following in this or
 4. the mouse's y position
 */
 pair<pair<vector<bool>, bool>, pair<double, double>> deserialize_input(string message) {
-	vector<string> message_array = split(message, "~");
+	vector<string> message_array = split(message, kSmallDelimiter);
 	vector<bool> key_down;
 	for (int i = 0; i < 4; i++) {
-		if (message_array[i] == "T") {
+		if (message_array[i] == kTrueBoolean) {
 			key_down.push_back(true);
 		}
 		else {
@@ -302,7 +302,7 @@ pair<pair<vector<bool>, bool>, pair<double, double>> deserialize_input(string me
 		}
 	}
 	bool mouse_down;
-	if (message_array[4] == "T") {
+	if (message_array[4] == kTrueBoolean) {
 		mouse_down = true;
 	}
 	else {
@@ -310,5 +310,6 @@ pair<pair<vector<bool>, bool>, pair<double, double>> deserialize_input(string me
 	}
 	double mouse_x = stoi(message_array[5]);
 	double mouse_y = stoi(message_array[6]);
-	return pair<pair<vector<bool>, bool>, pair<double, double>>(pair<vector<bool>, bool> (key_down, mouse_down), pair<double, double>(mouse_x, mouse_y));
+	return pair<pair<vector<bool>, bool>, pair<double, double>>(pair<vector<bool>, bool> 
+		(key_down, mouse_down), pair<double, double>(mouse_x, mouse_y));
 }

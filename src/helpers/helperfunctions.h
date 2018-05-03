@@ -1,7 +1,7 @@
 #pragma once
 #include <algorithm>
 #include <regex>
-#include "ofMain.h"
+#include "../ofMain.h"
 #include "../const.h"
 /*
 struct used to calculate intersections.
