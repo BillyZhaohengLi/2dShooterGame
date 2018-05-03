@@ -293,15 +293,11 @@ string serialize_input(bool keydown[255], bool mouse_down, double mouse_x, doubl
 }
 
 /*
-deserialize a player input string consisting of keys pressed, whether the mouse button is 
-held and the mouse position received through a Connection.
-returns an ugly data structure, with the contents being the following in this order:
-1. boolean vector of keys pressed
-2. boolean of whether the mouse is pressed
-3. the mouse's x position
-4. the mouse's y position
+deserialize a player input string consisting of keys pressed, whether the mouse button
+is held and the mouse position received through a Connection.
+returns an inputparams structure.
 */
-pair<pair<vector<bool>, bool>, pair<double, double>> deserialize_input(string message) {
+InputParams deserialize_input(string message) {
 	vector<string> message_array = split(message, kSmallDelimiter);
 	vector<bool> key_down;
 	for (int i = 0; i < 4; i++) {

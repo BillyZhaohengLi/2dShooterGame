@@ -1,6 +1,7 @@
 #include "objecthelperfunctions.h"
 /*
-resets both players to opposite corners in the map. Appears so many times in the main game engine that it deserves to be a standalone helper method.
+resets both players to opposite corners in the map. Appears so many times in the main game 
+engine that it deserves to be a standalone helper method.
 */
 void reset_game(Player& p1, Player& p2, ShotInLevel& shots_in_level, bool keydown[255]) {
 	//clear all shots in the level.
@@ -24,16 +25,19 @@ void reset_game(Player& p1, Player& p2, ShotInLevel& shots_in_level, bool keydow
 }
 
 /*
-resets both players to appropriate locations in the menu, clear the level (wall segments and shots) and reset the keys held.
+resets both players to appropriate locations in the menu, clear the level 
+(wall segments and shots) and reset the keys held.
 Called every time the main menu is entered.
 */
-void reset_to_menu(Player& p1, Player& p2, ShotInLevel& shots_in_level, Wall& walls_in_level, Connection status, bool keydown[255]) {
+void reset_to_menu(Player& p1, Player& p2, ShotInLevel& shots_in_level, Wall& walls_in_level, 
+	Connection status, bool keydown[255]) {
 	//clear shots and walls
 	shots_in_level.clear_shots();
 	walls_in_level.clear_level();
 
 	switch (status) {
-	//singleplayer; set p1 to the middle and p2 to any applicable position (since p2 isn't shown in the singleplayer menu anyways)
+	//singleplayer; set p1 to the middle and p2 to any applicable position 
+	//(since p2 isn't shown in the singleplayer menu anyways)
 	case NONE:
 		p1.reset_player(kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.4);
 		p2.reset_player((kLevelWidthMultiplier - 2.5) * kWallWidth, kWallWidth * 2.5);
