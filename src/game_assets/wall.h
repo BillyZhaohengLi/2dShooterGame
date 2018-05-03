@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "ofMain.h"
+#include "../ofMain.h"
 #include "../const.h"
 #include "player.h"
 #include "shot.h"
@@ -85,7 +85,7 @@ public:
 	/*
 	predict shots for bots; takes in positions of two players and returns whether the line segment between the players is obstructed by walls.
 	*/
-	bool bot_shot_predictor(Player p1, Player p2);
+	bool player_path_obstructed(Player p1, Player p2);
 
 	/*
 	randomly generates walls in the level. Generates the specified amount of wall segments while ensuring that none of the walls overlap with each other,

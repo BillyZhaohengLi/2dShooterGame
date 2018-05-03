@@ -1,6 +1,6 @@
 #pragma once
 #include "../const.h"
-#include "ofMain.h"
+#include "../ofMain.h"
 #include "../game_addons/ofxCenteredTrueTypeFont.h"
 #include "../helpers/helperfunctions.h"
 #include <vector>
@@ -162,7 +162,7 @@ public:
 	3. the starting x position of the shot (double)
 	4. the starting 7 position of the shot (double)
 	*/
-	pair<pair<bool, double>, pair<double, double>> shoot_prompt(bool mouse_down, bool clear_shot);
+	pair<pair<bool, double>, pair<double, double>> shoot_prompt(bool mouse_down, bool obstructed);
 
 	/*
 	sets randomized names and colors for bots.

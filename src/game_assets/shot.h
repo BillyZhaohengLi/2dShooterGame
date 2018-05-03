@@ -1,5 +1,5 @@
 #pragma once
-#include "ofMain.h"
+#include "../ofMain.h"
 #include "../const.h"
 #include "player.h"
 #include <math.h>

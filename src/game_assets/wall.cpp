@@ -148,7 +148,8 @@ pair<bool, int> Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	//generate 6 points; two based on the shot's current and previous locations, four based on the four corners of the wall.
 	//check for collision between the shot and the four sides defined by the four points of the wall segment.
 	//if a bounce occurs, the remaining bounces for the shot is decreased by one.
-	Point shot_before = Point(to_bounce.xpos_ - kShotLength * cos(to_bounce.angle_), to_bounce.ypos_ - kShotLength * sin(to_bounce.angle_));
+	Point shot_before = Point(to_bounce.xpos_ - kShotLength * cos(to_bounce.angle_), 
+		to_bounce.ypos_ - kShotLength * sin(to_bounce.angle_));
 	Point shot_now = Point(to_bounce.xpos_, to_bounce.ypos_);
 	Point wall_NW = Point(xpos_, ypos_);
 	Point wall_NE = Point(xpos_ + xspan_, ypos_);
@@ -205,7 +206,7 @@ pair<bool, int> Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 /*
 predict shots for bots; takes in positions of two players and returns whether the line segment between the players is obstructed by walls.
 */
-bool Wall::bot_shot_predictor(Player p1, Player p2) {
+bool Wall::player_path_obstructed(Player p1, Player p2) {
 	//create points based on player locations
 	Point point_1 = Point(p1.get_location().first, p1.get_location().second);
 	Point point_2 = Point(p2.get_location().first, p2.get_location().second);
@@ -216,8 +217,10 @@ bool Wall::bot_shot_predictor(Player p1, Player p2) {
 		Point wall_NE = Point(walls[i].xpos_ + walls[i].xspan_, walls[i].ypos_);
 		Point wall_SW = Point(walls[i].xpos_, walls[i].ypos_ + walls[i].yspan_);
 		Point wall_SE = Point(walls[i].xpos_ + walls[i].xspan_, walls[i].ypos_ + walls[i].yspan_);
-		if (doIntersect(point_1, point_2, wall_NW, wall_NE) || doIntersect(point_1, point_2, wall_NW, wall_SW)
-			|| doIntersect(point_1, point_2, wall_SW, wall_SE) || doIntersect(point_1, point_2, wall_NE, wall_SE)) {
+		if (doIntersect(point_1, point_2, wall_NW, wall_NE) || 
+			doIntersect(point_1, point_2, wall_NW, wall_SW)	|| 
+			doIntersect(point_1, point_2, wall_SW, wall_SE) || 
+			doIntersect(point_1, point_2, wall_NE, wall_SE)) {
 			return true;
 		}
 	}
@@ -231,11 +234,13 @@ void Wall::add_boundary() {
 	//top wall
 	walls.push_back(WallSegment(0, 0, kLevelWidthMultiplier * kWallWidth, kWallWidth));
 	//bottom wall
-	walls.push_back(WallSegment(0, (kLevelHeightMultiplier - 1) * kWallWidth, kLevelWidthMultiplier * kWallWidth, kWallWidth));
+	walls.push_back(WallSegment(0, (kLevelHeightMultiplier - 1) * 
+		kWallWidth, kLevelWidthMultiplier * kWallWidth, kWallWidth));
 	//left wall
 	walls.push_back(WallSegment(0, kWallWidth, kWallWidth, (kLevelHeightMultiplier - 2) * kWallWidth));
 	//right wall
-	walls.push_back(WallSegment((kLevelWidthMultiplier - 1) * kWallWidth, kWallWidth, kWallWidth, (kLevelHeightMultiplier - 2) * kWallWidth));
+	walls.push_back(WallSegment((kLevelWidthMultiplier - 1) * 
+		kWallWidth, kWallWidth, kWallWidth, (kLevelHeightMultiplier - 2) * kWallWidth));
 	
 }
 
@@ -267,7 +272,8 @@ void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 	bool bounced;
 	for (int i = 0; i < shots_in_level.shots_in_level.size(); i++) {
 		//take note of the shot's position before any modifications; this is used to reset bounces if things go ugly
-		pair<pair<double, double>, pair<double, int>> parameters = shots_in_level.get_shot_parameters(i);
+		pair<pair<double, double>, pair<double, int>> parameters = 
+			shots_in_level.get_shot_parameters(i);
 
 		//previous bounced direction (see (2) in the diagram in the explanations.txt file)
 		int bounce_direction = kNotBounced;
@@ -335,7 +341,8 @@ void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 		}
 
 		//if the shot has no bounces left and its index is not already in the to_remove array add its index.
-		if (shots_in_level.shots_in_level[i].bounces_remaining_ <= 0 && std::find(to_remove.begin(), to_remove.end(), i) == to_remove.end()) {
+		if (shots_in_level.shots_in_level[i].bounces_remaining_ <= 0 && 
+			std::find(to_remove.begin(), to_remove.end(), i) == to_remove.end()) {
 			to_remove.push_back(i);
 		}
 	}
@@ -548,7 +555,8 @@ bool Wall::intersect_with_spawn(int newx, int newy, int newwidth, int newheight)
 	Point p1_spawn_2 = Point(kWallWidth * 4, (kLevelHeightMultiplier - 1) * kWallWidth);
 	Point p2_spawn_1 = Point((kLevelWidthMultiplier - 4) * kWallWidth, kWallWidth);
 	Point p2_spawn_2 = Point((kLevelWidthMultiplier - 1) * kWallWidth, kWallWidth * 4);
-	if (rectOverlap(new_wall_1, new_wall_2, p1_spawn_1, p1_spawn_2) || rectOverlap(new_wall_1, new_wall_2, p2_spawn_1, p2_spawn_2)) {
+	if (rectOverlap(new_wall_1, new_wall_2, p1_spawn_1, p1_spawn_2) || 
+		rectOverlap(new_wall_1, new_wall_2, p2_spawn_1, p2_spawn_2)) {
 		return true;
 	}
 	return false;
@@ -570,7 +578,9 @@ string Wall::serialized_string() {
 	string to_return;
 	//the boundary walls are omitted as they are the same for any instance of the program, hence the for loop starting at 4.
 	for (int i = 4; i < walls.size(); i++) {
-		to_return += (to_string(walls[i].xpos_) + "~" + to_string(walls[i].ypos_) + "~" + to_string(walls[i].xspan_) + "~" + to_string(walls[i].yspan_) + "~");
+		to_return += (to_string(walls[i].xpos_) + kSmallDelimiter + to_string(walls[i].ypos_) +
+			kSmallDelimiter + to_string(walls[i].xspan_) + kSmallDelimiter + 
+			to_string(walls[i].yspan_) + kSmallDelimiter);
 	}
 	return to_return;
 }
@@ -580,9 +590,10 @@ deserialize an update message from the host server and adds the appropriate wall
 */
 void Wall::deserialize_update_message(string message) {
 	if (walls.size() <= 4) {
-		vector<string> message_array = split(message.substr(0, message.size() - 1), "~");
+		vector<string> message_array = split(message.substr(0, message.size() - 1), kSmallDelimiter);
 		for (int i = 0; i < message_array.size(); i += 4) {
-			WallSegment temp = WallSegment(stoi(message_array[i]), stoi(message_array[i + 1]), stoi(message_array[i + 2]), stoi(message_array[i + 3]));
+			WallSegment temp = WallSegment(stoi(message_array[i]), stoi(message_array[i + 1]), 
+				stoi(message_array[i + 2]), stoi(message_array[i + 3]));
 			walls.push_back(temp);
 		}
 	}

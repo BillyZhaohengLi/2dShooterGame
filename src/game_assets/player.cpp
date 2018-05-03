@@ -8,7 +8,7 @@ Player::Player(double x, double y, int palette, bool bot, string text) {
 	set_color(palette);
 	alive = true;
 	facing = STOP;
-	shot_cooldown = 10;
+	shot_cooldown = kPlayerShotCooldown / 2;
 	set_name(text);
 	is_bot = bot;
 	facing_x = 0;
@@ -126,32 +126,47 @@ void Player::draw_player() {
 	//if the player is alive
 	if (alive) {
 		//draw a smiley face on the player
-		ofDrawCircle(xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos - cos(kPi / 4) * kPlayerRadius * 0.5, kPlayerRadius * 0.2);
-		ofDrawCircle(xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos - cos(kPi / 4) * kPlayerRadius * 0.5, kPlayerRadius * 0.2);
-		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.5, xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75);
-		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.5, xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75);
-		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75, xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75);
-		double gun_angle = atan2(facing_y - ypos, facing_x - xpos);
+		ofDrawCircle(xpos - cos(kPi / 4) * kPlayerRadius * 0.5, 
+			ypos - cos(kPi / 4) * kPlayerRadius * 0.5, kPlayerRadius * 0.2);
+		ofDrawCircle(xpos + cos(kPi / 4) * kPlayerRadius * 0.5, 
+			ypos - cos(kPi / 4) * kPlayerRadius * 0.5, kPlayerRadius * 0.2);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.5, 
+			xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75);
+		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.5, 
+			xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75, 
+			xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.75);
+
 		//draw the gun; if the player is firing add a firing effect.
+		double gun_angle = atan2(facing_y - ypos, facing_x - xpos);
 		if (shot_cooldown >= kPlayerShotCooldown * 0.9) {
-			ofDrawLine(xpos + cos(gun_angle) * kPlayerRadius, ypos + sin(gun_angle) * kPlayerRadius, xpos + cos(gun_angle) * kPlayerRadius * 1.25, ypos + sin(gun_angle) * kPlayerRadius * 1.25);
+			ofDrawLine(xpos + cos(gun_angle) * kPlayerRadius, ypos + sin(gun_angle) * kPlayerRadius, 
+				xpos + cos(gun_angle) * kPlayerRadius * 1.25, ypos + sin(gun_angle) * kPlayerRadius * 1.25);
 			ofSetColor(ofColor::yellow, 128);
 			ofDrawCircle(xpos + cos(gun_angle) * kPlayerRadius * 1.25, ypos + sin(gun_angle) * kPlayerRadius * 1.25, 6);
 		}
 		else {
-			ofDrawLine(xpos + cos(gun_angle) * kPlayerRadius, ypos + sin(gun_angle) * kPlayerRadius, xpos + cos(gun_angle) * kPlayerRadius * 1.5, ypos + sin(gun_angle) * kPlayerRadius * 1.5);
+			ofDrawLine(xpos + cos(gun_angle) * kPlayerRadius, ypos + sin(gun_angle) * kPlayerRadius, 
+				xpos + cos(gun_angle) * kPlayerRadius * 1.5, ypos + sin(gun_angle) * kPlayerRadius * 1.5);
 		}
 	}
 	//if the player is dead
 	else {
 		//draw a sad face on the player
-		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.15, xpos - cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.85);
-		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.15, xpos + cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.85);
-		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.85, xpos - cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.15);
-		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.85, xpos + cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.15);
-		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.75, xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5);
-		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.75, xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5);
-		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5, xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.15, 
+			xpos - cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.85);
+		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.15, 
+			xpos + cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.85);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.85, 
+			xpos - cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.15);
+		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.15, ypos - cos(kPi / 4) * kPlayerRadius * 0.85, 
+			xpos + cos(kPi / 4) * kPlayerRadius * 0.85, ypos - cos(kPi / 4) * kPlayerRadius * 0.15);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.75, 
+			xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5);
+		ofDrawLine(xpos + cos(kPi / 4) * kPlayerRadius * 0.75, ypos + cos(kPi / 4) * kPlayerRadius * 0.75, 
+			xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5);
+		ofDrawLine(xpos - cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5, 
+			xpos + cos(kPi / 4) * kPlayerRadius * 0.5, ypos + cos(kPi / 4) * kPlayerRadius * 0.5);
 	}
 }
 
@@ -361,7 +376,7 @@ the return value is a very ugly data structure consisting of the values in the f
 3. the starting x position of the shot (double)
 4. the starting 7 position of the shot (double)
 */
-pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_down, bool clear_shot) {
+pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_down, bool obstructed) {
 	//if the player is not a bot base whether to fire a shot on whether the mouse is held.
 	if (!is_bot) {
 		//if the mouse is held, the shot cooldown is ready and the player is alive then fire a shot.
@@ -369,24 +384,28 @@ pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_d
 			double shot_angle = fire_shot();
 
 			//return the values as specified above.
-			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(true, shot_angle), pair<double, double>(
+			return pair<pair<bool, double>, pair<double, double>>
+				(pair<bool, double>(true, shot_angle), pair<double, double>(
 				xpos + (kPlayerRadius - kShotLength + kShotRadius + kEpsilon) * cos(shot_angle), 
 				ypos + (kPlayerRadius - kShotLength + kShotRadius + kEpsilon) * sin(shot_angle)));
 		}
 		else {
-			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), pair<double, double>(0, 0));
+			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), 
+				pair<double, double>(0, 0));
 		}
 	}
 	else {
 		//if there is a clear path between the bot and the opponent, the shot cooldown is ready and the bot is alive then fire a shot.
-		if (shot_cooldown == 0 && !clear_shot && alive) {
+		if (shot_cooldown == 0 && !obstructed && alive) {
 			double shot_angle = fire_shot();
 
 			//return the values as specified above.
-			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(true, shot_angle), pair<double, double>(
-				xpos + (kPlayerRadius * 0.9) * cos(shot_angle), ypos + (kPlayerRadius * 0.9) * sin(shot_angle)));
+			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(true, shot_angle), 
+				pair<double, double>(xpos + (kPlayerRadius * 0.9) * cos(shot_angle), 
+					ypos + (kPlayerRadius * 0.9) * sin(shot_angle)));
 		}
-		return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), pair<double, double>(0, 0));
+		return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), 
+			pair<double, double>(0, 0));
 	}
 }
 
@@ -460,7 +479,7 @@ void Player::set_bot(bool bot) {
 deserialize a message sent over a multiplayer Connection and update a player accordingly.
 */
 void Player::deserialize_update_model_message(string message) {
-	vector<string> message_array = split(message.substr(6), "~");
+	vector<string> message_array = split(message.substr(strlen(kPlayerString)), kSmallDelimiter);
 	//set the player's new color based on the color received.
 	switch (stoi(message_array[0])) {
 	case (kRedColor):
@@ -482,23 +501,25 @@ void Player::deserialize_update_model_message(string message) {
 		color = ofColor::cyan;
 		break;
 	}
-	//interpret the rest of the message; consists of the name, the x and y coordinates the player is facing separated by 2 ~ characters.
+	//interpret the rest of the message; consists of the name, the x and y coordinates the player is facing 
+	//separated by 2 small delimiters.
 	set_name(message_array[1]);
-	facing_x = stoi(message_array[2]);
-	facing_y = stoi(message_array[3]);
+	facing_x = stod(message_array[2]);
+	facing_y = stod(message_array[3]);
 }
 
 /*
-desearilaize a message sent over a multiplayer Connection and update the player's game parameters (position, firing status, etc.) accordingly.
+deserilaize a message sent over a multiplayer Connection and update the player's 
+game parameters (position, firing status, etc.) accordingly.
 */
 void Player::deserialize_update_game_message(string message) {
-	vector<string> message_array = split(message, "~");
-	xpos = stoi(message_array[0]);
-	ypos = stoi(message_array[1]);
-	facing_x = stoi(message_array[2]);
-	facing_y = stoi(message_array[3]);
+	vector<string> message_array = split(message, kSmallDelimiter);
+	xpos = stod(message_array[0]);
+	ypos = stod(message_array[1]);
+	facing_x = stod(message_array[2]);
+	facing_y = stod(message_array[3]);
 	shot_cooldown = stoi(message_array[4]);
-	if (message_array[5] == "F") {
+	if (message_array[5] == kFalseBoolean) {
 		alive = false;
 	}
 }
@@ -507,7 +528,8 @@ void Player::deserialize_update_game_message(string message) {
 send a player over the Connection as a serialized string.
 */
 string Player::serialized_model_string() {
-	string to_send = "PLAYER" + to_string(get_color()) + "~" + name + "~" + to_string(facing_x) + "~" + to_string(facing_y);
+	string to_send = "PLAYER" + to_string(get_color()) + kSmallDelimiter + name + 
+		kSmallDelimiter + to_string(facing_x) + kSmallDelimiter + to_string(facing_y);
 	return to_send;
 }
 
@@ -515,13 +537,14 @@ string Player::serialized_model_string() {
 send a player's position, direction facing, shot cooldown and whether they're alive over the Connection as a serialized string.
 */
 string Player::serialized_game_string() {
-	string to_send = "G" + to_string(round(xpos)) + "~" + to_string(round(ypos)) + "~" + to_string(round(facing_x)) +
-		"~" + to_string(round(facing_y)) + "~" + to_string(shot_cooldown) + "~";
+	string to_send = kBigDelimiter + to_string(xpos) + kSmallDelimiter + to_string(ypos) + 
+		kSmallDelimiter + to_string(facing_x) +	kSmallDelimiter + to_string(facing_y) + 
+		kSmallDelimiter + to_string(shot_cooldown) + kSmallDelimiter;
 	if (alive) {
-		return to_send + "T";
+		return to_send + kTrueBoolean;
 	}
 	else {
-		return to_send + "F";
+		return to_send + kFalseBoolean;
 	}
 }
 

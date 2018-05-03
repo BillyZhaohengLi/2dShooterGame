@@ -32,7 +32,8 @@ nothing is actually done with the contents of the data structure; it is only use
 in the reset_shot method below.
 */
 pair<pair<double, double>, pair<double, int>> ShotInLevel::Shot::get_shot_parameters() {
-	return pair<pair<double, double>, pair<double, int>>(pair<double, double>(xpos_, ypos_), pair<double, int>(angle_, bounces_remaining_));
+	return pair<pair<double, double>, pair<double, int>>(pair<double, double>(xpos_, ypos_), 
+		pair<double, int>(angle_, bounces_remaining_));
 }
 
 /*
@@ -97,9 +98,11 @@ void ShotInLevel::clear_shots() {
 serialized string format of all shots in the level. Used in multiplayer; shots are managed at the host server and sent to the client.
 */
 string ShotInLevel::serialized_string() {
-	string to_return = "G";
+	string to_return = kBigDelimiter;
 	for (int i = 0; i < shots_in_level.size(); i++) {
-		to_return += (to_string(round(shots_in_level[i].xpos_)) + "~" + to_string(round(shots_in_level[i].ypos_)) + "~" + to_string(round(shots_in_level[i].angle_)) + "~");
+		to_return += (to_string(shots_in_level[i].xpos_) + kSmallDelimiter + 
+			to_string(shots_in_level[i].ypos_) + kSmallDelimiter + 
+			to_string(shots_in_level[i].angle_) + kSmallDelimiter);
 	}
 	return to_return;
 }
@@ -109,10 +112,11 @@ deserialize an update message from the host server and adds the appropriate shot
 */
 void ShotInLevel::deserialize_update_message(string message) {
 	shots_in_level.clear();
-	vector<string> message_array = split(message.substr(0, message.size() - 1), "~");
+	vector<string> message_array = split(message.substr(0, message.size() - 1), kSmallDelimiter);
 	if (message_array.size() % 3 == 0) {
 		for (int i = 0; i < message_array.size(); i += 3) {
-			Shot temp = Shot(stoi(message_array[i]), stoi(message_array[i + 1]), stoi(message_array[i + 2]));
+			Shot temp = Shot(stod(message_array[i]), stod(message_array[i + 1]), 
+				stod(message_array[i + 2]));
 			shots_in_level.push_back(temp);
 		}
 	}
