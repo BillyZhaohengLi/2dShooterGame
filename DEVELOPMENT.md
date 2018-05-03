@@ -1,4 +1,4 @@
-# Project Proposal : Simple multiplayer 2d shooter game
+# Development Process : Simple multiplayer 2d shooter game
 ## Libraries: 
   * ~~Raknet (networking engine for games)~~
   * ~~Oxygine (2D C++ game engine)~~
