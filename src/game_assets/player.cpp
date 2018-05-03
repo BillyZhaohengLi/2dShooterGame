@@ -39,7 +39,8 @@ bool Player::isalive() {
 }
 
 /*
-moves the player. Called at every update function; modifies player coordinates based on the direction they are facing.
+moves the player. Called at every update function; modifies player coordinates based on the direction 
+they are facing.
 */
 void Player::move() {
 	//only move the player if they are alive (duh).
@@ -87,7 +88,8 @@ void Player::kill_player() {
 }
 
 /*
-revives the player (sets alive to true) at a given location and puts their weapon on cooldown (basically prepared for a new game).
+revives the player (sets alive to true) at a given location and puts their weapon on cooldown 
+(basically prepared for a new game).
 */
 void Player::reset_player(double new_x, double new_y) {
 	alive = true;
@@ -97,7 +99,8 @@ void Player::reset_player(double new_x, double new_y) {
 }
 
 /*
-updates the direction the player is facing (used to draw the player's gun). Has different outcomes based on whether the player is a bot.
+updates the direction the player is facing (used to draw the player's gun). Has different 
+outcomes based on whether the player is a bot.
 */
 void Player::update_player_facing(int mouse_x, int mouse_y, Player opponent) {
 	//if the player isn't a bot then the player faces towards the mouse direction
@@ -143,7 +146,8 @@ void Player::draw_player() {
 			ofDrawLine(xpos + cos(gun_angle) * kPlayerRadius, ypos + sin(gun_angle) * kPlayerRadius, 
 				xpos + cos(gun_angle) * kPlayerRadius * 1.25, ypos + sin(gun_angle) * kPlayerRadius * 1.25);
 			ofSetColor(ofColor::yellow, 128);
-			ofDrawCircle(xpos + cos(gun_angle) * kPlayerRadius * 1.25, ypos + sin(gun_angle) * kPlayerRadius * 1.25, 6);
+			ofDrawCircle(xpos + cos(gun_angle) * kPlayerRadius * 1.25, 
+				ypos + sin(gun_angle) * kPlayerRadius * 1.25, 6);
 		}
 		else {
 			ofDrawLine(xpos + cos(gun_angle) * kPlayerRadius, ypos + sin(gun_angle) * kPlayerRadius, 
@@ -276,7 +280,8 @@ int Player::get_color() {
 }
 
 /*
-changes the player's direction based on a vector of size 4 containing which of the WASD keys are held down. Used for p2 in multiplayer.
+changes the player's direction based on a vector of size 4 containing which of the WASD keys are 
+held down. Used for p2 in multiplayer.
 */
 void Player::change_direction(vector<bool> input) {
 	if (!is_bot) {
@@ -371,7 +376,8 @@ void Player::change_direction(vector<bool> input) {
 /*
 prompts the player to shoot a bullet. Has different outcomes based on whether the player is a bot.
 the return value is a very ugly data structure consisting of the values in the following order:
-1. whether the player decides to fire a shot (bool); if this is false none of the following return values matter.
+1. whether the player decides to fire a shot (bool); if this is false none of the following return 
+values matter.
 2. the angle of the shot (double)
 3. the starting x position of the shot (double)
 4. the starting 7 position of the shot (double)
@@ -395,7 +401,8 @@ pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_d
 		}
 	}
 	else {
-		//if there is a clear path between the bot and the opponent, the shot cooldown is ready and the bot is alive then fire a shot.
+		//if there is a clear path between the bot and the opponent, the shot cooldown is ready 
+		//and the bot is alive then fire a shot.
 		if (shot_cooldown == 0 && !obstructed && alive) {
 			double shot_angle = fire_shot();
 
@@ -501,8 +508,8 @@ void Player::deserialize_update_model_message(string message) {
 		color = ofColor::cyan;
 		break;
 	}
-	//interpret the rest of the message; consists of the name, the x and y coordinates the player is facing 
-	//separated by 2 small delimiters.
+	//interpret the rest of the message; consists of the name, the x and y coordinates the player 
+	//is facing separated by 2 small delimiters.
 	set_name(message_array[1]);
 	facing_x = stod(message_array[2]);
 	facing_y = stod(message_array[3]);
@@ -534,7 +541,8 @@ string Player::serialized_model_string() {
 }
 
 /*
-send a player's position, direction facing, shot cooldown and whether they're alive over the Connection as a serialized string.
+send a player's position, direction facing, shot cooldown and whether they're alive over the 
+Connection as a serialized string.
 */
 string Player::serialized_game_string() {
 	string to_send = kBigDelimiter + to_string(xpos) + kSmallDelimiter + to_string(ypos) + 

@@ -6,6 +6,7 @@
 #include <vector>
 #include <math.h>
 #include <mmsystem.h>
+
 /*
 player class; one player per object; stores parameters related to players in level.
 */
@@ -89,7 +90,8 @@ public:
 	bool isalive();
 
 	/*
-	moves the player. Called at every update function; modifies player coordinates based on the direction they are facing.
+	moves the player. Called at every update function; modifies player coordinates based on the 
+	direction they are facing.
 	*/
 	void move();
 
@@ -99,12 +101,14 @@ public:
 	void kill_player();
 
 	/*
-	resets the player (sets alive to true) at a given location and puts their weapon on cooldown (basically prepared for a new game).
+	resets the player (sets alive to true) at a given location and puts their weapon on cooldown 
+	(basically prepared for a new game).
 	*/
 	void reset_player(double new_x, double new_y);
 
 	/*
-	updates the direction the player is facing (used to draw the player's gun). Has different outcomes based on whether the player is a bot.
+	updates the direction the player is facing (used to draw the player's gun). Has different outcomes 
+	based on whether the player is a bot.
 	*/
 	void update_player_facing(int mouse_x, int mouse_y, Player opponent);
 
@@ -119,7 +123,8 @@ public:
 	double fire_shot();
 
 	/*
-	returns a boolean based on whether the player can fire a shot. True if cooldown is 0; false if otherwise.
+	returns a boolean based on whether the player can fire a shot. True if cooldown is 0; 
+	false if otherwise.
 	*/
 	bool can_shoot();
 
@@ -144,12 +149,14 @@ public:
 	void set_color(int color_palette);
 
 	/*
-	get the color of the player as an integer; each integer represents a color (since there are only 6 colors anyways)
+	get the color of the player as an integer; each integer represents a color 
+	(since there are only 6 colors anyways)
 	*/
 	int get_color();
 
 	/*
-	changes the player's direction based on a vector of size 4 containing which of the WASD keys are held down.
+	changes the player's direction based on a vector of size 4 containing which of the WASD 
+	keys are held down.
 	has different outcomes if the player is a bot.
 	*/
 	void change_direction(vector<bool> input);
@@ -157,7 +164,8 @@ public:
 	/*
 	prompts the player to shoot a bullet. Has different outcomes based on whether the player is a bot.
 	the return value is a very ugly data structure consisting of the values in the following order:
-	1. whether the player decides to fire a shot (bool); if this is false none of the following return values matter.
+	1. whether the player decides to fire a shot (bool); if this is false none of the following 
+	return values matter.
 	2. the angle of the shot (double)
 	3. the starting x position of the shot (double)
 	4. the starting 7 position of the shot (double)
@@ -180,7 +188,8 @@ public:
 	void deserialize_update_model_message(string message);
 
 	/*
-	desearilaize a message sent over a multiplayer Connection and update the player's game parameters (position, firing status, etc.) accordingly.
+	desearilaize a message sent over a multiplayer Connection and update the player's game parameters 
+	(position, firing status, etc.) accordingly.
 	*/
 	void deserialize_update_game_message(string message);
 
@@ -190,7 +199,8 @@ public:
 	string serialized_model_string();
 
 	/*
-	send a player's position, direction facing, shot cooldown and whether they're alive over the Connection as a serialized string.
+	send a player's position, direction facing, shot cooldown and whether they're alive over the 
+	Connection as a serialized string.
 	*/
 	string serialized_game_string();
 

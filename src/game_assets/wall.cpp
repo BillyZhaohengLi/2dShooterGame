@@ -10,7 +10,8 @@ Wall::WallSegment::WallSegment(int xpos, int ypos, int xspan, int yspan) {
 }
 
 /*
-handles collision between a wall segment and the player; if the player is in contact with the wall push them out.
+handles collision between a wall segment and the player; if the player is in contact with the wall 
+push them out.
 */
 bool Wall::WallSegment::collision_handler(Player& player_moving) {
 	//get the player's coordinates
@@ -19,8 +20,9 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 	double p_y = temp.second;
 	bool collided = false;
 
-	//convert the player coordinates and the four corners of the wall segment into points; check for collision
-	//between the player and the four sides defined by the four points of the wall segment.
+	//convert the player coordinates and the four corners of the wall segment into points; 
+	//check for collision between the player and the four sides defined by the four points of the 
+	//wall segment.
 	Point player_location = Point(temp.first, temp.second);
 	Point wall_NW = Point(xpos_, ypos_);
 	Point wall_NE = Point(xpos_ + xspan_, ypos_);
@@ -32,7 +34,8 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 		if (p_y < ypos_) {
 			collided = true;
 			//touching wall at corner; trig knowledge alert
-			//resolves the collision by pushing the player in the direction that requires the least distance moved to resolve the collision.
+			//resolves the collision by pushing the player in the direction that requires the least 
+			//distance moved to resolve the collision.
 			if (p_x < xpos_) {
 				double x_dif = xpos_ - p_x;
 				double y_dif = ypos_ - p_y;
@@ -137,7 +140,8 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 }
 
 /*
-handles collision between a wall segment and an individual shot. If the shot hits the wall "bounces" the shot in an appropriate direction.
+handles collision between a wall segment and an individual shot. If the shot hits the wall 
+"bounces" the shot in an appropriate direction.
 */
 pair<bool, int> Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	if (to_bounce.bounces_remaining_ == 0) {
@@ -145,9 +149,10 @@ pair<bool, int> Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	}
 	bool bounced = false;
 	int bounced_direction = kNotBounced;
-	//generate 6 points; two based on the shot's current and previous locations, four based on the four corners of the wall.
-	//check for collision between the shot and the four sides defined by the four points of the wall segment.
-	//if a bounce occurs, the remaining bounces for the shot is decreased by one.
+	//generate 6 points; two based on the shot's current and previous locations, four based 
+	//on the four corners of the wall. check for collision between the shot and the four sides 
+	//defined by the four points of the wall segment. if a bounce occurs, the remaining bounces 
+	//for the shot is decreased by one.
 	Point shot_before = Point(to_bounce.xpos_ - kShotLength * cos(to_bounce.angle_), 
 		to_bounce.ypos_ - kShotLength * sin(to_bounce.angle_));
 	Point shot_now = Point(to_bounce.xpos_, to_bounce.ypos_);
@@ -204,7 +209,8 @@ pair<bool, int> Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 }
 
 /*
-predict shots for bots; takes in positions of two players and returns whether the line segment between the players is obstructed by walls.
+predict shots for bots; takes in positions of two players and returns whether the line segment 
+between the players is obstructed by walls.
 */
 bool Wall::player_path_obstructed(Player p1, Player p2) {
 	//create points based on player locations
@@ -262,39 +268,47 @@ void Wall::draw_all_walls() {
 }
 
 /*
-bounces shots off walls in a level. Calls bounce_shots of each wall segment for each individual shot in shots_in_level.
+bounces shots off walls in a level. Calls bounce_shots of each wall segment for each individual 
+shot in shots_in_level.
 */
 void Wall::bounce_shots(ShotInLevel &shots_in_level) {
-	//vector containing indices of the shots which have no bounces remaining; they will be deleted after the bouncing is finished.
-	//the algorithm below is rather complicated; refer to the detailed explanation in the explanations.txt file in the source folder.
+	//vector containing indices of the shots which have no bounces remaining; they will be 
+	//deleted after the bouncing is finished. the algorithm below is rather complicated; 
+	//refer to the detailed explanation in the explanations.txt file in the source folder.
 	vector<int> to_remove;
 	//repeat resolving collisions until no shots are colliding with walls
 	bool bounced;
 	for (int i = 0; i < shots_in_level.shots_in_level.size(); i++) {
-		//take note of the shot's position before any modifications; this is used to reset bounces if things go ugly
+		//take note of the shot's position before any modifications; this is used to reset 
+		//bounces if things go ugly
 		pair<pair<double, double>, pair<double, int>> parameters = 
 			shots_in_level.get_shot_parameters(i);
 
 		//previous bounced direction (see (2) in the diagram in the explanations.txt file)
 		int bounce_direction = kNotBounced;
 
-		//whether to traverse the wall array from the back to handle collisions (takes care of bugs caused by resolving collisions of wall segments in the wrong order)
+		//whether to traverse the wall array from the back to handle collisions (takes care 
+		//of bugs caused by resolving collisions of wall segments in the wrong order)
 		bool reverse_array = false;
 
-		//how many times this shot has been bounced (see (3) in the diagram in the explanations.txt file)
+		//how many times this shot has been bounced (see (3) in the diagram in the 
+		//explanations.txt file)
 		int bounce_times = 0;
 
-		//the wall id that the shot just bounced off of. Mathematically proven that a shot should not bounce off the same wall two times consecutively; used to break loops.
+		//the wall id that the shot just bounced off of. Mathematically proven that a shot 
+		//should not bounce off the same wall two times consecutively; used to break loops.
 		//(see(4) in the diagram in the explanations.txt file)
 		int bounced_wall_id = -1;
 		do {
-			//if a shot has already bounced twice, then it shouldn't bounce a third time; break a loop (see diagram).
+			//if a shot has already bounced twice, then it shouldn't bounce a third time; break 
+			//a loop (see diagram).
 			if (bounce_times >= 2) {
 				break;
 			}
 			bounced = false;
 			for (int j = 0; j < walls.size(); j++) {
-				//do not resolve collision for a wall that the shot had already collided with in the same frame.
+				//do not resolve collision for a wall that the shot had already collided with in 
+				//the same frame.
 				if (j == bounced_wall_id) {
 					continue;
 				}
@@ -303,8 +317,10 @@ void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 					//increment times bounced and set the last wall bounced to this one
 					bounce_times++;
 					bounced_wall_id = j;
-					//if a shot's consecutive bounces are in opposite cardinal direction (top and bottom, left and right), then something's wrong (see diagram);
-					//reset the shot, reverse the order of traversal of the wallsement array and resolve the collisions again.
+					//if a shot's consecutive bounces are in opposite cardinal direction (top 
+					//and bottom, left and right), then something's wrong (see diagram);
+					//reset the shot, reverse the order of traversal of the wallsement array 
+					//and resolve the collisions again.
 					if (bounce_results.second == -bounce_direction) {
 						reverse_array = true;
 						bounced = false;
@@ -317,7 +333,8 @@ void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 				}
 			}
 		} while (bounced);
-		//resolve bounces in reverse order if needed; the process here is completely analogus to what happens above.
+		//resolve bounces in reverse order if needed; the process here is completely analogus 
+		//to what happens above.
 		if (reverse_array) {
 			int bounce_times = 0;
 			int bounced_wall_id = -1;
@@ -346,14 +363,16 @@ void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 			to_remove.push_back(i);
 		}
 	}
-	//remove all shots with the indices in the to_remove array; notice the backward iteration since deleting an elements shifts the indices of all those behind it.
+	//remove all shots with the indices in the to_remove array; notice the backward iteration since 
+	//deleting an elements shifts the indices of all those behind it.
 	for (int i = to_remove.size() - 1; i > -1; i--) {
 		shots_in_level.shots_in_level.erase(shots_in_level.shots_in_level.begin() + to_remove[i]);
 	}
 }
 
 /*
-resolves collision between the player and the walls in the level; calls collision_handler function of individual wall segments.
+resolves collision between the player and the walls in the level; calls collision_handler function 
+of individual wall segments.
 */
 void Wall::collision_resolver(Player &player_moving) {
 	bool collided;
@@ -368,8 +387,9 @@ void Wall::collision_resolver(Player &player_moving) {
 }
 
 /*
-randomly generates walls in the level. Generates the specified amount of wall segments while ensuring that none of the walls overlap with each other,
-spawn near the player spawns or block off the players by splitting the map into two.
+randomly generates walls in the level. Generates the specified amount of wall segments while ensuring 
+that none of the walls overlap with each other, spawn near the player spawns or block off the players 
+by splitting the map into two.
 */
 void Wall::random_level_generator(int wall_count) {
 	//count how many walls have been generated so far.
@@ -391,7 +411,8 @@ void Wall::random_level_generator(int wall_count) {
 			newwidth = (rand() % (kLevelHeightMultiplier / 3) + 2) * kWallWidth;
 			newheight = kWallWidth;
 		}
-		//only add the wall if it does not intersect with any existing walls; otherwise reroll the wall parameters.
+		//only add the wall if it does not intersect with any existing walls; otherwise reroll the wall 
+		//parameters.
 		if (!intersect_with_spawn(newx, newy, newwidth, newheight)) {
 			add_wall(newx, newy, newwidth, newheight);
 			//if the addition of the current wall splits the map, remove it and reroll the wall parameters.
@@ -416,10 +437,10 @@ bool Wall::closed_path_checker() {
 	Direction facing = EAST;
 	while (true) {
 		switch (facing) {
-		//checks valid directions one by one; there is no convienient "can go forward" check as in CS125 labs so these disgusting nested if statements
-		//are necessary.
-		//e.g. facing east, first check south (right), then check east (front), then check north (left), then turn back if its a dead end
-		//same for the other 3 cases.
+		//checks valid directions one by one; there is no convienient "can go forward" check as in CS125 
+		//labs so these disgusting nested if statements are necessary.
+		//e.g. facing east, first check south (right), then check east (front), then check north (left), 
+		//then turn back if its a dead end, same for the other 3 cases.
 		case EAST: 
 			if (intersect(kWallWidth * current_x, kWallWidth * (current_y + 1), kWallWidth, kWallWidth)) {
 				if (intersect(kWallWidth * (current_x + 1), kWallWidth * current_y, kWallWidth, kWallWidth)) {
@@ -572,11 +593,13 @@ void Wall::clear_level() {
 }
 
 /*
-serialized string format of all wall segments in the level. Used in multiplayer; walls are generated at the host server and sent to the client.
+serialized string format of all wall segments in the level. Used in multiplayer; walls are generated 
+at the host server and sent to the client.
 */
 string Wall::serialized_string() {
 	string to_return;
-	//the boundary walls are omitted as they are the same for any instance of the program, hence the for loop starting at 4.
+	//the boundary walls are omitted as they are the same for any instance of the program, hence the 
+	//for loop starting at 4.
 	for (int i = 4; i < walls.size(); i++) {
 		to_return += (to_string(walls[i].xpos_) + kSmallDelimiter + to_string(walls[i].ypos_) +
 			kSmallDelimiter + to_string(walls[i].xspan_) + kSmallDelimiter + 
@@ -586,7 +609,8 @@ string Wall::serialized_string() {
 }
 
 /*
-deserialize an update message from the host server and adds the appropriate wall segments to the wall object in the client program.
+deserialize an update message from the host server and adds the appropriate wall segments to the wall 
+object in the client program.
 */
 void Wall::deserialize_update_message(string message) {
 	if (walls.size() <= 4) {
