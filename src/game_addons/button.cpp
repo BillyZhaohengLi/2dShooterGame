@@ -16,7 +16,8 @@ AllButtons::Button::Button(int x, int y, int width, int height,
 }
 
 /*
-check whether the point (x,y) is on a button. Also checks whether the interface the button is in matches the one the player is currently in.
+check whether the point (x,y) is on a button. Also checks whether the interface the button is in 
+matches the one the player is currently in.
 */
 bool AllButtons::Button::on_button(int x_coord, int y_coord, GameState current) {
 	if (x_coord >= xpos_ && x_coord <= xpos_ + xspan_ &&
@@ -74,7 +75,8 @@ void AllButtons::add_button(int x, int y, int width, int height, ofColor color, 
 }
 
 /*
-detects whether the user's cursor is over a button. Returns the cell number of the button if it is, returns -1 otherwise.
+detects whether the user's cursor is over a button. Returns the cell number of the button if it is, 
+returns -1 otherwise.
 */
 int AllButtons::on_button(int x_coord, int y_coord, GameState current) {
 	for (int i = 0; i < buttons_in_game.size(); i++) {

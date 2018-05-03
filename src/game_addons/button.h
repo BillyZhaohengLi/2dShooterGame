@@ -45,10 +45,12 @@ private:
 		/*
 		conventional constructor. Ticked defaults to false.
 		*/
-		Button(int x, int y, int width, int height, ofColor color, string label, vector<GameState> to_show, ofxCenteredTrueTypeFont font);
+		Button(int x, int y, int width, int height, ofColor color, string label, 
+			vector<GameState> to_show, ofxCenteredTrueTypeFont font);
 
 		/*
-		check whether the point (x,y) is on a button. Also checks whether the interface the button is in matches the one the player is currently in.
+		check whether the point (x,y) is on a button. Also checks whether the interface the button is in 
+		matches the one the player is currently in.
 		*/
 		bool on_button(int x_coord, int y_coord, GameState current);
 
@@ -66,7 +68,8 @@ public:
 		vector<GameState> to_show, ofxCenteredTrueTypeFont font);
 
 	/*
-	detects whether the user's cursor is over a button. Returns the cell number of the button if it is, returns -1 otherwise.
+	detects whether the user's cursor is over a button. Returns the cell number of the button if it is, 
+	returns -1 otherwise.
 	*/
 	int on_button(int x_coord, int y_coord, GameState current);
 

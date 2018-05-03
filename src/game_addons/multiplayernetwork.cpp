@@ -24,7 +24,8 @@ bool MultiplayerNetwork::server_setup() {
 }
 
 /*
-sets up the client to connect to the specified ip address (and shutting down the server if it is on); returns whether the connection was successful.
+sets up the client to connect to the specified ip address (and shutting down the server if it is on); 
+returns whether the connection was successful.
 if the setup is successful changes status to "CLIENT".
 */
 bool MultiplayerNetwork::client_setup(string ip_address) {
@@ -86,11 +87,14 @@ void MultiplayerNetwork::send(string message) {
 
 /*
 receives a message from the partner. Uses a lossy receiving method.
-explanation: sometimes due to lag there will be multiple messages in the buffer when receive() is called at the start of every update.
-if only one message is received per update, severe lag will be caused due to messages piling up to form a queue.
+explanation: sometimes due to lag there will be multiple messages in the buffer when receive() is 
+called at the start of every update.
+if only one message is received per update, severe lag will be caused due to messages piling up 
+to form a queue.
 this way, only the last message in the queue is actually read; the rest are discarded.
-this will cause some loss of data but has miniscule impact on gameplay due to graphics updating 40 times a second - missing a frame or two
-here and there will not drastically alter the perception of the graphics.
+this will cause some loss of data but has miniscule impact on gameplay due to graphics updating 
+40 times a second - missing a frame or two here and there will not drastically alter the 
+perception of the graphics.
 */
 string MultiplayerNetwork::receive() {
 	if (status == HOST) {
@@ -138,9 +142,11 @@ void MultiplayerNetwork::disconnect_additional_clients() {
 }
 
 /*
-returns whether a client has received a message from a server in the period of time it was connected to it.
-Used to determine whether the client was disconnected due to trying to connect to a server already hosting another client
-(as this client will not receive any messages because all messages are sent to client No.0).
+returns whether a client has received a message from a server in the period of time it was 
+connected to it.
+Used to determine whether the client was disconnected due to trying to connect to a server already 
+hosting another client (as this client will not receive any messages because all messages are sent 
+to client No.0).
 */
 bool MultiplayerNetwork::received_message_from_server() {
 	return received_message;

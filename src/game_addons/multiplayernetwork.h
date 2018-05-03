@@ -19,13 +19,16 @@ private:
 	ofxTCPClient client;
 
 	/*
-	the status the program is in; used to determine whether to send/receive messages from the server or the client depending on which one is in use.
+	the status the program is in; used to determine whether to send/receive messages from the server 
+	or the client depending on which one is in use.
 	*/
 	Connection status;
 
 	/*
-	variable for determining whether the client has received a message since connecting to a server when being disconnected.
-	Used to determine whether the client was disconnected due to trying to connect to a server already with another client.
+	variable for determining whether the client has received a message since connecting to a server 
+	when being disconnected.
+	Used to determine whether the client was disconnected due to trying to connect to a server 
+	already with another client.
 	*/
 	bool received_message;
 public:
@@ -41,7 +44,8 @@ public:
 	bool server_setup();
 
 	/*
-	sets up the client to connect to the specified ip address (and shutting down the server if it is on); returns whether the connection was successful.
+	sets up the client to connect to the specified ip address (and shutting down the server if it is on); 
+	returns whether the connection was successful.
 	if the setup is successful changes status to "CLIENT".
 	*/
 	bool client_setup(string ip_address);
@@ -80,9 +84,11 @@ public:
 	void disconnect_additional_clients();
 
 	/*
-	returns whether a client has received a message from a server in the period of time it was connected to it.
-	Used to determine whether the client was disconnected due to trying to connect to a server already hosting another client
-	(as this client will not receive any messages because all messages are sent to client No.0).
+	returns whether a client has received a message from a server in the period of time it was
+	connected to it.
+	Used to determine whether the client was disconnected due to trying to connect to a server already
+	hosting another client (as this client will not receive any messages because all messages are sent
+	to client No.0).
 	*/
 	bool received_message_from_server();
 };
