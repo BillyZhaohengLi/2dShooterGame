@@ -1,7 +1,6 @@
 # CS 126 FinalProject - 2D Shooter Game
-## development background
-* This project is developed and compiled using Visual Studio 2017 with a Windows 7 OS.
-* The game is of the form of an .exe executable located in this directory.
+## Development background
+* This project was developed and compiled using Visual Studio 2017 with a Windows 7 OS.
 
 ## How do I play the game?
 * The instructions are contained inside the game viewable by clicking the "Help" button seen in the main menu and are rather self-explanatory; follow the prompts in the individual interfaces.
@@ -21,7 +20,7 @@
  * The text, Verdana.ttf is taken from openFrameworks.
  * Various helper functions in the helperfunction file were "derived" from stackoverflow and geeksforgeeks.
 
-## required dlls for building on Windows (x32):
+## Required dlls for building on Windows (x32):
 * assimp.dll
 * concrt140d.dll
 * fmodex.dll
