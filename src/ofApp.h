@@ -61,7 +61,8 @@ class ofApp : public ofBaseApp{
 		//buffer string for continually repeating the last message sent while in the waiting room.
 		string buffer;
 
-		//string to display in the multiplayer connect interface indicating success/failure of connections.
+		//string to display in the multiplayer connect interface indicating success/failure 
+		//of connections.
 		string multiplayer_string;
 
 		//game outcome message to be displayed in the game over screen indicating which player won.
