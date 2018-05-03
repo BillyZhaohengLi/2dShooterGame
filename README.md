@@ -9,7 +9,8 @@
 
 ## How do I build this thing?
  * All you need to compile the project are the code files in the src folder and the sound and text files in resources folder. Depending on the IDE used, either put the files in the resources folder into the src folder (in the SAME level as main.cpp) or put them into YourProjectName/bin/data if using Visual studio, where 'bin' should in the same level as the src folder.
- * Make sure to include the ofxGui and ofxNetwork libraries when building the project. They are specified in the addons.make file (found in this repo as well) in the same level of the src folder.
+ * Make sure to include the ofxGui and ofxNetwork libraries when building the project. They are specified in the addons.make file (found in this repo as well, which may or may not be needed to build the project depending on the IDE) in the same level of the src folder.
+ * The explanations.txt is not needed for compiling the program. It is a text file containing explanations and diagrams for some of the more complicated algorithms in the program.
  
 ## Unit testing
  * Not convinced that the game works? Go into the ofApp.h file and uncomment the test headers, then go into the ofApp.cpp file and uncomment the test methods, and read the test output in your console.
