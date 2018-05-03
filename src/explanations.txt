@@ -1,6 +1,6 @@
 
 
-//----------BEAUTIFUL DIAGRAM FOR EXPLANING THE SPAGETTI SHOT-WALL COLLISION ALGORITHM-------------
+//----------BEAUTIFUL DIAGRAM FOR EXPLANING THE SHOT-WALL COLLISION ALGORITHM-------------
 /*
 the shot-wall collision algorithm is made up of calls to the collision resolver of individual wall segments which look like this:
 ---------------|
@@ -79,3 +79,159 @@ with the bottom segment of the wall - the shot is resolved again to p2 and files
 Preventing this is easy; simply not allowing a shot to bounce off a wall two times consecutively does the trick.
 */
 
+//-----------BEAUTIFUL DIAGRAM FOR EXPLANING PLAYER-WALL COLLISION---------
+/*
+the player-wall collision algorithm is made up of calls to the collision handler which handles collisions between players and individual
+wall segments.
+(1) How does this happen? Let us look at the scenario below:
+        ------
+	   /      \
+	  /        \
+	  |   X    |
+	  | player |
+-----------------------|
+       \      /        |
+	    ------         |
+		wall           |
+what happens here is simple; the algorithm simply sets the player's position so the player's center X is at least "kPlayerRadius" units
+plus "kEpsilon" (which is a small error margin added to account for floating point errors - using exact values may result in the collision
+still being unresolved because the player's distance to the wall is slightly less than kPlayerRadius) away from the shortest distance out of 
+the four distances between the player and the four segments which make up the wall.
+In this case, the player is closest to the top wall segment; therefore, they will be pushed upwards.
+        ------
+	   /      \
+	  /        \
+	  |   X    |
+	  | player |
+      \        /
+       \      /        
+-----------------------|
+		wall           |
+(2) In cases where the shortest path from the player's center to the wall does not form a right angle with any of the wall segments (as seen below),
+        ------
+	   /      \
+	  /        \
+	  |   X    |
+	  | player |
+      \     |----------
+       \    | /        
+        ----|-   Wall
+            |
+the algorithm resolves the collision by drawing a line between the center of the player and the closest corner on the wall to the center of the
+player, then extend the line until the line is of "kPlayerRadius" + "kEpsilon" units long, and place the player there.
+        ------
+	   /      \
+	  /        \
+	  |   X    |
+	  | player |
+      \        |
+       \      /|------        
+        ------ | Wall
+               |
+(3) In cases where a player collides with 2 walls (which happens when a player moves diagonally into a corner), the collision is resolved
+sequentially one wall followed by the other.
+        ------|
+	   /      |
+	  /       |\
+	  |   X   ||
+	  | player||
+--------------||  wall A
+       \      |    
+        ------|
+    Wall B    |
+              |
+first resolve the collision with wall A (it depends on which one comes first in the array, which in turn depends on which wall segment
+was created first)
+      ------  |
+	 /      \ |
+	/        \|
+	|   X    ||
+	| player ||
+--------------|  wall A
+     \      / |    
+      ------  |
+    Wall B    |
+              |
+then resolve the collision with wall B and we're done.
+      ------  |
+	 /      \ |
+	/        \|
+	|   X    ||
+	| player ||
+    \        /|  wall A
+     \      / |    
+      ------  |
+------------- |
+   Wall B     |
+And no, given the walls being spawned on a grid, the smallest distance between two perpendicular wall segments is slightly larger
+than the player's diameter, so even though resolving collisions with 3 wall segments at once would likely result in an infinite loop,
+it would never happen (at least with the current structure of this game)
+  |   ------  |
+  |  /      \ |
+  |	/        \|
+  |	|   X    ||
+  |	| player ||
+  | \        /|  wall A
+  |  \      / |    
+  |   ------  |
+------------- |
+   Wall B     |
+*/
+
+//-----------BEAUTIFUL DIAGRAM FOR EXPLANING THE CLOSED PATH CHECKER ALGORITHM---------
+/*
+This is really just a reiteration of the CS125 maze traversal algorithm where you hug the right wall.
+If we set p1 (who spawns in the bottom left-hand corner) to be the start and p2 (who spawns in the top
+right-hand corner), then we can let the algorithm do its job by starting from p1 and finding its way to
+p2. If at some point the pointer goes back to p1 without reaching p2, then there is no valid path between
+p1 and p2:
+xxxxxxxxxxx
+x    x  p2x
+x    x    x
+xp1  x    x
+xxxxxxxxxxx
+It can be mathematically proven that infinite loops will not happen in this algorithm, though this is not
+a CS173 examlet so no such proof would be given here.
+
+So how does the algorithm actually work?
+xxxxxxxxxxx
+x        Dx
+x x       x
+x  x      x
+xox       x
+xxxxxxxxxxx
+let's say the x's represent walls, the o represets the checker, and the D is the destination. The checker starts out facing East; they try to move
+right, which is south. The attempt fails. Then they try to move forward (east), which also fails. They successfully
+move north.
+xxxxxxxxxxx
+x        Dx
+x x       x
+xo x      x
+x x       x
+xxxxxxxxxxx
+since the checker successfully moved north, they are now facing north; the checker will now again try to move right (east),
+and successfully does so.
+xxxxxxxxxxx
+x        Dx
+x x       x
+x ox      x
+x x       x
+xxxxxxxxxxx
+then they check right(south), forward(east) and left(north) but none of them are valid. The checker is in a dead end; 
+the checker thus moves backwards(west).
+xxxxxxxxxxx
+x        Dx
+x x       x
+xo x      x
+x x       x
+xxxxxxxxxxx
+the checker successfully moves right (north), and so on until it successfully reaches its destination.
+Therefore, this map has a valid path between p1 and p2.
+xxxxxxxxxxx
+x        Dx
+xox       x
+x  x      x
+x x       x
+xxxxxxxxxxx
+*/
+ 
