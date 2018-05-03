@@ -375,14 +375,9 @@ void Player::change_direction(vector<bool> input) {
 
 /*
 prompts the player to shoot a bullet. Has different outcomes based on whether the player is a bot.
-the return value is a very ugly data structure consisting of the values in the following order:
-1. whether the player decides to fire a shot (bool); if this is false none of the following return 
-values matter.
-2. the angle of the shot (double)
-3. the starting x position of the shot (double)
-4. the starting 7 position of the shot (double)
+returns a ShotParams structure.
 */
-pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_down, bool obstructed) {
+ShotParams Player::shoot_prompt(bool mouse_down, bool obstructed) {
 	//if the player is not a bot base whether to fire a shot on whether the mouse is held.
 	if (!is_bot) {
 		//if the mouse is held, the shot cooldown is ready and the player is alive then fire a shot.
@@ -390,14 +385,13 @@ pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_d
 			double shot_angle = fire_shot();
 
 			//return the values as specified above.
-			return pair<pair<bool, double>, pair<double, double>>
+			return ShotParams
 				(pair<bool, double>(true, shot_angle), pair<double, double>(
 				xpos + (kPlayerRadius - kShotLength + kShotRadius + kEpsilon) * cos(shot_angle), 
 				ypos + (kPlayerRadius - kShotLength + kShotRadius + kEpsilon) * sin(shot_angle)));
 		}
 		else {
-			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), 
-				pair<double, double>(0, 0));
+			return ShotParams(pair<bool, double>(false, 0),	pair<double, double>(0, 0));
 		}
 	}
 	else {
@@ -407,12 +401,11 @@ pair<pair<bool, double>, pair<double, double>> Player::shoot_prompt(bool mouse_d
 			double shot_angle = fire_shot();
 
 			//return the values as specified above.
-			return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(true, shot_angle), 
+			return ShotParams(pair<bool, double>(true, shot_angle),
 				pair<double, double>(xpos + (kPlayerRadius * 0.9) * cos(shot_angle), 
 					ypos + (kPlayerRadius * 0.9) * sin(shot_angle)));
 		}
-		return pair<pair<bool, double>, pair<double, double>>(pair<bool, double>(false, 0), 
-			pair<double, double>(0, 0));
+		return ShotParams(pair<bool, double>(false, 0),	pair<double, double>(0, 0));
 	}
 }
 
@@ -429,7 +422,6 @@ void Player::randomize_appearance() {
 		new_name.push_back(char(97));
 		new_name.push_back(char(110));
 		new_name.push_back(char(115));
-		set_name(new_name);
 		break;
 	case(1):
 		new_name.push_back(char(77));
@@ -440,7 +432,6 @@ void Player::randomize_appearance() {
 		new_name.push_back(char(117));
 		new_name.push_back(char(101));
 		new_name.push_back(char(114));
-		set_name(new_name);
 		break;
 	case(2):
 		new_name.push_back(char(70));
@@ -448,7 +439,6 @@ void Player::randomize_appearance() {
 		new_name.push_back(char(101));
 		new_name.push_back(char(99));
 		new_name.push_back(char(107));
-		set_name(new_name);
 		break;
 	case(3):
 		new_name.push_back(char(67));
@@ -458,7 +448,6 @@ void Player::randomize_appearance() {
 		new_name.push_back(char(108));
 		new_name.push_back(char(101));
 		new_name.push_back(char(110));
-		set_name(new_name);
 		break;
 	case(4):
 		new_name.push_back(char(65));
@@ -468,10 +457,9 @@ void Player::randomize_appearance() {
 		new_name.push_back(char(97));
 		new_name.push_back(char(118));
 		new_name.push_back(char(101));
-		set_name(new_name);
 		break;
 	}
-
+	set_name(new_name);
 	set_color(rand() % 6 + kRedPalette);
 }
 
@@ -535,7 +523,7 @@ void Player::deserialize_update_game_message(string message) {
 send a player over the Connection as a serialized string.
 */
 string Player::serialized_model_string() {
-	string to_send = "PLAYER" + to_string(get_color()) + kSmallDelimiter + name + 
+	string to_send = kPlayerString + to_string(get_color()) + kSmallDelimiter + name + 
 		kSmallDelimiter + to_string(facing_x) + kSmallDelimiter + to_string(facing_y);
 	return to_send;
 }

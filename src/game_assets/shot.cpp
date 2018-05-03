@@ -27,19 +27,17 @@ void ShotInLevel::Shot::draw_shot() {
 
 
 /*
-returns an ugly data structure containing the shot parameters of this shot.
-nothing is actually done with the contents of the data structure; it is only used to reset the shot 
-by being fed back into the shot in the reset_shot method below.
+returns a ShotResetData structure containing the shot parameters of this shot.
 */
-pair<pair<double, double>, pair<double, int>> ShotInLevel::Shot::get_shot_parameters() {
-	return pair<pair<double, double>, pair<double, int>>(pair<double, double>(xpos_, ypos_), 
-		pair<double, int>(angle_, bounces_remaining_));
+ShotResetData ShotInLevel::Shot::get_shot_parameters() {
+	return ShotResetData(pair<double, double>(xpos_, ypos_), pair<double, int>(angle_, bounces_remaining_));
 }
 
 /*
-set the shot's parameters based on the index and the aforementioned data structure in get_shot_parameters.
+set the shot's parameters based on the ShotResetData structure received
+in get_shot_parameters.
 */
-void ShotInLevel::Shot::reset_shot(pair<pair<double, double>, pair<double, int>> parameters) {
+void ShotInLevel::Shot::reset_shot(ShotResetData parameters) {
 	xpos_ = parameters.first.first;
 	ypos_ = parameters.first.second;
 	angle_ = parameters.second.first;
@@ -127,15 +125,15 @@ void ShotInLevel::deserialize_update_message(string message) {
 }
 
 /*
-returns an ugly data structure containing the shot parameters of the (shot_id)th shot in the level 
-in terms of array index.
-nothing is actually done with the contents of the data structure; it is only used to reset the shot 
-by being fed back into the reset_shot
+returns a ShotResetData structure containing the shot parameters of the (shot_id)th shot in the
+level in terms of array index.
+nothing is actually done with the contents of the data structure; it is only used to reset the
+shot by being fed back into the reset_shot
 method below this if needed in the shot-wall collision algorithm.
 if the shot is not found returns all 0s.
 */
-pair<pair<double, double>, pair<double, int>> ShotInLevel::get_shot_parameters(int shot_id) {
-	pair<pair<double, double>, pair<double, int>> temp;
+ShotResetData ShotInLevel::get_shot_parameters(int shot_id) {
+	ShotResetData temp;
 	for (int i = 0; i < shots_in_level.size(); i++) {
 		if (shot_id == i) {
 			return shots_in_level[i].get_shot_parameters();
@@ -147,7 +145,7 @@ pair<pair<double, double>, pair<double, int>> ShotInLevel::get_shot_parameters(i
 /*
 set a shot's parameters based on the index and the aforementioned data structure in get_shot_parameters.
 */
-void ShotInLevel::reset_shot(int shot_id, pair<pair<double, double>, pair<double, int>> parameters) {
+void ShotInLevel::reset_shot(int shot_id, ShotResetData parameters) {
 	for (int i = 0; i < shots_in_level.size(); i++) {
 		if (shot_id == i) {
 			shots_in_level[i].reset_shot(parameters);

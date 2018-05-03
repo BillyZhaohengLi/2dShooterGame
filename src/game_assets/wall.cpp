@@ -12,6 +12,7 @@ Wall::WallSegment::WallSegment(int xpos, int ypos, int xspan, int yspan) {
 /*
 handles collision between a wall segment and the player; if the player is in contact with the wall 
 push them out.
+For a detailed explanation of how this algorithm works see the relevant section in explanations.txt.
 */
 bool Wall::WallSegment::collision_handler(Player& player_moving) {
 	//get the player's coordinates
@@ -281,8 +282,7 @@ void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 	for (int i = 0; i < shots_in_level.shots_in_level.size(); i++) {
 		//take note of the shot's position before any modifications; this is used to reset 
 		//bounces if things go ugly
-		pair<pair<double, double>, pair<double, int>> parameters = 
-			shots_in_level.get_shot_parameters(i);
+		ShotResetData parameters = shots_in_level.get_shot_parameters(i);
 
 		//previous bounced direction (see (2) in the diagram in the explanations.txt file)
 		int bounce_direction = kNotBounced;
@@ -390,6 +390,7 @@ void Wall::collision_resolver(Player &player_moving) {
 randomly generates walls in the level. Generates the specified amount of wall segments while ensuring 
 that none of the walls overlap with each other, spawn near the player spawns or block off the players 
 by splitting the map into two.
+For a detailed explanation of how this algorithm works see the relevant section in explanations.txt.
 */
 void Wall::random_level_generator(int wall_count) {
 	//count how many walls have been generated so far.

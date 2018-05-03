@@ -3,6 +3,19 @@
 #include "../const.h"
 #include "player.h"
 #include <math.h>
+
+/*
+data structure representing the parameters of an individual shot object.
+the fields have these meanings in the following order:
+1. x position
+2. y position
+3. angle
+4. bounces remaining
+nothing is done with the individual fields of this data structure outside of the class.
+It is fed directly back into another class function that takes the structure as an input.
+*/
+using ShotResetData = pair<pair<double, double>, pair<double, int>>;
+
 /*
 class containing all shots fired in a level.
 */
@@ -52,17 +65,15 @@ public:
 		void draw_shot();
 
 		/*
-		returns an ugly data structure containing the shot parameters of this shot.
-		nothing is actually done with the contents of the data structure; it is only used 
-		to reset the shot by being fed back into the shot in the reset_shot method below.
+		returns a ShotResetData structure containing the shot parameters of this shot.
 		*/
-		pair<pair<double, double>, pair<double, int>> get_shot_parameters();
+		ShotResetData get_shot_parameters();
 
 		/*
-		set the shot's parameters based on the index and the aforementioned data structure 
+		set the shot's parameters based on the ShotResetData structure received 
 		in get_shot_parameters.
 		*/
-		void reset_shot(pair<pair<double, double>, pair<double, int>> parameters);
+		void reset_shot(ShotResetData parameters);
 	};
 
 	/*
@@ -109,18 +120,18 @@ public:
 	void deserialize_update_message(string message);
 
 	/*
-	returns an ugly data structure containing the shot parameters of the (shot_id)th shot in the 
+	returns a ShotResetData structure containing the shot parameters of the (shot_id)th shot in the 
 	level in terms of array index.
 	nothing is actually done with the contents of the data structure; it is only used to reset the 
 	shot by being fed back into the reset_shot
 	method below this if needed in the shot-wall collision algorithm.
 	if the shot is not found returns all 0s.
 	*/
-	pair<pair<double, double>, pair<double, int>> get_shot_parameters(int shot_id);
+	ShotResetData get_shot_parameters(int shot_id);
 
 	/*
 	set a shot's parameters based on the index and the aforementioned data structure in 
 	get_shot_parameters.
 	*/
-	void reset_shot(int shot_id, pair<pair<double, double>, pair<double, int>> parameters);
+	void reset_shot(int shot_id, ShotResetData parameters);
 };

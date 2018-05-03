@@ -8,6 +8,17 @@
 #include <mmsystem.h>
 
 /*
+a data structure representing the parameters of a player's decision to fire a shot
+and the shot parameters (if applicable) in the follow order:
+1. whether the player decides to fire a shot(bool); if this is false none of the following return
+values matter.
+2. the angle of the shot(double)
+3. the starting x position of the shot(double)
+4. the starting y position of the shot(double)
+*/
+using ShotParams = pair<pair<bool, double>, pair<double, double>>;
+
+/*
 player class; one player per object; stores parameters related to players in level.
 */
 class Player {
@@ -163,14 +174,9 @@ public:
 
 	/*
 	prompts the player to shoot a bullet. Has different outcomes based on whether the player is a bot.
-	the return value is a very ugly data structure consisting of the values in the following order:
-	1. whether the player decides to fire a shot (bool); if this is false none of the following 
-	return values matter.
-	2. the angle of the shot (double)
-	3. the starting x position of the shot (double)
-	4. the starting 7 position of the shot (double)
+	returns a ShotParams structure.
 	*/
-	pair<pair<bool, double>, pair<double, double>> shoot_prompt(bool mouse_down, bool obstructed);
+	ShotParams shoot_prompt(bool mouse_down, bool obstructed);
 
 	/*
 	sets randomized names and colors for bots.
