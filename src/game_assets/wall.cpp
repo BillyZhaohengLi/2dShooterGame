@@ -30,7 +30,7 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 	Point wall_SW = Point(xpos_, ypos_ + yspan_);
 	Point wall_SE = Point(xpos_ + xspan_, ypos_ + yspan_);
 	//the player collides with the north wall
-	if (line_segment_circle(wall_NW, wall_NE, player_location, kPlayerRadius)) {
+	if (circle_distance_to_segment(wall_NW, wall_NE, player_location, kPlayerRadius)) {
 		//if circle is above wall
 		if (p_y < ypos_) {
 			collided = true;
@@ -62,7 +62,7 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 		}
 	}
 	//the player collides with the south wall
-	if (line_segment_circle(wall_SW, wall_SE, player_location, kPlayerRadius)) {
+	if (circle_distance_to_segment(wall_SW, wall_SE, player_location, kPlayerRadius)) {
 		//if circle is below wall
 		if (p_y > ypos_ + yspan_) {
 			collided = true;
@@ -89,7 +89,7 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 		}
 	}
 	//the player collides with the west wall
-	if (line_segment_circle(wall_NW, wall_SW, player_location, kPlayerRadius)) {
+	if (circle_distance_to_segment(wall_NW, wall_SW, player_location, kPlayerRadius)) {
 		//if circle is left of wall
 		if (p_x < xpos_) {
 			collided = true;
@@ -114,7 +114,7 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 		}
 	}
 	//the player collides with the east wall
-	if (line_segment_circle(wall_NE, wall_SE, player_location, kPlayerRadius)) {
+	if (circle_distance_to_segment(wall_NE, wall_SE, player_location, kPlayerRadius)) {
 		//if circle is right of wall
 		if (p_x > xpos_ + xspan_) {
 			collided = true;
@@ -165,7 +165,7 @@ pair<bool, int> Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 	Point wall_SE = Point(xpos_ + xspan_, ypos_ + yspan_);
 
 	//if the shot trajectory intersects the west wall and comes from the left
-	if (doIntersect(shot_before, shot_now, wall_NW, wall_SW) && 
+	if (segments_intersect(shot_before, shot_now, wall_NW, wall_SW) && 
 		(to_bounce.angle_ >= -kPi / 2 && to_bounce.angle_ <= kPi / 2)) {
 		to_bounce.bounces_remaining_--;
 		bounced = true;
@@ -179,7 +179,7 @@ pair<bool, int> Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 		}
 	}
 	//if the shot trajectory intersects the east wall and comes from the right
-	else if (doIntersect(shot_before, shot_now, wall_NE, wall_SE) && 
+	else if (segments_intersect(shot_before, shot_now, wall_NE, wall_SE) && 
 		(to_bounce.angle_ <= -kPi / 2 || to_bounce.angle_ >= kPi / 2)) {
 		to_bounce.bounces_remaining_--;
 		bounced = true;
@@ -193,7 +193,7 @@ pair<bool, int> Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 		}
 	}
 	//if the shot trajectory intersects the north wall and comes from the top
-	else if (doIntersect(shot_before, shot_now, wall_NW, wall_NE) && (to_bounce.angle_ >= 0)) {
+	else if (segments_intersect(shot_before, shot_now, wall_NW, wall_NE) && (to_bounce.angle_ >= 0)) {
 		to_bounce.bounces_remaining_--;
 		bounced = true;
 		bounced_direction = kBouncedTop;
@@ -201,7 +201,7 @@ pair<bool, int> Wall::WallSegment::bounce_shot(ShotInLevel::Shot& to_bounce) {
 		to_bounce.angle_ = -to_bounce.angle_;
 	}
 	//if the shot trajectory intersects the south wall and comes from the bottom
-	else if (doIntersect(shot_before, shot_now, wall_SW, wall_SE) && (to_bounce.angle_ <= 0)) {
+	else if (segments_intersect(shot_before, shot_now, wall_SW, wall_SE) && (to_bounce.angle_ <= 0)) {
 		to_bounce.bounces_remaining_--;
 		bounced = true;
 		bounced_direction = kBouncedBottom;
@@ -226,10 +226,10 @@ bool Wall::player_path_obstructed(Player p1, Player p2) {
 		Point wall_NE = Point(walls[i].xpos_ + walls[i].xspan_, walls[i].ypos_);
 		Point wall_SW = Point(walls[i].xpos_, walls[i].ypos_ + walls[i].yspan_);
 		Point wall_SE = Point(walls[i].xpos_ + walls[i].xspan_, walls[i].ypos_ + walls[i].yspan_);
-		if (doIntersect(point_1, point_2, wall_NW, wall_NE) || 
-			doIntersect(point_1, point_2, wall_NW, wall_SW)	|| 
-			doIntersect(point_1, point_2, wall_SW, wall_SE) || 
-			doIntersect(point_1, point_2, wall_NE, wall_SE)) {
+		if (segments_intersect(point_1, point_2, wall_NW, wall_NE) || 
+			segments_intersect(point_1, point_2, wall_NW, wall_SW)	|| 
+			segments_intersect(point_1, point_2, wall_SW, wall_SE) || 
+			segments_intersect(point_1, point_2, wall_NE, wall_SE)) {
 			return true;
 		}
 	}
@@ -555,7 +555,7 @@ bool Wall::intersect(int newx, int newy, int newwidth, int newheight) {
 		//create points defining existing wall segments
 		Point current_wall_1 = Point(walls[i].xpos_, walls[i].ypos_);
 		Point current_wall_2 = Point(walls[i].xpos_ + walls[i].xspan_, walls[i].ypos_ + walls[i].yspan_);
-		if (rectOverlap(new_wall_1, new_wall_2, current_wall_1, current_wall_2)) {
+		if (rect_overlap(new_wall_1, new_wall_2, current_wall_1, current_wall_2)) {
 			return true;
 		}
 	}
@@ -573,7 +573,7 @@ bool Wall::intersect_with_spawn(int newx, int newy, int newwidth, int newheight)
 		//create points defining existing wall segments
 		Point current_wall_1 = Point(walls[i].xpos_, walls[i].ypos_);
 		Point current_wall_2 = Point(walls[i].xpos_ + walls[i].xspan_, walls[i].ypos_ + walls[i].yspan_);
-		if (rectOverlap(new_wall_1, new_wall_2, current_wall_1, current_wall_2)) {
+		if (rect_overlap(new_wall_1, new_wall_2, current_wall_1, current_wall_2)) {
 			return true;
 		}
 	}
@@ -582,8 +582,8 @@ bool Wall::intersect_with_spawn(int newx, int newy, int newwidth, int newheight)
 	Point p1_spawn_2 = Point(kWallWidth * 4, (kLevelHeightMultiplier - 1) * kWallWidth);
 	Point p2_spawn_1 = Point((kLevelWidthMultiplier - 4) * kWallWidth, kWallWidth);
 	Point p2_spawn_2 = Point((kLevelWidthMultiplier - 1) * kWallWidth, kWallWidth * 4);
-	if (rectOverlap(new_wall_1, new_wall_2, p1_spawn_1, p1_spawn_2) || 
-		rectOverlap(new_wall_1, new_wall_2, p2_spawn_1, p2_spawn_2)) {
+	if (rect_overlap(new_wall_1, new_wall_2, p1_spawn_1, p1_spawn_2) || 
+		rect_overlap(new_wall_1, new_wall_2, p2_spawn_1, p2_spawn_2)) {
 		return true;
 	}
 	return false;
