@@ -48,7 +48,11 @@ inline void WALL_TESTS() {
 
 	//test non-empty level serialized string
 	WALL_TEST.ASSERT_EQUALS("non-empty level serialized string", 
-		std::string("100~101~102~103~200~201~202~203~"), levelbounds.serialized_string());
+		std::string("100" + std::string(kSmallDelimiter) + "101" + std::string(kSmallDelimiter) +
+			"102" + std::string(kSmallDelimiter) + "103" + std::string(kSmallDelimiter) +
+			"200" + std::string(kSmallDelimiter) + "201" + std::string(kSmallDelimiter) +
+			"202" + std::string(kSmallDelimiter) + "203" + std::string(kSmallDelimiter)),
+		levelbounds.serialized_string());
 
 	//test deserialize string;
 	Wall test_wall2 = Wall();

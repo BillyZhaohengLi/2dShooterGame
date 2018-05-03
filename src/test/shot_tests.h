@@ -37,7 +37,10 @@ inline void SHOT_TESTS() {
 	//test serialized string
 	string data = test_shots.serialized_string();
 	SHOT_TEST.ASSERT_EQUALS("serialized shot string",
-		std::string("G100.000000~100.000000~0.000000~200.000000~200.000000~-3.141593~"), data);
+		std::string(std::string(kBigDelimiter) + "100.000000" + std::string(kSmallDelimiter) +
+			"100.000000" + std::string(kSmallDelimiter) + "0.000000" + std::string(kSmallDelimiter) +
+			"200.000000" + std::string(kSmallDelimiter) + "200.000000" + std::string(kSmallDelimiter) +
+			"-3.141593" + std::string(kSmallDelimiter)), data);
 
 	//test deserialize string
 	ShotInLevel test_shot2 = ShotInLevel();

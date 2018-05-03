@@ -26,9 +26,14 @@ inline void PLAYER_TESTS() {
 
 	//this might sometimes fail due to double precision error.
 	PLAYER_TEST.ASSERT_EQUALS("test serialized game string",
-		std::string("G100.000000~200.000000~0~0~15~T"), p1.serialized_game_string());
+		std::string(std::string(kBigDelimiter) + "100.000000" + std::string(kSmallDelimiter) +
+			"200.000000" + std::string(kSmallDelimiter) + "0" + std::string(kSmallDelimiter) +
+			"0" + std::string(kSmallDelimiter) + std::to_string(kPlayerShotCooldown / 2) +
+			std::string(kSmallDelimiter) + std::string(kTrueBoolean)), p1.serialized_game_string());
 	PLAYER_TEST.ASSERT_EQUALS("test serialized model string",
-		std::string("PLAYER0~Default~0~0"), p1.serialized_model_string());
+		std::string(std::string(kPlayerString) + std::to_string(kRedColor) + std::string(kSmallDelimiter) +
+			"Default" + std::string(kSmallDelimiter) + "0" + std::string(kSmallDelimiter)  + "0"), 
+		p1.serialized_model_string());
 
 	//test deserialize strings
 	Player p2 = Player(400, 500, kCyanPalette, false, "aaa");
@@ -92,7 +97,7 @@ inline void PLAYER_TESTS() {
 
 	//update aim and try to fire a shot; fails because weapon on cooldown
 	p1.update_player_facing(200, 100, p1);
-	pair<pair<bool, double>, pair<double, double>> shot_params = p1.shoot_prompt(true, false);
+	ShotParams shot_params = p1.shoot_prompt(true, false);
 	PLAYER_TEST.ASSERT_EQUALS("test shooting on cooldown", false, shot_params.first.first);
 
 	//cooldown the player's weapon
