@@ -1,5 +1,5 @@
 #pragma once
-#include "ofMain.h"
+#include "../ofMain.h"
 #include "../const.h"
 #include "ofxCenteredTrueTypeFont.h"
 //class for all text in the game.
@@ -36,7 +36,8 @@ private:
 		/*
 		typical constructor.
 		*/
-		GameText(string content, int xpos, int ypos, bool centered, GameState to_show, ofxCenteredTrueTypeFont font);
+		GameText(string content, int xpos, int ypos, bool centered, 
+			GameState to_show, ofxCenteredTrueTypeFont font);
 
 		/*
 		draw the text using the allocated font.
@@ -57,7 +58,8 @@ public:
 	/*
 	add a text snippet. Calls the GameText constructor.
 	*/
-	void add_text(string content, int xpos, int ypos, bool centered, GameState to_show, ofxCenteredTrueTypeFont font);
+	void add_text(string content, int xpos, int ypos, bool centered, 
+		GameState to_show, ofxCenteredTrueTypeFont font);
 
 	/*
 	add a font.

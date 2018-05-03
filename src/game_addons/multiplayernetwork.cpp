@@ -95,7 +95,7 @@ here and there will not drastically alter the perception of the graphics.
 string MultiplayerNetwork::receive() {
 	if (status == HOST) {
 		string message = server.receive(0);
-		string checker = server.receive(0);
+		string checker = message;
 		while (checker.size() > 0 && server.getNumClients() > 0) {
 			received_message = true;
 			message = checker;
@@ -105,7 +105,7 @@ string MultiplayerNetwork::receive() {
 	}
 	else if (status == CLIENT) {
 		string message = client.receive();
-		string checker = client.receive();
+		string checker = message;
 		while (checker.size() > 0) {
 			received_message = true;
 			message = checker;

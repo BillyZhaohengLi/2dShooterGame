@@ -1,6 +1,6 @@
 #pragma once
 #include "../const.h"
-#include "ofMain.h"
+#include "../ofMain.h"
 #include "ofxCenteredTrueTypeFont.h"
 #include <vector>
 using namespace std;
@@ -62,7 +62,8 @@ public:
 	/*
 	add a button. Calls the button constructor.
 	*/
-	void add_button(int x, int y, int width, int height, ofColor color, string label, vector<GameState> to_show, ofxCenteredTrueTypeFont font);
+	void add_button(int x, int y, int width, int height, ofColor color, string label, 
+		vector<GameState> to_show, ofxCenteredTrueTypeFont font);
 
 	/*
 	detects whether the user's cursor is over a button. Returns the cell number of the button if it is, returns -1 otherwise.

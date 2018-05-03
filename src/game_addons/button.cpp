@@ -67,7 +67,8 @@ void AllButtons::Button::draw_button() {
 /*
 add a button. Calls the button constructor.
 */
-void AllButtons::add_button(int x, int y, int width, int height, ofColor color, string label, vector<GameState> to_show, ofxCenteredTrueTypeFont font) {
+void AllButtons::add_button(int x, int y, int width, int height, ofColor color, string label, 
+	vector<GameState> to_show, ofxCenteredTrueTypeFont font) {
 	Button temp = Button(x, y, width, height, color, label, to_show, font);
 	buttons_in_game.push_back(temp);
 }

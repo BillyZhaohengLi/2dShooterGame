@@ -1,6 +1,6 @@
 #pragma once
 #include "../const.h"
-#include "ofMain.h"
+#include "../ofMain.h"
 #include "ofxNetwork.h"
 
 /*
