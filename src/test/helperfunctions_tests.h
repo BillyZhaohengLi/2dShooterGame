@@ -9,11 +9,11 @@ inline void HELPERFUNCTIONS_TESTS() {
 
 	//point on segment test
 	HF_TEST.ASSERT_EQUALS("point on segment yes", true,
-		onSegment(Point(100, 100), Point(150, 100), Point(200, 100)));
+		point_on_segment(Point(100, 100), Point(150, 100), Point(200, 100)));
 	HF_TEST.ASSERT_EQUALS("point on segment no", false,
-		onSegment(Point(100, 100), Point(150, 101), Point(200, 100)));
+		point_on_segment(Point(100, 100), Point(150, 101), Point(200, 100)));
 	HF_TEST.ASSERT_EQUALS("point on segment extension", false,
-		onSegment(Point(100, 100), Point(250, 100), Point(200, 100)));
+		point_on_segment(Point(100, 100), Point(250, 100), Point(200, 100)));
 
 	//orientation test
 	HF_TEST.ASSERT_EQUALS("orientation CW", 2,
@@ -23,40 +23,40 @@ inline void HELPERFUNCTIONS_TESTS() {
 
 	//line segment intersection tests
 	HF_TEST.ASSERT_EQUALS("line segment intersection tests - true", true,
-		doIntersect(Point(100, 100), Point(200, 100), Point(150, 50), Point(150, 150)));
+		segments_intersect(Point(100, 100), Point(200, 100), Point(150, 50), Point(150, 150)));
 	HF_TEST.ASSERT_EQUALS("line segment intersection tests - false", false,
-		doIntersect(Point(100, 100), Point(200, 100), Point(150, 50), Point(150, 60)));
+		segments_intersect(Point(100, 100), Point(200, 100), Point(150, 50), Point(150, 60)));
 	HF_TEST.ASSERT_EQUALS("line segment intersection tests - on extension", false,
-		doIntersect(Point(100, 100), Point(200, 100), Point(210, 50), Point(210, 150)));
+		segments_intersect(Point(100, 100), Point(200, 100), Point(210, 50), Point(210, 150)));
 	HF_TEST.ASSERT_EQUALS("line segment intersection tests - same line", true,
-		doIntersect(Point(100, 100), Point(200, 100), Point(100, 100), Point(200, 100)));
+		segments_intersect(Point(100, 100), Point(200, 100), Point(100, 100), Point(200, 100)));
 	HF_TEST.ASSERT_EQUALS("line segment intersection tests - share endpoints", true,
-		doIntersect(Point(100, 100), Point(200, 100), Point(200, 100), Point(300, 200)));
+		segments_intersect(Point(100, 100), Point(200, 100), Point(200, 100), Point(300, 200)));
 
 	//test line segment to circle
 	HF_TEST.ASSERT_EQUALS("line segment to circle touching 1", true,
-		line_segment_circle(Point(100, 100), Point(200, 100), Point(150, 70), 50));
+		circle_distance_to_segment(Point(100, 100), Point(200, 100), Point(150, 70), 50));
 	HF_TEST.ASSERT_EQUALS("line segment to circle touching 2", true,
-		line_segment_circle(Point(100, 100), Point(200, 100), Point(210, 70), 50));
+		circle_distance_to_segment(Point(100, 100), Point(200, 100), Point(210, 70), 50));
 	HF_TEST.ASSERT_EQUALS("line segment to circle not touching", false,
-		line_segment_circle(Point(100, 100), Point(200, 100), Point(100, 0), 50));
+		circle_distance_to_segment(Point(100, 100), Point(200, 100), Point(100, 0), 50));
 
 	//test distance to segment
 	HF_TEST.ASSERT_EQUALS("distance to segment perpendicular", 50.0,
-		FindDistanceToSegment(100, 100, 200, 100, 150, 50), kEpsilon);
+		distance_to_segment(100, 100, 200, 100, 150, 50), kEpsilon);
 	HF_TEST.ASSERT_EQUALS("distance to segment on extension", 50.0 * sqrt(2),
-		FindDistanceToSegment(100, 100, 200, 100, 250, 50), kEpsilon);
+		distance_to_segment(100, 100, 200, 100, 250, 50), kEpsilon);
 	HF_TEST.ASSERT_EQUALS("distance to segment on segment", 0.0,
-		FindDistanceToSegment(100, 100, 200, 100, 150, 100), kEpsilon);
+		distance_to_segment(100, 100, 200, 100, 150, 100), kEpsilon);
 
 	//test rect overlap
-	HF_TEST.ASSERT_EQUALS("rect overlap, touching sides", false, rectOverlap(
+	HF_TEST.ASSERT_EQUALS("rect overlap, touching sides", false, rect_overlap(
 		Point(100, 100), Point(200, 200), Point(100, 200), Point(200, 300)));
-	HF_TEST.ASSERT_EQUALS("rect overlap, touching", true, rectOverlap(
+	HF_TEST.ASSERT_EQUALS("rect overlap, touching", true, rect_overlap(
 		Point(100, 100), Point(200, 200), Point(100, 190), Point(200, 300)));
-	HF_TEST.ASSERT_EQUALS("rect overlap, touching corners", false, rectOverlap(
+	HF_TEST.ASSERT_EQUALS("rect overlap, touching corners", false, rect_overlap(
 		Point(100, 100), Point(200, 200), Point(200, 200), Point(300, 300)));
-	HF_TEST.ASSERT_EQUALS("rect overlap, not touching", false, rectOverlap(
+	HF_TEST.ASSERT_EQUALS("rect overlap, not touching", false, rect_overlap(
 		Point(100, 100), Point(200, 200), Point(300, 300), Point(400, 400)));
 
 	//test wall button to wall amount
