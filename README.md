@@ -16,7 +16,7 @@
  * More test cases can be added to the test files located in src/test. Just follow the format of the existing test cases (or simply look at UNIT_TEST.h, a custom-created unit test class for this project).
  
 ## Resources used
- * ofxGui and ofxNetwork libraries.
+ * ofxGui and ofxNetwork libraries from openFrameworks.
  * ofxCenteredTrueTypeFont external library from https://github.com/armadillu/ofxCenteredTrueTypeFont/blob/master/src/ofxCenteredTrueTypeFont.h
  * The sounds used in the game are taken from Counter Strike 1.6; the shot sound and the death sound are the P2000 firing sound and death sound used in Counter Strike 1.6 respectively. 
  * The text, Verdana.ttf is taken from openFrameworks.
