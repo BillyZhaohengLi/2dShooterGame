@@ -8,8 +8,8 @@ void ofApp::setup(){
 	//WALL_TESTS();
 	//BUTTON_TESTS();
 	//MULTIPLAYER_NETWORK_TESTS();
-	//HELPERFUNCTIONS_TESTS();
-	//OBJECTHELPERFUNCTIONS_TESTS();
+	HELPERFUNCTIONS_TESTS();
+	OBJECTHELPERFUNCTIONS_TESTS();
 
 	//load sounds
 	shotSound.load("fire_shot.wav");

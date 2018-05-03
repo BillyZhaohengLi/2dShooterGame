@@ -15,13 +15,13 @@
 #include <mmsystem.h>
 
 //unit test headers. comment out when finished with testing and building the actual program.
-//#include "test/player_tests.h"
-//#include "test/shot_tests.h"
-//#include "test/wall_tests.h"
-//#include "test/button_tests.h"
-//#include "test/multiplayer_network_tests.h"
-//#include "test/helperfunctions_tests.h"
-//#include "test/objecthelperfunctions_tests.h"
+#include "test/player_tests.h"
+#include "test/shot_tests.h"
+#include "test/wall_tests.h"
+#include "test/button_tests.h"
+#include "test/multiplayer_network_tests.h"
+#include "test/helperfunctions_tests.h"
+#include "test/objecthelperfunctions_tests.h"
 
 
 class ofApp : public ofBaseApp{
@@ -73,14 +73,17 @@ class ofApp : public ofBaseApp{
 		//boolean on whether the left mouse button is held down.
 		bool mouse_down;
 
-		//boolean on whether the mouse is held; used to prevent more than one button being triggered with one mouse press
+		//boolean on whether the mouse is held; used to prevent more than one button being 
+		//triggered with one mouse press
 		bool mouse_held;
 
-		//boolean for handling player input for player name in main menu; used to prevent multiple keys being entered with one press
+		//boolean for handling player input for player name in main menu; used to prevent 
+		//multiple keys being entered with one press
 		//due to how fast update is called. By default nothing has been entered yet.
 		bool entered = false;
 
-		//the amount of walls to generate in a level when the start button is clicked. Defaults to the minimum option.
+		//the amount of walls to generate in a level when the start button is clicked. 
+		//Defaults to the minimum option.
 		int walls_amount = kFewWallsAmount;
 
 		//wall object containing the walls in the level.
@@ -105,8 +108,11 @@ class ofApp : public ofBaseApp{
 		string ip_address;
 
 		//players in the game. By default p1 is the player character and p2 is a bot.
-		Player p1 = Player(kLevelWidthMultiplier * kWallWidth * 0.5, kLevelHeightMultiplier * kWallWidth * 0.4, kBluePalette, false, "default");
-		Player p2 = Player((kLevelWidthMultiplier - 2.5) * kWallWidth, kWallWidth * 2.5, kBluePalette, true, "default");
+		Player p1 = Player(kLevelWidthMultiplier * kWallWidth * 0.5, 
+			kLevelHeightMultiplier * kWallWidth * 0.4, 
+			kBluePalette, false, "default");
+		Player p2 = Player((kLevelWidthMultiplier - 2.5) * kWallWidth, 
+			kWallWidth * 2.5, kBluePalette, true, "default");
 
 		//methods down here are default openframeworks functions which were not used in this program.
 		void mouseMoved(int x, int y);

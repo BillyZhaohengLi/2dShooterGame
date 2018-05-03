@@ -1,5 +1,4 @@
 #pragma once
-
 /*
 message for a failed connection attempt to a server.
 */
@@ -16,7 +15,8 @@ message for clicking the 'create server' button when already hosting a server.
 static const char* kAlreadyHost = "you are already hosting a server.";
 
 /*
-message for failing to host a server, usually due to another instance of the program hosting a server on the same machine.
+message for failing to host a server, usually due to another instance of the program hosting a server 
+on the same machine.
 */
 static const char* kServerConflict = "setup failed; there is already a server running on this machine.";
 
@@ -30,11 +30,13 @@ static const char* kSmallDelimiter = "~";
 //large delimiter; used to split the whole message into strings passed to individual objects.
 static const char* kBigDelimiter = "G";
 
-//char representing true. Please make sure the string and char versions are consistent if modifications are to be made.
+//char representing true. Please make sure the string and char versions are consistent if 
+//modifications are to be made.
 static const char* kTrueBoolean = "T";
 static const char kTrueBooleanChar = 'T';
 
-//char representing false. Please make sure the string and char versions are consistent if modifications are to be made.
+//char representing false. Please make sure the string and char versions are consistent if 
+//modifications are to be made.
 static const char* kFalseBoolean = "F";
 static const char kFalseBooleanChar = 'F';
 
@@ -104,7 +106,8 @@ cooldown between firing shots in ticks.
 const int kPlayerShotCooldown = 30;
 
 /*
-the "length" of a shot; only used in shot-wall collisions to calculate trajectory; has nothing to do with shot-player collisions.
+the "length" of a shot; only used in shot-wall collisions to calculate trajectory; has nothing to 
+do with shot-player collisions.
 */
 const int kShotLength = 12;
 
@@ -135,7 +138,8 @@ const int kMaxIpLength = 15;
 /*
 direction enum; used to determine the player's orientation.
 */
-enum Direction { STOP = 0, NORTH = 1, SOUTH = 2, EAST = 3, WEST = 4, NORTHEAST = 5, NORTHWEST = 6, SOUTHEAST = 7, SOUTHWEST = 8 };
+enum Direction { STOP = 0, NORTH = 1, SOUTH = 2, EAST = 3, WEST = 4, NORTHEAST = 5, 
+	NORTHWEST = 6, SOUTHEAST = 7, SOUTHWEST = 8 };
 
 /*
 game state enum; used for determining what interface the program is in.
@@ -198,7 +202,8 @@ const int kMagentaColor = 4;
 const int kCyanColor = 5;
 
 /*
-constants for the amount of walls to be generated in a level; corresponds to the wall setting buttons.
+constants for the amount of walls to be generated in a level; corresponds to the 
+wall setting buttons.
 */
 const int kFewWallsAmount = 8;
 const int kMediumWallsAmount = 16;
@@ -227,7 +232,8 @@ ascii value of period.
 const int kPeriodAscii = 46;
 
 /*
-port number used for multiplayer connections. (Fixing this makes so that only one multiplayer server can be started per ip address).
+port number used for multiplayer connections. (Fixing this makes so that only one multiplayer 
+server can be started per ip address).
 */
 const int kMultiplayerPort = 11999;
 
@@ -238,7 +244,8 @@ constants for which boundary a shot was bounced off a wall segment from.
 const int kNotBounced = 3;
 
 //bounced off a specific boundary; note how the values of top and bottom, left and right are opposites.
-//used in the shot-wall collision algorithm; for details see Wall.cpp for the algorithm and an accompanying diagram.
+//used in the shot-wall collision algorithm; for details see Wall.cpp for the 
+//algorithm and an accompanying diagram.
 const int kBouncedTop = 1;
 const int kBouncedBottom = -1;
 const int kBouncedLeft = 2;
