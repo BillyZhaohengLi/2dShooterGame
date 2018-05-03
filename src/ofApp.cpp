@@ -2,6 +2,15 @@
 
 //---setup; load different game elements to prepare for game
 void ofApp::setup(){
+	//unit tests in test folder. Not actually needed to run program; just comment out during build after done with unit testing
+	//PLAYER_TESTS();
+	//SHOT_TESTS();
+	//WALL_TESTS();
+	//BUTTON_TESTS();
+	//MULTIPLAYER_NETWORK_TESTS();
+	//HELPERFUNCTIONS_TESTS();
+	//OBJECTHELPERFUNCTIONS_TESTS();
+
 	//load sounds
 	shotSound.load("fire_shot.wav");
 	dieSound.load("die.wav");
@@ -97,14 +106,14 @@ void ofApp::keyPressed(int key){
 			//if there is a game currently going on set the keys to case insensitive
 			keydown[toupper(key)] = true;
 			//if pause is pressed during a single player game pause the game
-			if (toupper(key) == 'P' && game_current == IN_GAME_SINGLE) {
+			if (toupper(key) == kPause && game_current == IN_GAME_SINGLE) {
 				game_current = PAUSE;
 			}
 		}
 		else if (game_current == PAUSE) {
 			keydown[toupper(key)] = true;
 			//if pause is pressed during pause then resume the game
-			if (toupper(key) == 'P') {
+			if (toupper(key) == kPause) {
 				game_current = IN_GAME_SINGLE;
 			}
 		}
@@ -142,14 +151,14 @@ void ofApp::update_menu() {
 	//receive and handle message from partner; if singleplayer this part is skipped since the size of message will be 0.
 	string message = multiplayer_network.receive();
 	if (message.size() > 0) {
-		//if the message begins with "PLAYER" then it is a message to update the opponent's player model;
-		if (message.substr(0, 6) == "PLAYER") {
+		//if the message begins with the player model string then it is a message to update the opponent's player model;
+		if (message.substr(0, strlen(kPlayerString)) == kPlayerString) {
 			p2.deserialize_update_model_message(message);
 		}
-		//if the message begins with "UPDATE" then it is a message to update the generated walls in the level and start the game.
-		else if (message.substr(0, 6) == "UPDATE") {
+		//if the message begins with update game string then it is a message to update the generated walls in the level and start the game.
+		else if (message.substr(0, strlen(kPlayerString)) == kUpdateString) {
 			reset_game(p1, p2, shots_on_screen, keydown);
-			levelbounds.deserialize_update_message(message.substr(6));
+			levelbounds.deserialize_update_message(message.substr(strlen(kPlayerString)));
 			game_current = IN_GAME_MULTI;
 			return;
 		}
@@ -189,8 +198,8 @@ void ofApp::update_menu() {
 			//case for multiplayer game
 			default:
 				//sends the signal to the partner to start the game; while waiting for response move into waiting room
-				multiplayer_network.send("UPDATE" + levelbounds.serialized_string());
-				buffer = "UPDATE" + levelbounds.serialized_string();
+				multiplayer_network.send(kUpdateString + levelbounds.serialized_string());
+				buffer = kUpdateString + levelbounds.serialized_string();
 				game_current = WAITING_ROOM;
 				return;
 				break;
@@ -216,7 +225,8 @@ void ofApp::update_menu() {
 		case (kMultiDisconnectButton):
 			//close either the server or the client based on what the program was connected to the session as and reset the game objects.
 			multiplayer_network.close();
-			reset_to_menu(p1, p2, shots_on_screen, levelbounds, multiplayer_network.get_status(), keydown);
+			reset_to_menu(p1, p2, shots_on_screen, levelbounds, 
+				multiplayer_network.get_status(), keydown);
 			game_current = DISCONNECTED;
 			break;
 
@@ -261,13 +271,16 @@ void ofApp::update_waiting_room() {
 	//waiting room; the program which initiated a change of interface should wait here for response from their partner
 	//to ensure that they are on the same interface.
 	string message = multiplayer_network.receive();
-	//messages beginning with 'U', 'T' and 'F' signify that the partner is in the multiplayer game and the program should proceed.
-	if (message[0] == 'U' || message[0] == 'T' || message[0] == 'F') {
-		game_current = IN_GAME_MULTI;
-	}
-	//messages beginning with 'P' signify that the partner is back in the main menu and the program should proceed, if the program is currently in the game over screen
-	else if (message[0] == 'P' && buffer == "BCKMAIN") {
-		game_current = MULTI_MENU;
+	if (message.size() > 0) {
+		//messages beginning with 'U', 'T' and 'F' signify that the partner is in the multiplayer game and the program should proceed.
+		if (message.substr(0, strlen(kPlayerString)) == kUpdateString || message[0] == kTrueBooleanChar ||
+			message[0] == kFalseBooleanChar) {
+			game_current = IN_GAME_MULTI;
+		}
+		//messages beginning with 'P' signify that the partner is back in the main menu and the program should proceed, if the program is currently in the game over screen
+		else if (message.substr(0, strlen(kPlayerString)) == kPlayerString && buffer == kBackMainString) {
+			game_current = MULTI_MENU;
+		}
 	}
 	multiplayer_network.send(buffer);
 }
@@ -280,8 +293,8 @@ void ofApp::update_singleplayer_game() {
 		p2.cooldown_reduce();
 
 		//determines the players' new direction based on the keys held down at this particular time.
-		p1.change_direction({ keydown['W'], keydown['A'], keydown['S'], keydown['D'] });
-		p2.change_direction({ keydown['W'], keydown['A'], keydown['S'], keydown['D'] });
+		p1.change_direction({ keydown[kUp], keydown[kLeft], keydown[kDown], keydown[kRight] });
+		p2.change_direction({ keydown[kUp], keydown[kLeft], keydown[kDown], keydown[kRight] });
 
 		//update the direction the players' guns point at.
 		p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
@@ -296,16 +309,20 @@ void ofApp::update_singleplayer_game() {
 		levelbounds.collision_resolver(p2);
 
 		//check firing shots for both players
-		bool clear_shot = levelbounds.bot_shot_predictor(p1, p2);
-		pair<pair<bool, double>, pair<double, double>> p1_shot_params = p1.shoot_prompt(mouse_down, clear_shot);
-		pair<pair<bool, double>, pair<double, double>> p2_shot_params = p2.shoot_prompt(mouse_down, clear_shot);
+		bool obstructed = levelbounds.player_path_obstructed(p1, p2);
+		pair<pair<bool, double>, pair<double, double>> p1_shot_params = 
+			p1.shoot_prompt(mouse_down, obstructed);
+		pair<pair<bool, double>, pair<double, double>> p2_shot_params = 
+			p2.shoot_prompt(mouse_down, obstructed);
 		if (p1_shot_params.first.first) {
 			shotSound.play();
-			shots_on_screen.add_shot(p1_shot_params.second.first, p1_shot_params.second.second, p1_shot_params.first.second);
+			shots_on_screen.add_shot(p1_shot_params.second.first, 
+				p1_shot_params.second.second, p1_shot_params.first.second);
 		}
 		if (p2_shot_params.first.first) {
 			shotSound.play();
-			shots_on_screen.add_shot(p2_shot_params.second.first, p2_shot_params.second.second, p2_shot_params.first.second);
+			shots_on_screen.add_shot(p2_shot_params.second.first, 
+				p2_shot_params.second.second, p2_shot_params.first.second);
 		}
 
 		//move all shots on the screen.
@@ -337,13 +354,13 @@ void ofApp::update_singleplayer_game() {
 		string message = multiplayer_network.receive();
 		//if there is a message update the shots on screen and the players accordingly.
 		if (message.size() > 0) {
-			vector<string> message_array = split(message, "G");
-			if (message_array[0] == "UPDATE") {
+			vector<string> message_array = split(message, kBigDelimiter);
+			if (message_array[0] == kUpdateString) {
 				shots_on_screen.deserialize_update_message(message_array[1]);
 				p2.deserialize_update_game_message(message_array[2]);
 				p1.deserialize_update_game_message(message_array[3]);
 				//denotes whether a shot was fired; if yes, play the shot sound.
-				if (message_array[4] == "S") {
+				if (message_array[4] == kTrueBoolean) {
 					shotSound.play();
 				}
 			}
@@ -367,7 +384,7 @@ void ofApp::update_singleplayer_game() {
 		p2.cooldown_reduce();
 
 		//updates the parameters of p1; for a detailed description see the singleplayer game engine.
-		p1.change_direction({ keydown['W'], keydown['A'], keydown['S'], keydown['D'] });
+		p1.change_direction({ keydown[kUp], keydown[kLeft], keydown[kDown], keydown[kRight] });
 		p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
 		p1.move();
 		levelbounds.collision_resolver(p1);
@@ -380,7 +397,7 @@ void ofApp::update_singleplayer_game() {
 
 		//if there is a valid message, update the parameters of p2; otherwise don't do anything with them.
 		string message = multiplayer_network.receive();
-		if (message.size() > 0 && (message[0] == 'T' || message[0] == 'F')) {
+		if (message.size() > 0 && (message[0] == kTrueBooleanChar || message[0] == kFalseBooleanChar)) {
 			pair<pair<vector<bool>, bool>, pair<double, double>> message_pairs = deserialize_input(message);
 			p2.change_direction(message_pairs.first.first);
 			p2.update_player_facing(message_pairs.second.first, message_pairs.second.second, p1);
@@ -405,13 +422,14 @@ void ofApp::update_singleplayer_game() {
 		shots_on_screen.hit_player(p2);
 
 		//send updated game to client
-		string to_send = ("UPDATE" + shots_on_screen.serialized_string() + p1.serialized_game_string() + p2.serialized_game_string() + "G");
+		string to_send = (kUpdateString + shots_on_screen.serialized_string() + 
+			p1.serialized_game_string() + p2.serialized_game_string() + kBigDelimiter);
 		//determines whether a shot was fired this frame; if yes tell the client to play the shot_fired sound.
 		if (shot_fired) {
-			to_send += "S";
+			to_send += kTrueBoolean;
 		}
 		else {
-			to_send += "N";
+			to_send += kFalseBoolean;
 		}
 		multiplayer_network.send(to_send);
 
@@ -446,13 +464,13 @@ void ofApp::update_round_over() {
 	//if there is a message, interpret it and determine what button the other user pressed and update game state accordingly.
 	if (message.size() > 0) {
 		//other user pressed rematch
-		if (message == "REMATCH") {
+		if (message == kRematchString) {
 			reset_game(p1, p2, shots_on_screen, keydown);
 			game_current = IN_GAME_MULTI;
 			return;
 		}
 		//other user pressed back to main
-		else if (message == "BCKMAIN") {
+		else if (message == kBackMainString) {
 			reset_to_menu(p1, p2, shots_on_screen, levelbounds, multiplayer_network.get_status(), keydown);
 			game_current = MULTI_MENU;
 			return;
@@ -477,8 +495,8 @@ void ofApp::update_round_over() {
 
 			//case for multiplayer
 			default:
-				multiplayer_network.send("REMATCH");
-				buffer = "REMATCH";
+				multiplayer_network.send(kRematchString);
+				buffer = kRematchString;
 				game_current = WAITING_ROOM;
 				break;
 			}
@@ -495,8 +513,8 @@ void ofApp::update_round_over() {
 
 			//case for multiplayer game; sends a message to the partner to go back to main menu.
 			default:
-				multiplayer_network.send("BCKMAIN");
-				buffer = "BCKMAIN";
+				multiplayer_network.send(kBackMainString);
+				buffer = kBackMainString;
 				game_current = WAITING_ROOM;
 				break;
 			}

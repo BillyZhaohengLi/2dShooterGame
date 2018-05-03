@@ -21,6 +21,49 @@ message for failing to host a server, usually due to another instance of the pro
 static const char* kServerConflict = "setup failed; there is already a server running on this machine.";
 
 /*
+strings and chars sent over a multiplayer network:
+*/
+
+//small delimiter; used to split strings used to deserialize individual objects into relevant values.
+static const char* kSmallDelimiter = "~";
+
+//large delimiter; used to split the whole message into strings passed to individual objects.
+static const char* kBigDelimiter = "G";
+
+//char representing true. Please make sure the string and char versions are consistent if modifications are to be made.
+static const char* kTrueBoolean = "T";
+static const char kTrueBooleanChar = 'T';
+
+//char representing false. Please make sure the string and char versions are consistent if modifications are to be made.
+static const char* kFalseBoolean = "F";
+static const char kFalseBooleanChar = 'F';
+
+//string heading a serialized message to update player model in main menu.
+static const char* kUpdateString = "UPDATE";
+
+//string heading a serialized message to update player and shot positions in game.
+static const char* kPlayerString = "PLAYER";
+
+//string signifying a rematch request
+static const char* kRematchString = "REMATCH";
+
+//string signifying a back to main menu request
+static const char* kBackMainString = "BCKMAIN";
+
+/*
+chars for WASD keys.
+*/
+static const char kUp = 'W';
+static const char kLeft = 'A';
+static const char kDown = 'S';
+static const char kRight = 'D';
+
+/*
+char for pausing.
+*/
+static const char kPause = 'P';
+
+/*
 pi. self-explanatory.
 */
 const double kPi = 3.14159265359;
