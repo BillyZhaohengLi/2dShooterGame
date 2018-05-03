@@ -15,6 +15,7 @@
 ## Unit testing
  * Not convinced that the game works? Go into the ofApp.h file and uncomment the test headers, then go into the ofApp.cpp file and uncomment the test methods, and read the test output in your console.
  * More test cases can be added to the test files located in src/test. Just follow the format of the existing test cases (or simply look at UNIT_TEST.h, a custom-created unit test class for this project).
+ * Why not Catch/VS Unit tests? None of them work with openFrameworks components, which are present in almost every class in this program.
  
 ## Resources used
  * ofxGui and ofxNetwork libraries from openFrameworks.
