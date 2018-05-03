@@ -15,13 +15,13 @@
 #include <mmsystem.h>
 
 //unit test headers. comment out when finished with testing and building the actual program.
-#include "test/player_tests.h"
-#include "test/shot_tests.h"
-#include "test/wall_tests.h"
-#include "test/button_tests.h"
-#include "test/multiplayer_network_tests.h"
-#include "test/helperfunctions_tests.h"
-#include "test/objecthelperfunctions_tests.h"
+//#include "test/player_tests.h"
+//#include "test/shot_tests.h"
+//#include "test/wall_tests.h"
+//#include "test/button_tests.h"
+//#include "test/multiplayer_network_tests.h"
+//#include "test/helperfunctions_tests.h"
+//#include "test/objecthelperfunctions_tests.h"
 
 
 class ofApp : public ofBaseApp{

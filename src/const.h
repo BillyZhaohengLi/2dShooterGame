@@ -1,4 +1,5 @@
 #pragma once
+
 /*
 message for a failed connection attempt to a server.
 */

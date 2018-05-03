@@ -323,10 +323,8 @@ void ofApp::update_singleplayer_game() {
 
 		//check firing shots for both players
 		bool obstructed = levelbounds.player_path_obstructed(p1, p2);
-		pair<pair<bool, double>, pair<double, double>> p1_shot_params = 
-			p1.shoot_prompt(mouse_down, obstructed);
-		pair<pair<bool, double>, pair<double, double>> p2_shot_params = 
-			p2.shoot_prompt(mouse_down, obstructed);
+		ShotParams p1_shot_params =	p1.shoot_prompt(mouse_down, obstructed);
+		ShotParams p2_shot_params =	p2.shoot_prompt(mouse_down, obstructed);
 		if (p1_shot_params.first.first) {
 			shotSound.play();
 			shots_on_screen.add_shot(p1_shot_params.second.first, 
@@ -405,8 +403,7 @@ void ofApp::update_singleplayer_game() {
 		p1.update_player_facing(ofGetMouseX(), ofGetMouseY(), p2);
 		p1.move();
 		levelbounds.collision_resolver(p1);
-		pair<pair<bool, double>, pair<double, double>> p1_shot_params = 
-			p1.shoot_prompt(mouse_down, false);
+		ShotParams p1_shot_params =	p1.shoot_prompt(mouse_down, false);
 		if (p1_shot_params.first.first) {
 			shot_fired = true;
 			shotSound.play();
@@ -418,14 +415,12 @@ void ofApp::update_singleplayer_game() {
 		string message = multiplayer_network.receive();
 		if (message.size() > 0 && (message[0] == kTrueBooleanChar || 
 			message[0] == kFalseBooleanChar)) {
-			pair<pair<vector<bool>, bool>, pair<double, double>> message_pairs = 
-				deserialize_input(message);
+			InputParams message_pairs =	deserialize_input(message);
 			p2.change_direction(message_pairs.first.first);
 			p2.update_player_facing(message_pairs.second.first, message_pairs.second.second, p1);
 			p2.move();
 			levelbounds.collision_resolver(p2);
-			pair<pair<bool, double>, pair<double, double>> p2_shot_params = 
-				p2.shoot_prompt(message_pairs.first.second, false);
+			ShotParams p2_shot_params =	p2.shoot_prompt(message_pairs.first.second, false);
 			if (p2_shot_params.first.first) {
 				shot_fired = true;
 				shotSound.play();
