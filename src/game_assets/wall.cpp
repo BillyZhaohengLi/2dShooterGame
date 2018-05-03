@@ -37,6 +37,7 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 			//touching wall at corner; trig knowledge alert
 			//resolves the collision by pushing the player in the direction that requires the least 
 			//distance moved to resolve the collision.
+			//This part corresponds to section (2) in the diagram.
 			if (p_x < xpos_) {
 				double x_dif = xpos_ - p_x;
 				double y_dif = ypos_ - p_y;
@@ -54,6 +55,7 @@ bool Wall::WallSegment::collision_handler(Player& player_moving) {
 				player_moving.set_location(new_x, new_y);
 			}
 			//touching wall at side. Pushes the player outwards.
+			//This part corresponds to section (1) in the diagram.
 			else {
 				player_moving.set_location(p_x, ypos_ - kPlayerRadius - kEpsilon);
 			}
@@ -373,6 +375,8 @@ void Wall::bounce_shots(ShotInLevel &shots_in_level) {
 /*
 resolves collision between the player and the walls in the level; calls collision_handler function 
 of individual wall segments.
+For a detailed explanation of how this algorithm works see the relevant section in explanations.txt.
+This part, resolving collisions sequentially corresponds to section(3) in the diagram.
 */
 void Wall::collision_resolver(Player &player_moving) {
 	bool collided;
@@ -429,7 +433,8 @@ void Wall::random_level_generator(int wall_count) {
 }
 
 /*
-checks whether there is a valid path between the two players. Uses a maze traversal algorithm.
+checks whether there is a valid path between the two players.
+for a detailed explanation of this look at the diagram in explanations.txt.
 */
 bool Wall::closed_path_checker() {
 	//start from bottom left hand corner, hug the right wall

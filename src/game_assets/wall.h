@@ -95,6 +95,7 @@ public:
 
 	/*
 	checks whether there is a valid path between the two players.
+	for a detailed explanation of this look at the diagram in explanations.txt.
 	*/
 	bool closed_path_checker();
 
