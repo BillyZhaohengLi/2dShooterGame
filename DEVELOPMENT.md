@@ -76,3 +76,13 @@
  * changed magic strings used in network communication to constants in const.h.
  * updated and finalized readme.md and project file structure.
  * the bot algorithm will be left as it is; developing an algorithm that is significantly better than the current random movement + shoot when unobstructed bot takes too much time to both write and run.
+ * added two diagrams for the player-wall collision algorithm and the closed path checker algorithm appearing in wall.cpp in explanations.txt.
+ * renamed all functions in helperfunctions.txt to snake case. (they were not in snake case in their original sources).
+ * added reasons for certain decisions in PROPOSAL.MD
+ * PROJECT DONE
+ * PROJECT DONE
+ * PROJECT DONE
+ * PROJECT DONE
+ * PROJECT DONE
+ * PROJECT DONE
+ * PROJECT DONE
