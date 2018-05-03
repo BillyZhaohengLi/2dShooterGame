@@ -72,5 +72,6 @@
  * added explanations.txt; used for storing diagrams for some of the more math-heavy functions in the program.
 ### May 2:
  * added unit tests; unit tests were done with a custom unit test class (which does work) because Catch and Visual Studio unit tests were both very uncooperative. Unit tests were added for all major classes including player, shot, wall, buttons and networks.
- ## Days left to work on project: 0 days
-* May 2 (half day, but best not to make any major changes on this day; excluded for now)
+ * line wrapped both comments and code for all existing files.
+ * changed magic strings used in network communication to constants in const.h.
+ * updated and finalized readme.md and project file structure.
