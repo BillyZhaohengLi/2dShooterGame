@@ -39,7 +39,7 @@ struct Point
 check whether point r is on line segment pq.
 */
 //code from https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/.
-bool onSegment(Point p, Point q, Point r);
+bool point_on_segment(Point p, Point q, Point r);
 
 /*
 returns the orientation of triangle pqr defined as whether tracing the triangle in such a 
@@ -52,25 +52,25 @@ int orientation(Point p, Point q, Point r);
 detect whether line segments p1q1 and p2q2 intersect.
 */
 //code from https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/.
-bool doIntersect(Point p1, Point q1, Point p2, Point q2);
+bool segments_intersect(Point p1, Point q1, Point p2, Point q2);
 
 /*
 detect whether the line segment p1p2 and circle centered at point circ with a specified 
 radius intersect.
 */
-bool line_segment_circle(Point p1, Point p2, Point circ, double radius);
+bool circle_distance_to_segment(Point p1, Point p2, Point circ, double radius);
 
 /*
 find distance of (pointX, pointY) to line segment((x1, y1), (x2, y2)).
 */
 //from http://www.cprogramto.com/c-program-to-find-shortest-distance-between-point-and-line-segment/.
-double FindDistanceToSegment(double x1, double y1, double x2, double y2, double pointX, double pointY);
+double distance_to_segment(double x1, double y1, double x2, double y2, double pointX, double pointY);
 
 /*
 find whether two rectangles with corner points (l1, r1) and (l2, r2) intersect.
 by convention "l" is the upper lefthand corner, r is the lower righthand corner.
 */
-bool rectOverlap(Point l1, Point r1, Point l2, Point r2);
+bool rect_overlap(Point l1, Point r1, Point l2, Point r2);
 
 /*
 helper function for entering name called in update. Takes in the keys pressed, whether 

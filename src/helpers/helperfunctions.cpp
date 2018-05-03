@@ -10,7 +10,7 @@ Point::Point(double xval, double yval) {
 check whether point r is on line segment pq.
 */
 //code from https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/.
-bool onSegment(Point p, Point q, Point r)
+bool point_on_segment(Point p, Point q, Point r)
 {
 	if (q.x <= std::max(p.x, r.x) && q.x >=  std::min(p.x, r.x) &&
 		q.y <= std::max(p.y, r.y) && q.y >= std::min(p.y, r.y))
@@ -40,7 +40,7 @@ int orientation(Point p, Point q, Point r)
 detect whether line segments p1q1 and p2q2 intersect.
 */
 //code from https://www.geeksforgeeks.org/check-if-two-given-line-segments-intersect/.
-bool doIntersect(Point p1, Point q1, Point p2, Point q2)
+bool segments_intersect(Point p1, Point q1, Point p2, Point q2)
 {
 	// Find the four orientations needed for general and
 	// special cases
@@ -55,16 +55,16 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2)
 
 	// Special Cases
 	// p1, q1 and p2 are colinear and p2 lies on segment p1q1
-	if (o1 == 0 && onSegment(p1, p2, q1)) return true;
+	if (o1 == 0 && point_on_segment(p1, p2, q1)) return true;
 
 	// p1, q1 and q2 are colinear and q2 lies on segment p1q1
-	if (o2 == 0 && onSegment(p1, q2, q1)) return true;
+	if (o2 == 0 && point_on_segment(p1, q2, q1)) return true;
 
 	// p2, q2 and p1 are colinear and p1 lies on segment p2q2
-	if (o3 == 0 && onSegment(p2, p1, q2)) return true;
+	if (o3 == 0 && point_on_segment(p2, p1, q2)) return true;
 
 	// p2, q2 and q1 are colinear and q1 lies on segment p2q2
-	if (o4 == 0 && onSegment(p2, q1, q2)) return true;
+	if (o4 == 0 && point_on_segment(p2, q1, q2)) return true;
 
 	return false; // Doesn't fall in any of the above cases
 }
@@ -73,8 +73,8 @@ bool doIntersect(Point p1, Point q1, Point p2, Point q2)
 detect whether the line segment p1p2 and circle centered at point circ with a specified 
 radius intersect.
 */
-bool line_segment_circle(Point p1, Point p2, Point circ, double radius) {
-	double dist = FindDistanceToSegment(p1.x, p1.y, p2.x, p2.y, circ.x, circ.y);
+bool circle_distance_to_segment(Point p1, Point p2, Point circ, double radius) {
+	double dist = distance_to_segment(p1.x, p1.y, p2.x, p2.y, circ.x, circ.y);
 	return dist < radius;
 }
 
@@ -82,7 +82,7 @@ bool line_segment_circle(Point p1, Point p2, Point circ, double radius) {
 find distance of (pointX, pointY) to line segment((x1, y1), (x2, y2)).
 */
 //from http://www.cprogramto.com/c-program-to-find-shortest-distance-between-point-and-line-segment/.
-double FindDistanceToSegment(double x1, double y1, double x2, double y2, double pointX, double pointY)
+double distance_to_segment(double x1, double y1, double x2, double y2, double pointX, double pointY)
 {
 	double diffX = x2 - x1;
 	float diffY = y2 - y1;
@@ -123,7 +123,7 @@ double FindDistanceToSegment(double x1, double y1, double x2, double y2, double 
 find whether two rectangles with corner points (l1, r1) and (l2, r2) intersect.
 by convention "l" is the upper lefthand corner, r is the lower righthand corner.
 */
-bool rectOverlap(Point l1, Point r1, Point l2, Point r2)
+bool rect_overlap(Point l1, Point r1, Point l2, Point r2)
 {
 	// If one rectangle is on left side of other
 	if (l1.x >= r2.x || l2.x >= r1.x)
