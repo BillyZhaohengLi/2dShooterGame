@@ -4,10 +4,11 @@
 #include "../game_assets/player.h"
 #include "../game_assets/wall.h"
 #include "../game_assets/shot.h"
-#include "unit_test.h"
+#include "UNIT_TEST.h"
 
-//manual unit testing
-//both Catch and the VS Unit Tests were VERY uncooperative so sadly it had to come down to this.
+/*
+unit tests for the player class.
+*/
 inline void PLAYER_TESTS() {
 	/*
 	PLAYER TESTS
@@ -57,19 +58,24 @@ inline void PLAYER_TESTS() {
 	p1.change_direction({ true, false, false, false });
 	p1.move();
 	PLAYER_TEST.ASSERT_EQUALS("move location X - up", 100.0, p1.get_location().first, kEpsilon);
-	PLAYER_TEST.ASSERT_EQUALS("move location Y - up", 196.0, p1.get_location().second, kEpsilon);
+	PLAYER_TEST.ASSERT_EQUALS("move location Y - up", 
+		200.0 - kPlayerVelocity, p1.get_location().second, kEpsilon);
 
 	//moving in a diagonal direction
 	p1.change_direction({ true, true, false, false });
 	p1.move();
-	PLAYER_TEST.ASSERT_EQUALS("move location X - up&left", 97.171573, p1.get_location().first, kEpsilon);
-	PLAYER_TEST.ASSERT_EQUALS("move location Y - up&left", 193.171573, p1.get_location().second, kEpsilon);
+	PLAYER_TEST.ASSERT_EQUALS("move location X - up&left", 
+		100 - kPlayerVelocity / sqrt(2), p1.get_location().first, kEpsilon);
+	PLAYER_TEST.ASSERT_EQUALS("move location Y - up&left", 
+		200 - kPlayerVelocity - kPlayerVelocity / sqrt(2), p1.get_location().second, kEpsilon);
 
 	//holding down opposite buttons cancel each other out
 	p1.change_direction({ true, false, true, false });
 	p1.move();
-	PLAYER_TEST.ASSERT_EQUALS("move location X - cancel", 97.171573, p1.get_location().first, kEpsilon);
-	PLAYER_TEST.ASSERT_EQUALS("move location Y - cancel", 193.171573, p1.get_location().second, kEpsilon);
+	PLAYER_TEST.ASSERT_EQUALS("move location X - cancel", 
+		100 - kPlayerVelocity / sqrt(2), p1.get_location().first, kEpsilon);
+	PLAYER_TEST.ASSERT_EQUALS("move location Y - cancel", 
+		200 - kPlayerVelocity - kPlayerVelocity / sqrt(2), p1.get_location().second, kEpsilon);
 
 	p1.kill_player();
 	PLAYER_TEST.ASSERT_EQUALS("test kill player", false, p1.isalive());
@@ -98,7 +104,8 @@ inline void PLAYER_TESTS() {
 	shot_params = p1.shoot_prompt(true, false);
 	PLAYER_TEST.ASSERT_EQUALS("test shooting off cooldown", true, shot_params.first.first);
 	PLAYER_TEST.ASSERT_EQUALS("test shot angle", 0.0, shot_params.first.second, kEpsilon);
-	PLAYER_TEST.ASSERT_EQUALS("test shot x position", 106.00005, shot_params.second.first, kEpsilon);
+	PLAYER_TEST.ASSERT_EQUALS("test shot x position", 100 + kPlayerRadius - kShotLength +
+		kShotRadius + kEpsilon, shot_params.second.first, kEpsilon);
 	PLAYER_TEST.ASSERT_EQUALS("test shot y position", 100.0, shot_params.second.second, kEpsilon);
 
 	//set the player to be a bot and test on what conditions the bot fires
@@ -113,11 +120,14 @@ inline void PLAYER_TESTS() {
 
 	//the bot does not fire a shot if there are obstacles between the players - obstructed is true
 	shot_params = p1.shoot_prompt(false, true);
-	PLAYER_TEST.ASSERT_EQUALS("test shooting off cooldown bot - no clear shot", false, shot_params.first.first);
+	PLAYER_TEST.ASSERT_EQUALS("test shooting off cooldown bot - no clear shot", 
+		false, shot_params.first.first);
 
 	//however the bot shoots regardless of whether the mouse is held down or not
 	//the bot fires diagonally at the opponent
 	shot_params = p1.shoot_prompt(false, false);
-	PLAYER_TEST.ASSERT_EQUALS("test shooting off cooldown bot - clear shot", true, shot_params.first.first);
-	PLAYER_TEST.ASSERT_EQUALS("test bot shot angle at opponent", kPi / 4, shot_params.first.second, kEpsilon);
+	PLAYER_TEST.ASSERT_EQUALS("test shooting off cooldown bot - clear shot", 
+		true, shot_params.first.first);
+	PLAYER_TEST.ASSERT_EQUALS("test bot shot angle at opponent", 
+		kPi / 4, shot_params.first.second, kEpsilon);
 }
