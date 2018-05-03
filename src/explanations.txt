@@ -5,14 +5,14 @@
 the shot-wall collision algorithm is made up of calls to the collision resolver of individual wall segments which look like this:
 ---------------|
    I'm a wall  |
-			   |   O shot's previous position
-			   |  /
-			   | /
-			   |/
-			   X
-			  /|\
-			 / | \
-			p  |  O shot's position after resolving collision
+	       |   O shot's previous position
+	       |  /
+	       | /
+	       |/
+	       X
+	      /|\
+	     / | \
+	    p  |  O shot's position after resolving collision
 ---------------|
 as seen in the diagram above, what it does is it uses some basic trig knowledge to calculate the shot's position given its angle it was travelling in
 and its position before being resolved (marked by p). Simple high-school incidence and reflection angle stuff.
@@ -21,19 +21,19 @@ and its position before being resolved (marked by p). Simple high-school inciden
 ---------------|
    Wall A      |
                |
-			   |
-			   |
-			   |  O shot's previous position
-			   | / 
-			   |/   O shot's expected position
-		   p1  X   /
-			\ /|\ /
+	       |
+	       |
+	       |  O shot's previous position
+	       | / 
+	       |/   O shot's expected position
+	   p1  X   /
+	    \ /|\ /
 -------------X---X-----------------|
             /              Wall B  |
-		   p2			           |
-								   |
-								   |
-								   |
+	   p2		           |
+				   |
+				   |
+				   |
 now, firing the shot at this combination of wall segments, it is expected that the shot ends up at the expected position by bouncing off wall A
 followed by wall B. But what if wall B comes before wall A in the wallsegment array? The collision with wall B is resolved FIRST and the shot
 ends up in the awkward position of being stuck in the wall, where it bounces between p1 and p2 resolving collisions until it dissappears.
@@ -44,15 +44,15 @@ with wall B.
 
 (3) let us consider another scenario:
               |  OP shot's previous position
-	Wall A	  | /
-	     p3   |/   OE shot's expected position
-		  \   X   /
-		   \ /|\ /
+   Wall A     | /
+	 p3   |/   OE shot's expected position
+          \   X   /
+	   \ /|\ /
 ------------X-|-X-------------|
            / \|/ \            |
-		  /	  X   \           |
-		 p4	 /|    p1 Wall B  |
-			p2|               |
+         /    X   \           |
+        p4   /|    p1 Wall B  |
+	    p2|               |
 in this scenario, Wall A and Wall B are touching corners; again as expected, you would expected a shot fired in a way shown in this diagram to be bounced
 off wall A followed by wall B and we're done.
 That's not what happens; after the shot is at the expected position, the algorithm wrongly thinks that the shot came from the point p2 due to its
@@ -63,16 +63,16 @@ in any given frame. Once the two collisions are resolved we break the loop and n
 
 (4) let us consider a final scenario:
              |
- I'm a wall	 |
+ I'm a wall  |
              | OE shot's expected position
-			 |/
-			 X
-			/|\
+	     |/
+	     X
+	    /|\
 -----------X-| \
           / \   \
          /   \   \
         p1    \   OP shot's previous position
-		       p2
+	       p2
 In this scenario, a shot is fired at the corner of a wall; the expected behaviour is that it bounces off a wall segment ending up at OE.
 however, similar to (3), after the shot is resolved to OE, the algorithm thinks that the shot came from point p1 and thus has an intersection
 with the bottom segment of the wall - the shot is resolved again to p2 and files straight back at whoever fired it.
@@ -85,34 +85,34 @@ the player-wall collision algorithm is made up of calls to the collision handler
 wall segments.
 (1) How does this happen? Let us look at the scenario below:
         ------
-	   /      \
-	  /        \
-	  |   X    |
-	  | player |
+       /      \
+      /        \
+      |   X    |
+      | player |
 -----------------------|
        \      /        |
-	    ------         |
-		wall           |
+	------         |
+        wall           |
 what happens here is simple; the algorithm simply sets the player's position so the player's center X is at least "kPlayerRadius" units
 plus "kEpsilon" (which is a small error margin added to account for floating point errors - using exact values may result in the collision
 still being unresolved because the player's distance to the wall is slightly less than kPlayerRadius) away from the shortest distance out of 
 the four distances between the player and the four segments which make up the wall.
 In this case, the player is closest to the top wall segment; therefore, they will be pushed upwards.
         ------
-	   /      \
-	  /        \
-	  |   X    |
-	  | player |
+       /      \
+      /        \
+      |   X    |
+      | player |
       \        /
        \      /        
 -----------------------|
-		wall           |
+        wall           |
 (2) In cases where the shortest path from the player's center to the wall does not form a right angle with any of the wall segments (as seen below),
         ------
-	   /      \
-	  /        \
-	  |   X    |
-	  | player |
+       /      \
+      /        \
+      |   X    |
+      | player |
       \     |----------
        \    | /        
         ----|-   Wall
@@ -120,10 +120,10 @@ In this case, the player is closest to the top wall segment; therefore, they wil
 the algorithm resolves the collision by drawing a line between the center of the player and the closest corner on the wall to the center of the
 player, then extend the line until the line is of "kPlayerRadius" + "kEpsilon" units long, and place the player there.
         ------
-	   /      \
-	  /        \
-	  |   X    |
-	  | player |
+       /      \
+      /        \
+      |   X    |
+      | player |
       \        |
        \      /|------        
         ------ | Wall
@@ -131,10 +131,10 @@ player, then extend the line until the line is of "kPlayerRadius" + "kEpsilon" u
 (3) In cases where a player collides with 2 walls (which happens when a player moves diagonally into a corner), the collision is resolved
 sequentially one wall followed by the other.
         ------|
-	   /      |
-	  /       |\
-	  |   X   ||
-	  | player||
+       /      |
+      /       |\
+      |   X   ||
+      | player||
 --------------||  wall A
        \      |    
         ------|
@@ -143,10 +143,10 @@ sequentially one wall followed by the other.
 first resolve the collision with wall A (it depends on which one comes first in the array, which in turn depends on which wall segment
 was created first)
       ------  |
-	 /      \ |
-	/        \|
-	|   X    ||
-	| player ||
+     /      \ |
+    /        \|
+    |   X    ||
+    | player ||
 --------------|  wall A
      \      / |    
       ------  |
@@ -154,10 +154,10 @@ was created first)
               |
 then resolve the collision with wall B and we're done.
       ------  |
-	 /      \ |
-	/        \|
-	|   X    ||
-	| player ||
+     /      \ |
+    /        \|
+    |   X    ||
+    | player ||
     \        /|  wall A
      \      / |    
       ------  |
@@ -168,9 +168,9 @@ than the player's diameter, so even though resolving collisions with 3 wall segm
 it would never happen (at least with the current structure of this game)
   |   ------  |
   |  /      \ |
-  |	/        \|
-  |	|   X    ||
-  |	| player ||
+  | /        \|
+  | |   X    ||
+  | | player ||
   | \        /|  wall A
   |  \      / |    
   |   ------  |
